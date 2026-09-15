@@ -1,193 +1,789 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Extracted Incident</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/components.css">
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+
+    <title>LinkageX — Extracted Incident</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/components.css"
+    >
+
 </head>
+
+
 <body>
+
     <script src="../js/data.js"></script>
     <script src="../js/app.js"></script>
 
-    <script>
-        const c = shell("citizen", "Report");
 
-        const analysisJSON = sessionStorage.getItem("linkageX_analysis");
+    <script>
+
+        /* =====================================================
+           APPLICATION SHELL
+        ====================================================== */
+
+        const c =
+            shell(
+                "citizen",
+                "Report"
+            );
+
+
+
+        /* =====================================================
+           GET NLP RESULT
+        ====================================================== */
+
+        const analysisJSON =
+            sessionStorage.getItem(
+                "linkageX_analysis"
+            );
+
+
+
+        /* =====================================================
+           NO ANALYSIS FOUND
+        ====================================================== */
 
         if (!analysisJSON) {
-            c.innerHTML = pageHead(
-                "No Analysis Found",
-                "We could not find the analyzed complaint. Please submit your complaint again."
-            );
+
+            c.innerHTML =
+                pageHead(
+                    "No Analysis Found",
+                    "We could not find the analyzed complaint. Please submit your complaint again."
+                );
+
 
             c.innerHTML += `
+
                 <div class="card">
+
                     <div class="alert alert-warn">
-                        <strong>Analysis unavailable.</strong>
-                        <p>Please return to the complaint page and submit your report again.</p>
+
+                        <strong>
+                            Analysis unavailable.
+                        </strong>
+
+                        <p>
+                            Please return to the complaint page
+                            and submit your report again.
+                        </p>
+
                     </div>
 
-                    <div class="actions" style="margin-top:18px">
-                        <a class="btn btn-primary" href="complaint.html">
+
+                    <div
+                        class="actions"
+                        style="margin-top:18px"
+                    >
+
+                        <a
+                            class="btn btn-primary"
+                            href="complaint.html"
+                        >
                             Back to Complaint
                         </a>
+
                     </div>
+
                 </div>
+
             `;
-        } else {
 
-            const result = JSON.parse(analysisJSON);
-            const incident = result.incident || {};
-            const missingFields = result.missing_fields || [];
+        }
 
-            c.innerHTML = pageHead(
-                "We Understood Your Incident",
-                "The system extracted the following information from your complaint. Please review it before continuing."
-            );
+
+        /* =====================================================
+           ANALYSIS FOUND
+        ====================================================== */
+
+        else {
+
+            let result;
+
+            try {
+
+                result =
+                    JSON.parse(
+                        analysisJSON
+                    );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Unable to parse NLP result:",
+                    error
+                );
+
+
+                c.innerHTML =
+                    pageHead(
+                        "Analysis Error",
+                        "The complaint analysis could not be read."
+                    );
+
+
+                c.innerHTML += `
+
+                    <div class="card">
+
+                        <div class="alert alert-warn">
+
+                            <strong>
+                                Invalid analysis data.
+                            </strong>
+
+                            <p>
+                                Please submit the complaint again.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="actions"
+                            style="margin-top:18px"
+                        >
+
+                            <a
+                                class="btn btn-primary"
+                                href="complaint.html"
+                            >
+                                Back to Complaint
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+
+                throw error;
+
+            }
+
+
+
+            /* =================================================
+               EXTRACT INCIDENT
+            ================================================== */
+
+            const data = result.data || {};
+const incident = data.incident || {};
+const missingFields = data.missing_fields || [];
+
+
+
+            /* =================================================
+               PAGE HEADER
+            ================================================== */
+
+            c.innerHTML =
+                pageHead(
+                    "We Understood Your Incident",
+                    "The system extracted the following information from your complaint. Please review and confirm it before continuing."
+                );
+
+
+
+            /* =================================================
+               REVIEW NOTICE
+            ================================================== */
 
             c.innerHTML += `
-                <div class="alert alert-info" style="margin-bottom:16px">
-                    <strong>Review before continuing:</strong>
-                    Extracted information is based on your complaint text and may require confirmation or additional details.
+
+                <div
+                    class="alert alert-info"
+                    style="margin-bottom:16px"
+                >
+
+                    <strong>
+                        Review before continuing:
+                    </strong>
+
+                    Extracted information is based on
+                    your complaint text. Please confirm
+                    the details and provide any missing
+                    information before submitting your report.
+
                 </div>
+
             `;
+
+
+
+            /* =================================================
+               DISPLAY VALUE
+            ================================================== */
 
             function displayValue(value) {
 
-                if (value === null || value === undefined) {
+                if (
+                    value === null ||
+                    value === undefined
+                ) {
+
                     return "Not provided";
+
                 }
 
-                if (Array.isArray(value)) {
-                    if (value.length === 0) {
+
+                if (
+                    Array.isArray(value)
+                ) {
+
+                    if (
+                        value.length === 0
+                    ) {
+
                         return "Not provided";
+
                     }
 
-                    return value.join(", ");
+
+                    return value
+                        .map(
+                            item =>
+                                String(item)
+                        )
+                        .join(", ");
+
                 }
 
-                if (typeof value === "string" && value.trim() === "") {
+
+                if (
+                    typeof value === "string" &&
+                    value.trim() === ""
+                ) {
+
                     return "Not provided";
+
                 }
 
-                return value;
+
+                return String(value);
+
             }
 
-            function statusFor(field) {
-                return missingFields.includes(field)
-                    ? `<span class="badge badge-warn">Needs confirmation</span>`
-                    : `<span class="badge badge-success">Extracted</span>`;
+
+
+            /* =================================================
+               CHECK WHETHER VALUE EXISTS
+            ================================================== */
+
+            function hasValue(value) {
+
+                if (
+                    value === null ||
+                    value === undefined
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (
+                    Array.isArray(value)
+                ) {
+
+                    return value.length > 0;
+
+                }
+
+
+                if (
+                    typeof value === "string"
+                ) {
+
+                    return value.trim().length > 0;
+
+                }
+
+
+                return true;
+
             }
+
+
+
+            /* =================================================
+               FIELD STATUS
+            ================================================== */
+
+            function statusFor(
+                value,
+                fieldName
+            ) {
+
+                const missing =
+                    missingFields.includes(
+                        fieldName
+                    );
+
+
+                if (
+                    missing ||
+                    !hasValue(value)
+                ) {
+
+                    return `
+                        <span class="badge badge-warn">
+                            Needs confirmation
+                        </span>
+                    `;
+
+                }
+
+
+                return `
+                    <span class="badge badge-success">
+                        Extracted
+                    </span>
+                `;
+
+            }
+
+
+
+            /* =================================================
+               FORMAT AMOUNTS
+            ================================================== */
+
+            function displayAmounts(
+                amounts
+            ) {
+
+                if (
+                    !Array.isArray(amounts) ||
+                    amounts.length === 0
+                ) {
+
+                    return "Not provided";
+
+                }
+
+
+                return amounts
+                    .map(
+                        amount => {
+
+                            const number =
+                                Number(amount);
+
+
+                            if (
+                                Number.isNaN(number)
+                            ) {
+
+                                return String(
+                                    amount
+                                );
+
+                            }
+
+
+                            return (
+                                "₹" +
+                                number.toLocaleString(
+                                    "en-IN"
+                                )
+                            );
+
+                        }
+                    )
+                    .join(", ");
+
+            }
+
+
+
+            /* =================================================
+               BUILD FIELD LIST
+            ================================================== */
 
             const fields = [
+
                 [
                     "Crime Category",
-                    displayValue(incident.crime_category),
+
+                    incident.crime_category,
+
                     "crime_category"
+
                 ],
+
+
                 [
                     "Crime Type",
-                    displayValue(incident.crime_subcategory),
+
+                    incident.crime_subcategory,
+
                     "crime_subcategory"
+
                 ],
+
+
                 [
                     "Channel",
-                    displayValue(incident.channels),
+
+                    incident.channels,
+
                     "channels"
+
                 ],
-                [
-                    "Attacker / Entity",
-                    displayValue(
-                        incident.organizations?.length
-                            ? incident.organizations
-                            : null
-                    ),
-                    "attacker_action"
-                ],
+
+
                 [
                     "Deception Method",
-                    displayValue(incident.deception),
+
+                    incident.deception,
+
                     "deception"
+
                 ],
+
+
                 [
                     "Victim Action",
-                    displayValue(incident.victim_action),
+
+                    incident.victim_action,
+
                     "victim_action"
+
                 ],
+
+
                 [
-                    "Amount",
-                    incident.amounts && incident.amounts.length
-                        ? incident.amounts.map(a => `₹${Number(a).toLocaleString("en-IN")}`).join(", ")
-                        : "Not provided",
-                    "amounts"
+                    "Attacker Action",
+
+                    incident.attacker_action,
+
+                    "attacker_action"
+
                 ],
+
+
                 [
                     "Outcome",
-                    displayValue(incident.outcome),
+
+                    incident.outcome,
+
                     "outcome"
+
                 ],
+
+
                 [
                     "Payment Method",
-                    displayValue(incident.payment_method),
+
+                    incident.payment_method,
+
                     "payment_method"
+
                 ],
+
+
+                [
+                    "Amount",
+
+                    incident.amounts,
+
+                    "amounts"
+
+                ],
+
+
+                [
+                    "Organizations",
+
+                    incident.organizations,
+
+                    "organizations"
+
+                ],
+
+
                 [
                     "Location",
-                    displayValue(incident.locations),
+
+                    incident.locations,
+
                     "locations"
+
                 ]
+
             ];
 
+
+
+            /* =================================================
+               RENDER TABLE
+            ================================================== */
+
             c.innerHTML += `
+
                 <div class="card">
 
+                    <div class="section-head">
+
+                        <h3>
+                            Extracted Incident Information
+                        </h3>
+
+                        <span>
+                            NLP-generated representation
+                        </span>
+
+                    </div>
+
+
                     <div class="table-wrap">
+
                         <table class="data-table">
 
                             <thead>
+
                                 <tr>
-                                    <th>Field</th>
-                                    <th>Extracted Information</th>
-                                    <th>Status</th>
+
+                                    <th>
+                                        Field
+                                    </th>
+
+                                    <th>
+                                        Extracted Information
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
                                 </tr>
+
                             </thead>
 
+
                             <tbody>
-                                ${fields.map(f => `
-                                    <tr>
-                                        <td>
-                                            <strong>${f[0]}</strong>
-                                        </td>
 
-                                        <td>
-                                            ${f[1]}
-                                        </td>
+                                ${
 
-                                        <td>
-                                            ${statusFor(f[2])}
-                                        </td>
-                                    </tr>
-                                `).join("")}
+                                    fields
+                                        .map(
+                                            field => {
+
+                                                const label =
+                                                    field[0];
+
+                                                const rawValue =
+                                                    field[1];
+
+                                                const key =
+                                                    field[2];
+
+
+                                                const value =
+
+                                                    key === "amounts"
+
+                                                        ? displayAmounts(
+                                                            rawValue
+                                                        )
+
+                                                        : displayValue(
+                                                            rawValue
+                                                        );
+
+
+                                                return `
+
+                                                    <tr>
+
+                                                        <td>
+
+                                                            <strong>
+                                                                ${label}
+                                                            </strong>
+
+                                                        </td>
+
+
+                                                        <td>
+
+                                                            ${value}
+
+                                                        </td>
+
+
+                                                        <td>
+
+                                                            ${statusFor(
+                                                                rawValue,
+                                                                key
+                                                            )}
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                `;
+
+                                            }
+                                        )
+                                        .join("")
+
+                                }
+
                             </tbody>
 
                         </table>
+
                     </div>
 
-                    <div class="actions" style="margin-top:18px">
-                        <a class="btn btn-primary" href="missing-info.html">
+
+
+                    <!-- =====================================
+                         ENTITY DETAILS
+                    ====================================== -->
+
+                    <div
+                        class="divider"
+                        style="margin:22px 0"
+                    ></div>
+
+
+                    <div class="section-head">
+
+                        <h3>
+                            Extracted Indicators
+                        </h3>
+
+                        <span>
+                            Additional information detected from the complaint
+                        </span>
+
+                    </div>
+
+
+                    <div class="incident-grid">
+
+
+                        ${
+
+                            field(
+                                "Phone Numbers",
+                                displayValue(
+                                    incident.phones
+                                ),
+                                "phones",
+                                false
+                            )
+
+                        }
+
+
+                        ${
+
+                            field(
+                                "Email Addresses",
+                                displayValue(
+                                    incident.emails
+                                ),
+                                "emails",
+                                false
+                            )
+
+                        }
+
+
+                        ${
+
+                            field(
+                                "UPI IDs",
+                                displayValue(
+                                    incident.upi_ids
+                                ),
+                                "upi_ids",
+                                false
+                            )
+
+                        }
+
+
+                        ${
+
+                            field(
+                                "URLs",
+                                displayValue(
+                                    incident.urls
+                                ),
+                                "urls",
+                                false
+                            )
+
+                        }
+
+
+                    </div>
+
+
+
+                    <!-- =====================================
+                         ACTIONS
+                    ====================================== -->
+
+                    <div
+                        class="actions"
+                        style="margin-top:22px"
+                    >
+
+                        <a
+                            class="btn btn-primary"
+                            href="missing-info.html"
+                        >
+
                             Continue Review →
+
                         </a>
 
-                        <a class="btn btn-secondary" href="complaint.html">
+
+                        <a
+                            class="btn btn-secondary"
+                            href="complaint.html"
+                        >
+
                             Back
+
                         </a>
+
                     </div>
+
 
                 </div>
+
             `;
+
         }
+
     </script>
+
 </body>
+
 </html>
