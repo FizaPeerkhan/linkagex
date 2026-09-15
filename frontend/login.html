@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>LinkageX — Secure Access</title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="css/components.css"
+  >
+
+</head>
+
+
+<body class="login-body">
+
+
+  <main class="login-shell">
+
+
+    <!-- =====================================================
+         LEFT VISUAL PANEL
+    ====================================================== -->
+
+    <section class="login-visual">
+
+
+      <div class="brand">
+
+        <span
+          class="brand-mark"
+          aria-hidden="true"
+        >
+          <span></span>
+        </span>
+
+        <div>
+
+          <strong>LINKAGEX</strong>
+
+          <small>INTELLIGENCE</small>
+
+        </div>
+
+      </div>
+
+
+      <div class="visual-copy">
+
+        <span class="eyebrow">
+          CYBERCRIME INCIDENT INTELLIGENCE
+        </span>
+
+        <h1>
+          From fragmented reports to
+          <em>structured intelligence.</em>
+        </h1>
+
+        <p>
+          Transform unstructured cybercrime reports
+          into comparable incident representations
+          and explainable potential relationships.
+        </p>
+
+      </div>
+
+
+      <div
+        class="network-art"
+        aria-hidden="true"
+      >
+
+        <i style="--x:14%;--y:25%"></i>
+        <i style="--x:38%;--y:45%"></i>
+        <i style="--x:67%;--y:24%"></i>
+        <i style="--x:81%;--y:62%"></i>
+        <i style="--x:47%;--y:76%"></i>
+        <i style="--x:22%;--y:72%"></i>
+
+        <b
+          style="--x1:14%;--y1:25%;--x2:38%;--y2:45%"
+        ></b>
+
+        <b
+          style="--x1:38%;--y1:45%;--x2:67%;--y2:24%"
+        ></b>
+
+        <b
+          style="--x1:67%;--y1:24%;--x2:81%;--y2:62%"
+        ></b>
+
+        <b
+          style="--x1:38%;--y1:45%;--x2:47%;--y2:76%"
+        ></b>
+
+        <b
+          style="--x1:22%;--y1:72%;--x2:47%;--y2:76%"
+        ></b>
+
+      </div>
+
+
+      <div class="trust-strip">
+
+        <span>◈</span>
+
+        Intelligence-support platform
+        &nbsp;•&nbsp;
+        Human validated
+        &nbsp;•&nbsp;
+        Explainable
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         LOGIN PANEL
+    ====================================================== -->
+
+    <section class="login-panel">
+
+
+      <div class="login-card">
+
+
+        <!-- MOBILE BRAND -->
+
+        <div class="mobile-brand brand">
+
+          <span class="brand-mark">
+
+            <span></span>
+
+          </span>
+
+          <div>
+
+            <strong>LINKAGEX</strong>
+
+            <small>INTELLIGENCE</small>
+
+          </div>
+
+        </div>
+
+
+        <span class="eyebrow">
+          SECURE ACCESS
+        </span>
+
+
+        <h2>
+          Welcome back
+        </h2>
+
+
+        <p class="muted">
+          Sign in to access your intelligence workspace.
+        </p>
+
+
+
+        <!-- =================================================
+             LOGIN FORM
+        ================================================== -->
+
+        <form id="loginForm">
+
+
+          <!-- EMAIL -->
+
+          <label>
+
+            Email / User ID
+
+            <input
+              id="loginEmail"
+              type="email"
+              placeholder="you@example.com"
+              autocomplete="username"
+              required
+            >
+
+          </label>
+
+
+
+          <!-- PASSWORD -->
+
+          <label>
+
+            Password
+
+            <div class="password-wrap">
+
+              <input
+                id="loginPassword"
+                type="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+              >
+
+              <button
+                type="button"
+                class="icon-btn"
+                data-toggle-password
+                aria-label="Show password"
+              >
+                ◉
+              </button>
+
+            </div>
+
+          </label>
+
+
+
+          <!-- =================================================
+               REMEMBER + FORGOT
+          ================================================== -->
+
+          <div class="form-row between">
+
+            <label class="check">
+
+              <input
+                type="checkbox"
+                id="rememberMe"
+              >
+
+              <span>
+                Remember me
+              </span>
+
+            </label>
+
+
+            <button
+              type="button"
+              class="link-btn"
+              data-action="forgot"
+            >
+              Forgot password?
+            </button>
+
+          </div>
+
+
+
+          <!-- =================================================
+               SIGN IN
+          ================================================== -->
+
+          <button
+            class="btn btn-primary btn-lg"
+            type="submit"
+          >
+
+            Sign In
+
+            <span>→</span>
+
+          </button>
+
+
+        </form>
+
+
+
+        <!-- =================================================
+             CREATE ACCOUNT
+        ================================================== -->
+
+        <button
+          class="btn btn-secondary btn-lg"
+          type="button"
+          data-action="register"
+        >
+          Create Account
+        </button>
+
+
+
+        <!-- =================================================
+             SECURITY NOTE
+        ================================================== -->
+
+        <p class="security-note">
+
+          ⌁ Your information is handled through a secure
+          authentication interface. Never enter passwords,
+          OTPs, PINs or banking credentials in a complaint.
+
+        </p>
+
+
+      </div>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =====================================================
+       TOAST
+  ====================================================== -->
+
+  <div
+    id="toast-root"
+    class="toast-root"
+  ></div>
+
+
+
+  <!-- =====================================================
+       EXISTING JAVASCRIPT
+  ====================================================== -->
+
+  <script src="js/data.js"></script>
+
+  <script src="js/app.js"></script>
+
+
+
+  <!-- =====================================================
+       LOGIN JAVASCRIPT
+  ====================================================== -->
+
+  <script>
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+
+
+        // ==================================================
+        // LOGIN
+        // ==================================================
+
+        const loginForm =
+          document.getElementById(
+            'loginForm'
+          );
+
+
+        if (loginForm) {
+
+          loginForm.addEventListener(
+            'submit',
+            async (e) => {
+
+              e.preventDefault();
+
+
+              const email =
+                document
+                  .getElementById(
+                    'loginEmail'
+                  )
+                  .value
+                  .trim()
+                  .toLowerCase();
+
+
+              const password =
+                document
+                  .getElementById(
+                    'loginPassword'
+                  )
+                  .value;
+
+
+              const rememberMe =
+                document
+                  .getElementById(
+                    'rememberMe'
+                  )
+                  ?.checked || false;
+
+
+              if (!email || !password) {
+
+                toast(
+                  'Please enter your email and password.'
+                );
+
+                return;
+
+              }
+
+
+              const submitButton =
+                loginForm.querySelector(
+                  'button[type="submit"]'
+                );
+
+
+              const originalText =
+                submitButton.innerHTML;
+
+
+              submitButton.disabled =
+                true;
+
+              submitButton.innerHTML =
+                'Signing In...';
+
+
+              try {
+
+
+                /*
+                 * Authentication endpoint.
+                 *
+                 * Your teammate will connect this
+                 * endpoint to the database.
+                 */
+
+                const response =
+                  await fetch(
+                    'http://127.0.0.1:5000/api/login',
+                    {
+                      method: 'POST',
+
+                      headers: {
+                        'Content-Type':
+                          'application/json'
+                      },
+
+                      body:
+                        JSON.stringify({
+                          email: email,
+                          password: password
+                        })
+                    }
+                  );
+
+
+                const data =
+                  await response.json();
+
+
+                if (
+                  !response.ok ||
+                  !data.success
+                ) {
+
+                  throw new Error(
+                    data.message ||
+                    'Invalid email or password.'
+                  );
+
+                }
+
+
+                // ==================================================
+                // USER + ROLE FROM BACKEND
+                // ==================================================
+
+                const user =
+                  data.user;
+
+
+                if (
+                  !user ||
+                  !user.role
+                ) {
+
+                  throw new Error(
+                    'Account role could not be verified.'
+                  );
+
+                }
+
+
+                // ==================================================
+                // STORE USER SESSION
+                // ==================================================
+
+                sessionStorage.setItem(
+                  'csUser',
+                  JSON.stringify(user)
+                );
+
+
+                // ==================================================
+                // REMEMBER EMAIL
+                // ==================================================
+
+                if (rememberMe) {
+
+                  localStorage.setItem(
+                    'csRememberEmail',
+                    email
+                  );
+
+                }
+
+                else {
+
+                  localStorage.removeItem(
+                    'csRememberEmail'
+                  );
+
+                }
+
+
+                // ==================================================
+                // ROLE-BASED REDIRECT
+                // ==================================================
+
+                if (
+                  user.role === 'citizen'
+                ) {
+
+                  window.location.href =
+                    'citizen/dashboard.html';
+
+                }
+
+                else if (
+                  user.role === 'investigator'
+                ) {
+
+                  window.location.href =
+                    'investigator/dashboard.html';
+
+                }
+
+                else {
+
+                  throw new Error(
+                    'Unauthorized account role.'
+                  );
+
+                }
+
+
+            }
+
+            catch (error) {
+
+              console.error(
+                'Login error:',
+                error
+              );
+
+
+              toast(
+                error.message ||
+                'Unable to sign in. Please try again.'
+              );
+
+
+              submitButton.disabled =
+                false;
+
+              submitButton.innerHTML =
+                originalText;
+
+            }
+
+          });
+
+        }
+
+
+
+        // ==================================================
+        // CREATE ACCOUNT
+        // ==================================================
+
+        const registerButton =
+          document.querySelector(
+            '[data-action="register"]'
+          );
+
+
+        if (registerButton) {
+
+          registerButton.onclick =
+            () => {
+
+              window.location.href =
+                'register.html';
+
+            };
+
+        }
+
+
+
+        // ==================================================
+        // FORGOT PASSWORD
+        // ==================================================
+
+        const forgotButton =
+          document.querySelector(
+            '[data-action="forgot"]'
+          );
+
+
+        if (forgotButton) {
+
+          forgotButton.onclick =
+            () => {
+
+              toast(
+                'Password recovery will be available through your registered email address.'
+              );
+
+            };
+
+        }
+
+
+
+        // ==================================================
+        // SHOW / HIDE PASSWORD
+        // ==================================================
+
+        const passwordToggle =
+          document.querySelector(
+            '[data-toggle-password]'
+          );
+
+
+        if (passwordToggle) {
+
+          passwordToggle.onclick =
+            () => {
+
+              const input =
+                document.getElementById(
+                  'loginPassword'
+                );
+
+
+              if (!input) return;
+
+
+              input.type =
+                input.type === 'password'
+                  ? 'text'
+                  : 'password';
+
+            };
+
+        }
+
+
+
+        // ==================================================
+        // REMEMBER EMAIL
+        // ==================================================
+
+        const savedEmail =
+          localStorage.getItem(
+            'csRememberEmail'
+          );
+
+
+        if (savedEmail) {
+
+          const emailInput =
+            document.getElementById(
+              'loginEmail'
+            );
+
+
+          const rememberCheckbox =
+            document.getElementById(
+              'rememberMe'
+            );
+
+
+          if (emailInput) {
+
+            emailInput.value =
+              savedEmail;
+
+          }
+
+
+          if (rememberCheckbox) {
+
+            rememberCheckbox.checked =
+              true;
+
+          }
+
+        }
+
+      }
+    );
+
+  </script>
+
+
+</body>
+
+</html>

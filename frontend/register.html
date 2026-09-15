@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>LinkageX — Create Account</title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="css/components.css"
+  >
+
+  <style>
+
+    /* =====================================================
+       REGISTRATION PAGE
+       Uses the existing LinkageX design language
+    ====================================================== */
+
+    .register-body {
+      min-height: 100vh;
+      background: #f5f7fb;
+      padding: 35px 20px;
+    }
+
+
+    .register-container {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+
+    /* =====================================================
+       HEADER
+    ====================================================== */
+
+    .register-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+
+    .register-header .brand {
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+
+    .register-header .brand strong {
+      font-size: 24px;
+    }
+
+
+    .register-header .brand small {
+      display: block;
+    }
+
+
+    .register-header .eyebrow {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+
+    .register-header h1 {
+      margin: 0 0 7px;
+    }
+
+
+    .register-header p {
+      margin: 0 auto;
+      max-width: 650px;
+    }
+
+
+    /* =====================================================
+       MAIN CARD
+    ====================================================== */
+
+    .register-card {
+      background: white;
+
+      border-radius: 16px;
+
+      box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.08);
+
+      padding: 32px 38px;
+    }
+
+
+    /* =====================================================
+       INFO STRIP
+    ====================================================== */
+
+    .register-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+
+      padding: 13px 15px;
+
+      margin-bottom: 25px;
+
+      background: #f3f6fb;
+
+      border-radius: 8px;
+
+      color: #5b6472;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+    }
+
+
+    .register-info strong {
+      color: #374151;
+    }
+
+
+    /* =====================================================
+       FORM
+    ====================================================== */
+
+    .register-form {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      column-gap: 24px;
+
+      row-gap: 18px;
+    }
+
+
+    .register-form > label {
+      margin: 0;
+    }
+
+
+    .register-form .full-width {
+      grid-column: 1 / -1;
+    }
+
+
+    .register-form input,
+    .register-form select {
+
+      width: 100%;
+
+      margin-top: 7px;
+
+      height: 44px;
+
+      padding: 0 12px;
+
+      border: 1px solid #d1d5db;
+
+      border-radius: 7px;
+
+      background: white;
+
+      font-family: inherit;
+
+      font-size: 13px;
+
+      color: #1f2937;
+
+      outline: none;
+
+    }
+
+
+    .register-form input:focus,
+    .register-form select:focus {
+
+      border-color: #2563eb;
+
+      box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+
+    }
+
+
+    /* =====================================================
+       PASSWORD
+    ====================================================== */
+
+    .password-wrap {
+      position: relative;
+
+      margin-top: 7px;
+    }
+
+
+    .password-wrap input {
+
+      margin-top: 0;
+
+      padding-right: 45px;
+
+    }
+
+
+    .password-wrap .icon-btn {
+
+      position: absolute;
+
+      right: 9px;
+
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      border: none;
+
+      background: transparent;
+
+      color: #6b7280;
+
+      cursor: pointer;
+
+    }
+
+
+    .password-wrap .icon-btn:hover {
+
+      color: #2563eb;
+
+    }
+
+
+    /* =====================================================
+       PASSWORD REQUIREMENTS
+    ====================================================== */
+
+    .password-help {
+
+      margin-top: 5px;
+
+      font-size: 11px;
+
+      color: #9ca3af;
+
+    }
+
+
+    /* =====================================================
+       ACTIONS
+    ====================================================== */
+
+    .register-actions {
+
+      grid-column: 1 / -1;
+
+      margin-top: 5px;
+
+    }
+
+
+    .register-actions .btn {
+
+      width: 100%;
+
+    }
+
+
+    /* =====================================================
+       LOGIN LINK
+    ====================================================== */
+
+    .login-link-row {
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      gap: 5px;
+
+      margin-top: 22px;
+
+      font-size: 13px;
+
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ====================================================== */
+
+    .register-security {
+
+      text-align: center;
+
+      margin-top: 20px;
+
+      color: #6b7280;
+
+      font-size: 11px;
+
+      line-height: 1.5;
+
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ====================================================== */
+
+    @media (max-width: 700px) {
+
+      .register-body {
+
+        padding: 20px 14px;
+
+      }
+
+
+      .register-card {
+
+        padding: 25px 20px;
+
+      }
+
+
+      .register-form {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .register-form .full-width {
+
+        grid-column: auto;
+
+      }
+
+
+      .register-actions {
+
+        grid-column: auto;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body class="register-body">
+
+
+  <div class="register-container">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="register-header">
+
+
+      <div class="brand">
+
+        <span
+          class="brand-mark"
+          aria-hidden="true"
+        >
+          <span></span>
+        </span>
+
+        <div>
+
+          <strong>LINKAGEX</strong>
+
+          <small>INTELLIGENCE</small>
+
+        </div>
+
+      </div>
+
+
+      <span class="eyebrow">
+        CREATE ACCOUNT
+      </span>
+
+
+      <h1>
+        Create your LinkageX account
+      </h1>
+
+
+      <p class="muted">
+        Register to submit cybercrime complaints,
+        track your reports and receive relevant
+        guidance.
+      </p>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+         REGISTRATION CARD
+    ====================================================== -->
+
+    <section class="register-card">
+
+
+      <!-- =================================================
+           INFORMATION NOTE
+      ================================================== -->
+
+      <div class="register-info">
+
+        <span>◈</span>
+
+        <div>
+
+          <strong>
+            Why we ask for profile information
+          </strong>
+
+          <br>
+
+          Your age group, profession and region may
+          help LinkageX identify recurring victim
+          profiles and potential targeting patterns
+          across related incidents.
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =================================================
+           REGISTRATION FORM
+      ================================================== -->
+
+      <form
+        id="registerForm"
+        class="register-form"
+      >
+
+
+        <!-- FULL NAME -->
+
+        <label>
+
+          Full Name
+
+          <input
+            id="fullName"
+            type="text"
+            placeholder="Enter your full name"
+            autocomplete="name"
+            required
+          >
+
+        </label>
+
+
+
+        <!-- EMAIL -->
+
+        <label>
+
+          Email Address
+
+          <input
+            id="registerEmail"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          >
+
+        </label>
+
+
+
+        <!-- MOBILE -->
+
+        <label>
+
+          Mobile Number
+
+          <input
+            id="mobileNumber"
+            type="tel"
+            placeholder="Enter your mobile number"
+            autocomplete="tel"
+            inputmode="numeric"
+            required
+          >
+
+        </label>
+
+
+
+        <!-- AGE GROUP -->
+
+        <label>
+
+          Age Group
+
+          <select
+            id="ageGroup"
+            required
+          >
+
+            <option value="">
+              Select age group
+            </option>
+
+            <option value="Under 18">
+              Under 18
+            </option>
+
+            <option value="18-24">
+              18–24
+            </option>
+
+            <option value="25-34">
+              25–34
+            </option>
+
+            <option value="35-44">
+              35–44
+            </option>
+
+            <option value="45-54">
+              45–54
+            </option>
+
+            <option value="55-64">
+              55–64
+            </option>
+
+            <option value="65+">
+              65+
+            </option>
+
+          </select>
+
+        </label>
+
+
+
+        <!-- PROFESSION -->
+
+        <label>
+
+          Profession
+
+          <select
+            id="profession"
+            required
+          >
+
+            <option value="">
+              Select profession
+            </option>
+
+            <option value="Student">
+              Student
+            </option>
+
+            <option value="Employed">
+              Employed
+            </option>
+
+            <option value="Self-Employed">
+              Self-Employed
+            </option>
+
+            <option value="Business Owner">
+              Business Owner
+            </option>
+
+            <option value="Homemaker">
+              Homemaker
+            </option>
+
+            <option value="Retired">
+              Retired
+            </option>
+
+            <option value="Unemployed">
+              Unemployed
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </label>
+
+
+
+        <!-- CITY / REGION -->
+
+        <label>
+
+          City / Region
+
+          <input
+            id="cityRegion"
+            type="text"
+            placeholder="Enter your city or region"
+            autocomplete="address-level2"
+            required
+          >
+
+        </label>
+
+
+
+        <!-- LANGUAGE -->
+
+        <label>
+
+          Preferred Language
+
+          <span class="muted">
+            (Optional)
+          </span>
+
+          <select
+            id="preferredLanguage"
+          >
+
+            <option value="">
+              Select language
+            </option>
+
+            <option value="English">
+              English
+            </option>
+
+            <option value="Hindi">
+              Hindi
+            </option>
+
+            <option value="Marathi">
+              Marathi
+            </option>
+
+          </select>
+
+        </label>
+
+
+
+        <!-- PASSWORD -->
+
+        <label>
+
+          Password
+
+          <div class="password-wrap">
+
+            <input
+              id="registerPassword"
+              type="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+              required
+            >
+
+            <button
+              type="button"
+              class="icon-btn"
+              data-toggle-password="password"
+              aria-label="Show password"
+            >
+              ◉
+            </button>
+
+          </div>
+
+          <div class="password-help">
+            Use at least 8 characters.
+          </div>
+
+        </label>
+
+
+
+        <!-- CONFIRM PASSWORD -->
+
+        <label>
+
+          Confirm Password
+
+          <div class="password-wrap">
+
+            <input
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirm your password"
+              autocomplete="new-password"
+              required
+            >
+
+            <button
+              type="button"
+              class="icon-btn"
+              data-toggle-password="confirm"
+              aria-label="Show password"
+            >
+              ◉
+            </button>
+
+          </div>
+
+        </label>
+
+
+
+        <!-- SUBMIT -->
+
+        <div class="register-actions">
+
+          <button
+            class="btn btn-primary btn-lg"
+            type="submit"
+          >
+
+            Create Account
+
+            <span>→</span>
+
+          </button>
+
+        </div>
+
+
+      </form>
+
+
+
+      <!-- =================================================
+           LOGIN LINK
+      ================================================== -->
+
+      <div class="login-link-row">
+
+        <span class="muted">
+          Already have an account?
+        </span>
+
+        <button
+          type="button"
+          class="link-btn"
+          id="loginLink"
+        >
+          Sign In
+        </button>
+
+      </div>
+
+
+
+      <!-- =================================================
+           SECURITY NOTE
+      ================================================== -->
+
+      <p class="register-security">
+
+        ⌁ Your profile information is used to support
+        complaint analysis and recurring-pattern research.
+        Never share your password, OTP, PIN or banking
+        credentials.
+
+      </p>
+
+
+    </section>
+
+
+  </div>
+
+
+
+  <!-- =====================================================
+       TOAST
+  ====================================================== -->
+
+  <div
+    id="toast-root"
+    class="toast-root"
+  ></div>
+
+
+
+  <!-- =====================================================
+       EXISTING JAVASCRIPT
+  ====================================================== -->
+
+  <script src="js/data.js"></script>
+
+  <script src="js/app.js"></script>
+
+
+
+  <!-- =====================================================
+       REGISTRATION JAVASCRIPT
+  ====================================================== -->
+
+  <script>
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+
+
+        // ==================================================
+        // REGISTRATION
+        // ==================================================
+
+        const registerForm =
+          document.getElementById(
+            'registerForm'
+          );
+
+
+        registerForm.addEventListener(
+          'submit',
+          async (e) => {
+
+            e.preventDefault();
+
+
+            const fullName =
+              document
+                .getElementById('fullName')
+                .value
+                .trim();
+
+
+            const email =
+              document
+                .getElementById('registerEmail')
+                .value
+                .trim()
+                .toLowerCase();
+
+
+            const mobileNumber =
+              document
+                .getElementById('mobileNumber')
+                .value
+                .trim();
+
+
+            const ageGroup =
+              document
+                .getElementById('ageGroup')
+                .value;
+
+
+            const profession =
+              document
+                .getElementById('profession')
+                .value;
+
+
+            const cityRegion =
+              document
+                .getElementById('cityRegion')
+                .value
+                .trim();
+
+
+            const preferredLanguage =
+              document
+                .getElementById('preferredLanguage')
+                .value;
+
+
+            const password =
+              document
+                .getElementById('registerPassword')
+                .value;
+
+
+            const confirmPassword =
+              document
+                .getElementById('confirmPassword')
+                .value;
+
+
+
+            // ==================================================
+            // VALIDATION
+            // ==================================================
+
+            if (
+              !fullName ||
+              !email ||
+              !mobileNumber ||
+              !ageGroup ||
+              !profession ||
+              !cityRegion ||
+              !password ||
+              !confirmPassword
+            ) {
+
+              toast(
+                'Please complete all required fields.'
+              );
+
+              return;
+
+            }
+
+
+            if (
+              password.length < 8
+            ) {
+
+              toast(
+                'Password must contain at least 8 characters.'
+              );
+
+              return;
+
+            }
+
+
+            if (
+              password !==
+              confirmPassword
+            ) {
+
+              toast(
+                'Passwords do not match.'
+              );
+
+              return;
+
+            }
+
+
+
+            // ==================================================
+            // MOBILE VALIDATION
+            // ==================================================
+
+            const mobilePattern =
+              /^[0-9]{10}$/;
+
+
+            if (
+              !mobilePattern.test(
+                mobileNumber
+              )
+            ) {
+
+              toast(
+                'Please enter a valid 10-digit mobile number.'
+              );
+
+              return;
+
+            }
+
+
+
+            // ==================================================
+            // SUBMIT BUTTON
+            // ==================================================
+
+            const submitButton =
+              registerForm.querySelector(
+                'button[type="submit"]'
+              );
+
+
+            const originalText =
+              submitButton.innerHTML;
+
+
+            submitButton.disabled =
+              true;
+
+            submitButton.innerHTML =
+              'Creating Account...';
+
+
+
+            try {
+
+
+              // ==================================================
+              // BACKEND REGISTRATION
+              // ==================================================
+
+              const response =
+                await fetch(
+                  'http://127.0.0.1:5000/api/register',
+                  {
+
+                    method: 'POST',
+
+                    headers: {
+
+                      'Content-Type':
+                        'application/json'
+
+                    },
+
+                    body:
+                      JSON.stringify({
+
+                        full_name:
+                          fullName,
+
+                        email:
+                          email,
+
+                        mobile_number:
+                          mobileNumber,
+
+                        age_group:
+                          ageGroup,
+
+                        profession:
+                          profession,
+
+                        city_region:
+                          cityRegion,
+
+                        preferred_language:
+                          preferredLanguage,
+
+                        password:
+                          password
+
+                      })
+
+                  }
+                );
+
+
+              const data =
+                await response.json();
+
+
+
+              if (
+                !response.ok ||
+                !data.success
+              ) {
+
+                throw new Error(
+                  data.message ||
+                  'Unable to create account.'
+                );
+
+              }
+
+
+
+              // ==================================================
+              // SUCCESS
+              // ==================================================
+
+              toast(
+                'Account created successfully. Redirecting to login...'
+              );
+
+
+              setTimeout(
+                () => {
+
+                  window.location.href =
+                    'login.html';
+
+                },
+                1500
+              );
+
+
+            }
+
+
+            catch (error) {
+
+              console.error(
+                'Registration error:',
+                error
+              );
+
+
+              toast(
+                error.message ||
+                'Unable to create account. Please try again.'
+              );
+
+
+              submitButton.disabled =
+                false;
+
+              submitButton.innerHTML =
+                originalText;
+
+            }
+
+          }
+        );
+
+
+
+        // ==================================================
+        // LOGIN LINK
+        // ==================================================
+
+        const loginLink =
+          document.getElementById(
+            'loginLink'
+          );
+
+
+        loginLink.onclick =
+          () => {
+
+            window.location.href =
+              'login.html';
+
+          };
+
+
+
+        // ==================================================
+        // PASSWORD TOGGLES
+        // ==================================================
+
+        const passwordToggles =
+          document.querySelectorAll(
+            '[data-toggle-password]'
+          );
+
+
+        passwordToggles.forEach(
+          (button) => {
+
+            button.addEventListener(
+              'click',
+              () => {
+
+                const target =
+                  button.getAttribute(
+                    'data-toggle-password'
+                  );
+
+
+                let input;
+
+
+                if (
+                  target ===
+                  'password'
+                ) {
+
+                  input =
+                    document.getElementById(
+                      'registerPassword'
+                    );
+
+                }
+
+                else {
+
+                  input =
+                    document.getElementById(
+                      'confirmPassword'
+                    );
+
+                }
+
+
+                if (!input) return;
+
+
+                input.type =
+                  input.type === 'password'
+                    ? 'text'
+                    : 'password';
+
+              }
+            );
+
+          }
+        );
+
+      }
+    );
+
+  </script>
+
+
+</body>
+
+</html>
