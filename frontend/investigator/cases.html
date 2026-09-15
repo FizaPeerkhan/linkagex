@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Case Repository</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const c=shell("investigator","Cases");c.innerHTML=pageHead("Case Repository","Search, filter and review standardized cybercrime incidents.");
+    c.innerHTML+=`<div class="card"><div class="searchbar"><input id="search" placeholder="Search case ID, incident type, entity, indicator…"><button class="btn btn-secondary" onclick="document.getElementById('search').value='';render()">Clear</button></div><div class="filters"><select id="category"><option value="">All Categories</option><option>Financial Fraud</option><option>Social Engineering</option></select><select id="type"><option value="">All Crime Types</option><option>Loan Scam</option><option>UPI Fraud</option><option>Phishing</option><option>Fake Job Offer</option></select><select id="channel"><option value="">All Channels</option><option>WhatsApp</option><option>UPI</option><option>Email</option><option>Telegram</option></select><select id="status"><option value="">All Statuses</option><option>New</option><option>Unlinked</option><option>Flagged</option></select><select id="region"><option value="">All Regions</option><option>Mumbai</option><option>Pune</option><option>Delhi</option></select></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Case</th><th>Crime Type</th><th>Date</th><th>Status</th><th>Potential Links</th><th>Region</th><th>Channel</th></tr></thead><tbody id="rows"></tbody></table></div></div>`;
+
+    function render(){let q=document.getElementById("search").value.toLowerCase(),t=document.getElementById("type").value,s=document.getElementById("status").value,r=document.getElementById("region").value,ch=document.getElementById("channel").value;let data=CS.cases.filter(x=>(!q||x.join(" ").toLowerCase().includes(q))&&(!t||x[1]===t)&&(!s||x[3].toLowerCase().includes(s.toLowerCase()))&&(!r||x[5]===r)&&(!ch||x[6]===ch));document.getElementById("rows").innerHTML=data.map(x=>`<tr onclick="location.href='case-details.html?case=${x[0]}'"><td><strong>${x[0]}</strong></td><td>${x[1]}</td><td>${x[2]}</td><td>${badge(x[3])}</td><td>${x[4]}</td><td>${x[5]}</td><td>${x[6]}</td></tr>`).join("")||`<tr><td colspan="7"><div class="empty"><div class="empty-icon">⌕</div><h3>No cases found</h3><p>Try changing the search or filters.</p></div></td></tr>`}
+
+    ["search","type","status","region","channel"].forEach(id=>document.getElementById(id).addEventListener("input",render));render();
+  </script>
+
+</body>
+</html>

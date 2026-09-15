@@ -1,0 +1,55 @@
+/* Reusable component refinements */
+
+.kpi-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.divider {
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+}
+
+.callout-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 850;
+    color: #718097;
+    margin-bottom: 9px;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.actions .btn {
+    width: auto;
+    margin: 0;
+}
+
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-top: 14px;
+}
+
+.page-btn {
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 7px;
+    padding: 7px 10px;
+    font-size: 10px;
+}
+
+.page-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}

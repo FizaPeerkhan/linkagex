@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,1">
+  <title>Potential Linkages</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const c=shell("investigator","Potential Linkages");c.innerHTML=pageHead("Potentially Related Incidents","Cases ranked by similarity to the current incident.");
+
+    c.innerHTML+=`<div class="alert alert-warn" style="margin-bottom:15px"><strong>Interpretation:</strong> Similarity results are investigative leads, not confirmed relationships.</div><div class="card"><div class="table-wrap"><table class="data-table"><thead><tr><th>Case</th><th>Similarity</th><th>Main Signals</th><th>Action</th></tr></thead><tbody>${CS.related.map(x=>`<tr onclick="location.href='comparison.html?case=${x.caseId}'"><td><strong>${x.caseId}</strong></td><td><div class="confidence"><div class="progress"><span style="width:${x.similarity*100}%"></span></div><small>${Math.round(x.similarity*100)}%</small></div></td><td>${x.commonSignals.slice(0,3).map(s=>`<span class="tag">${s}</span>`).join(" ")}</td><td><span class="status status-linked">Potentially related</span></td></tr>`).join("")}</tbody></table></div></div>`;
+  </script>
+
+</body>
+</html>

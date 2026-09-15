@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Similarity Explanation</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const c=shell("investigator","Potential Linkages");const id=new URLSearchParams(location.search).get("case")||"CC034",r=getSimilarityBreakdown(id);c.innerHTML=pageHead("Why Were These Cases Considered Similar?","The score is based on measurable incident signals, not an opaque AI conclusion.",`<a class="btn btn-secondary" href="linkage.html">← Potential Linkages</a>`);
+
+    c.innerHTML+=`<div class="grid grid-2"><div class="card"><div class="section-head"><h3>Evidence / Similarity Breakdown</h3><span>${r.caseId} vs CC001</span></div><div class="bars">${Object.entries(r.signals).map(([k,v])=>`<div class="bar-row"><span>${k==="mo"?"MO similarity":k.replace(/([A-Z])/g," $1").replace(/^./,m=>m.toUpperCase())}</span><div class="progress"><span style="width:${v*100}%"></span></div><strong>${Math.round(v*100)}%</strong></div>`).join("")}</div><div class="divider"></div><div class="kpi-row"><strong>Overall similarity score</strong><div class="score-wrap"><div class="score-ring"><span>${Math.round(r.similarity*100)}%</span></div></div></div></div><div class="card"><div class="section-head"><h3>Key Common Signals</h3></div><div class="tags">${r.commonSignals.map(x=>`<span class="tag">${x}</span>`).join("")}</div><div class="divider"></div><div class="callout-title">Differences</div><div class="list">${r.differences.map(x=>`<div class="list-item"><strong>${x}</strong></div>`).join("")}</div></div></div>`;
+
+    c.innerHTML+=`<div class="section card"><div class="section-head"><h3>Side-by-side Incident Comparison</h3><span>Current Case CC001 · Compared Case ${r.caseId}</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Signal</th><th>CC001</th><th>${r.caseId}</th></tr></thead><tbody>${[["Channel","WhatsApp","WhatsApp"],["Crime Type","Loan Scam","Loan Scam"],["MO","Fake loan offer","Fake loan offer"],["Victim Action","Paid fee","Transferred money"],["Amount","₹15,000","₹18,000"],["Region","Mumbai","Pune"]].map(x=>`<tr><td><strong>${x[0]}</strong></td><td>${x[1]}</td><td>${x[2]}</td></tr>`).join("")}</tbody></table></div></div><div class="actions" style="margin-top:15px"><button class="btn btn-secondary" onclick="saveCase('${r.caseId}');toast('Case saved for future correlation.')">Save for Future Correlation</button><button class="btn btn-secondary" onclick="toast('Case flagged for further investigation.')">Flag for Further Investigation</button></div>`;
+  </script>
+
+</body>
+</html>

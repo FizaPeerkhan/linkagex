@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Investigator Profile</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const c=shell("investigator","Profile");c.innerHTML=pageHead("Investigator Profile","Demo account and workspace preferences.");c.innerHTML+=`<div class="grid grid-2"><div class="card"><label>Name<input value="Investigator Demo"></label><label>User ID<input value="INV-0042"></label><label>Role<input value="Investigator" disabled></label><button class="btn btn-primary" onclick="toast('Settings saved locally for this demo.')">Save Changes</button></div><div class="card"><h3>Platform scope</h3><p class="card-sub">This prototype supports structured incident review, similarity exploration, clustering, saving and flagging. It is not a full police case-management system.</p><div class="tags" style="margin-top:14px">${["Case repository","Explainable linkage","Clusters","Future correlation"].map(x=>`<span class="tag">${x}</span>`).join("")}</div></div></div>`;
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Report Incident</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const c = shell("citizen","Report");
+        c.innerHTML = pageHead("Report a Cybercrime Incident","Tell us what happened in your own words. You do not need to know the crime category.");
+        c.innerHTML += `<div class="steps"><div class="step active"><span class="num">1</span> Describe</div><div class="step-line"></div><div class="step"><span class="num">2</span> Understand</div><div class="step-line"></div><div class="step"><span class="num">3</span> Review</div><div class="step-line"></div><div class="step"><span class="num">4</span> Submit</div></div>`;
+        c.innerHTML += `<div class="grid grid-2"><div class="card"><div class="callout-title">Unstructured complaint</div><textarea id="complaintText" rows="9" placeholder="Describe what happened…">I received a WhatsApp message offering me a personal loan. They asked me to pay ₹15,000 as a processing fee and after I paid, they stopped responding.</textarea><div class="alert alert-info" style="margin-top:13px">Avoid entering passwords, OTPs, PINs, banking credentials or other unnecessary sensitive information.</div><div class="actions" style="margin-top:15px"><button class="btn btn-primary" id="submitComplaint">Submit Complaint →</button><button class="btn btn-secondary" onclick="toast('Draft saved locally for this demo.')">Save Draft</button></div></div><div class="card"><div class="callout-title">About this step</div><h3>Start with your story</h3>
+        <p class="card-sub">
+    Your complaint is analyzed by the LinkageX NLP service,
+    which extracts incident details and identifies information
+    that may need confirmation.
+</p><div class="divider"></div><div class="alert alert-warn"><strong>Important:</strong> Profile information is separate from victim information. If you are reporting for someone else, that distinction is collected later in the review flow.</div></div></div>`;
+       document.getElementById("submitComplaint").onclick = async () => {
+    const text = document.getElementById("complaintText").value.trim();
+
+    if (!text) {
+        toast("Please describe what happened.");
+        return;
+    }
+
+    document.getElementById("content").innerHTML = `
+        <div class="loading-screen">
+            <div>
+                <div class="spinner"></div>
+                <div class="loading-copy">
+                    <h3>Analyzing your report</h3>
+                    <p>
+                        Complaint received · Identifying incident details ·
+                        Structuring information · Checking missing information
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/analyze", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                complaint_text: text
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("API request failed");
+        }
+
+        const result = await response.json();
+
+        // Store the NLP result for the next pages
+        sessionStorage.setItem(
+            "linkageX_analysis",
+            JSON.stringify(result)
+        );
+
+        // Go to the real extraction page
+        window.location.href = "extraction.html";
+
+    } catch (error) {
+        console.error("LinkageX NLP error:", error);
+
+        document.getElementById("content").innerHTML = `
+            <div class="card">
+                <div class="alert alert-warn">
+                    <strong>Unable to analyze the complaint.</strong>
+                    <p>Please make sure the LinkageX backend is running and try again.</p>
+                </div>
+                <div class="actions" style="margin-top:15px">
+                    <button class="btn btn-primary" onclick="location.reload()">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+};</script>
+</body>
+</html>

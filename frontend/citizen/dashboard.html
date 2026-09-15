@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Citizen Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const c=shell("citizen","Dashboard");
+        c.innerHTML=pageHead("Good evening, Zara","Stay informed. Report safely. Protect yourself from emerging cybercrime patterns.",`<a class="btn btn-primary" href="complaint.html">＋ Submit Complaint</a>`);
+        c.innerHTML+=`<div class="grid grid-4"><div class="card action-card"><h3 class="card-title">Report an Incident</h3><p class="card-sub">Describe what happened and let the system organize the information.</p><a class="btn btn-primary" href="complaint.html">Submit Complaint →</a></div><div class="card action-card"><h3 class="card-title">My Complaints</h3><p class="card-sub">3 submitted incidents</p><strong style="font-size:26px;margin-top:8px">3</strong><a class="btn btn-secondary" href="complaints.html">View Complaints</a></div><div class="card action-card"><h3 class="card-title">Regional Awareness</h3><p class="card-sub">Frequently reported patterns in your region.</p><a class="btn btn-secondary" href="awareness.html">Explore Awareness</a></div><div class="card action-card"><h3 class="card-title">Safety Center</h3><p class="card-sub">Practical actions to take after an incident.</p><a class="btn btn-secondary" href="guidance.html">View Guidance</a></div></div>`;
+        c.innerHTML+=`<div class="section"><div class="card"><div class="section-head"><h3>Recent complaints</h3><a class="link-btn" href="complaints.html">View all</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Case ID</th><th>Type</th><th>Date</th><th>Status</th></tr></thead><tbody>${CS.complaints.map(x=>`<tr onclick="location.href='complaints.html?case=${x[0]}'"><td><strong>${x[0]}</strong></td><td>${x[1]}</td><td>${x[2]}</td><td>${badge(x[3])}</td></tr>`).join("")}</tbody></table></div></div></div>`;
+        c.innerHTML+=`<div class="section grid grid-2"><div class="card"><div class="section-head"><h3>How the platform works</h3></div><div class="list"><div class="list-item"><strong>01 · Describe</strong><p>Tell us what happened in your own words.</p></div><div class="list-item"><strong>02 · Review</strong><p>Check extracted information and answer only relevant missing questions.</p></div><div class="list-item"><strong>03 · Confirm</strong><p>Your corrections remain part of the human validation step.</p></div></div></div><div class="card"><div class="section-head"><h3>Privacy reminder</h3></div><div class="alert alert-info">Never include passwords, OTPs, PINs or banking credentials in a complaint. Review extracted information before confirming.</div></div></div>`;
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Safety Center</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const c=shell("citizen","Safety Center");c.innerHTML=pageHead("What Should You Do Now?","Informative, cautious guidance based on the incident type.");
+        c.innerHTML+=`<div class="grid grid-2"><div class="card"><div class="callout-title">Loan scam</div><h3>Recommended Immediate Actions</h3><div class="list">${["Stop further communication with the suspected sender.","Do not make additional payments.","Preserve relevant messages and transaction records.","Contact the relevant financial institution if money was transferred.","Use the appropriate official cybercrime reporting channel."].map((x,i)=>`<div class="list-item"><strong>${i+1}. ${x}</strong></div>`).join("")}</div></div><div class="card"><div class="callout-title">Evidence to preserve</div><div class="tags">${["WhatsApp messages","Phone numbers","Screenshots","Payment references","Emails","URLs","Dates & timestamps"].map(x=>`<span class="tag">${x}</span>`).join("")}</div><div class="alert alert-warn" style="margin-top:20px"><strong>Important:</strong> Never share OTPs, PINs, passwords, or banking credentials with anyone claiming to represent an institution.</div></div></div>`;
+    </script>
+</body>
+</html>

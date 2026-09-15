@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Case Details</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const c=shell("investigator","Cases");
+    const id=new URLSearchParams(location.search).get("case")||"CC001";
+    c.innerHTML=pageHead("Case "+id,"Structured incident details and investigative-support signals.",`<div class="actions"><a class="btn btn-secondary" href="cases.html">← Back to Cases</a><a class="btn btn-primary" href="linkage.html?case=${id}">View Potential Linkages →</a></div>`);
+
+    c.innerHTML+=`<div class="tags" style="margin-bottom:15px"><span class="tag">Financial Fraud</span><span class="tag">Loan Scam</span>${badge("New")}</div>${renderIncident(CS.incident)}<div class="grid grid-2 section"><div class="card"><div class="section-head"><h3>Extracted Indicators</h3><span>Comparable signals</span></div><div class="tags">${CS.incident.indicators.map(x=>`<span class="tag">${x}</span>`).join("")}</div></div><div class="card"><div class="section-head"><h3>Source</h3></div><p class="card-sub"><strong>Citizen-submitted complaint</strong></p><button class="btn btn-secondary" onclick="toast('Original report viewer is simulated.')">View Original Report</button></div></div>`;
+  </script>
+
+</body>
+</html>

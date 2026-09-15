@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Investigator Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const c=shell("investigator","Dashboard");c.innerHTML=pageHead("Investigator Intelligence Dashboard","Analyze structured cybercrime incidents and identify potentially related patterns.",`<a class="btn btn-primary" href="upload-report.html">↑ Upload Report</a>`);
+
+    c.innerHTML+=`<div class="grid grid-4"><div class="card metric"><div class="label">Total Cases</div><div class="value">248</div><div class="trend">Repository</div><div class="metric-mark">▤</div></div><div class="card metric"><div class="label">New Cases</div><div class="value">18</div><div class="trend">Requires review</div><div class="metric-mark">＋</div></div><div class="card metric"><div class="label">Potential Linkages</div><div class="value">32</div><div class="trend">Similarity-ranked</div><div class="metric-mark">⌁</div></div><div class="card metric"><div class="label">Unlinked Cases</div><div class="value">41</div><div class="trend">Available for future correlation</div><div class="metric-mark">○</div></div></div>`;
+
+    c.innerHTML+=`<div class="section grid grid-2"><div class="card"><div class="section-head"><h3>Recent Cases</h3><a class="link-btn" href="cases.html">View repository</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Case ID</th><th>Crime Type</th><th>Date</th><th>Status</th><th>Potential Links</th></tr></thead><tbody>${CS.cases.slice(0,6).map(x=>`<tr onclick="location.href='case-details.html?case=${x[0]}'"><td><strong>${x[0]}</strong></td><td>${x[1]}</td><td>${x[2]}</td><td>${badge(x[3])}</td><td>${x[4]}</td></tr>`).join("")}</tbody></table></div></div><div class="card"><div class="section-head"><h3>Potential Linkage Activity</h3><span>Last 7 days</span></div><div class="chart">${[38,55,44,70,61,83,68].map((v,i)=>`<div class="bar" style="height:${v}%"><span>${v}</span><small>${["M","T","W","T","F","S","S"][i]}</small></div>`).join("")}</div></div></div>`;
+
+    c.innerHTML+=`<div class="section grid grid-2"><div class="card"><h3>Research lens</h3><p class="card-sub">The platform transforms fragmented reports into standardized incident representations, then ranks potential relationships using measurable signals.</p><div class="tags" style="margin-top:15px">${["Structured fields","Similarity signals","Explainable scores","Clusters","Future correlation"].map(x=>`<span class="tag">${x}</span>`).join("")}</div></div><div class="card"><div class="alert alert-warn"><strong>Interpretation:</strong> Similarity is an investigative lead, not proof of criminal linkage. The interface intentionally uses “potentially related” terminology.</div></div></div>`;
+  </script>
+
+</body>
+</html>

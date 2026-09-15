@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Incident Clusters</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const c=shell("investigator","Potential Linkages");c.innerHTML=pageHead("Incident Clusters","Groups of incidents sharing common structured signals. Clusters are exploratory, not proof of a criminal network.");
+    c.innerHTML+=`<div class="cluster-grid">${CS.clusters.map((x,i)=>`<div class="card cluster-card"><div class="section-head"><h3>${x.name}</h3><span>${x.count} incidents</span></div><div class="cluster-nodes">${x.ids.map(id=>`<span class="node">${id}</span>`).join("")}</div><div class="divider"></div><div class="tags">${x.channels.map(z=>`<span class="tag">${z}</span>`).join("")}</div><p class="note" style="margin-top:10px">Regions: ${x.regions.join(", ")}<br>Date range: ${x.range}</p><button class="btn btn-secondary" onclick="toast('${x.name}: ${x.count} incidents')">View Cluster Details</button></div>`).join("")}</div>`;
+  </script>
+
+</body>
+</html>

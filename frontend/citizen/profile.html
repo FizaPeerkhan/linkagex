@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Profile</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const c=shell("citizen","Profile");c.innerHTML=pageHead("My Profile","Manage the basic profile information used to personalize your experience.");
+        c.innerHTML+=`<div class="grid grid-2"><div class="card"><label>Name<input value="Zara Khan"></label><label>Age / Age group<input value="20 / 18–24"></label><label>City / Region<input value="Mumbai"></label><label>Optional contact information<input placeholder="Not provided"></label><button class="btn btn-primary" onclick="toast('Profile changes saved locally for this demo.')">Save Profile</button></div><div class="card"><div class="alert alert-info"><strong>Profile vs victim information</strong><br>Profile information is used to personalize your experience. It is separate from information about the victim in a complaint.</div><div class="divider"></div><p class="note">A citizen may submit a complaint on behalf of someone else. The complaint flow therefore collects victim context separately.</p></div></div>`;
+    </script>
+</body>
+</html>

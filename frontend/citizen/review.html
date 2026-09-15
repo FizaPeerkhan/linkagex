@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Review Complaint</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const c=shell("citizen","Report");c.innerHTML=pageHead("Review Your Complaint Information","Please check the information below before submitting your incident.");
+        c.innerHTML+=`<div class="alert alert-warn" style="margin-bottom:16px">This information was automatically extracted from your complaint. Please correct anything that is inaccurate.</div>`;
+        c.innerHTML+=renderIncident(CS.incident,true);
+        c.innerHTML+=`<div class="card section"><div class="callout-title">Victim information</div><h3>Is this complaint about you or someone else?</h3><div class="grid grid-2"><label class="card" style="margin:0"><input type="radio" name="victim" checked> Me</label><label class="card" style="margin:0"><input type="radio" name="victim"> Someone else</label></div><p class="note" style="margin-top:12px">Profile information is separate from victim information. If reporting for someone else, the victim's age group and region can be captured without changing your account profile.</p></div>`;
+        c.innerHTML+=`<div class="actions" style="margin-top:16px"><a class="btn btn-secondary" href="missing-info.html">← Back</a><button class="btn btn-primary" onclick="location.href='success.html'">Confirm & Submit →</button></div>`;
+    </script>
+</body>
+</html>

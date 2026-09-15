@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Awareness</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const c = shell("citizen","Awareness");
+        c.innerHTML = pageHead("Cybercrime Awareness","Frequently reported cybercrime patterns among similar users.");
+        c.innerHTML += `<div class="alert alert-info">These are awareness statistics based on mock regional/age-group data. They are <strong>not personal predictions</strong> and do not mean you are likely to experience a particular scam.</div><div class="grid grid-2 section"><div class="card"><h3>Frequently Reported in Your Region</h3><div class="chart">${[82,68,55,44].map((v,i)=>`<div class="bar" style="height:${v}%"><span>${v}</span><small>${["UPI","Shopping","Loan","Account"][i]}</small></div>`).join("")}</div><div class="list" style="margin-top:28px">${CS.trends.region.map((x,i)=>`<div class="kpi-row list-item"><strong>${i+1}. ${x}</strong><span class="note">awareness signal</span></div>`).join("")}</div></div><div class="card"><h3>Frequently Reported Among Your Age Group</h3><div class="list" style="margin-top:15px">${CS.trends.age.map(x=>`<div class="list-item"><strong>${x}</strong><p>Frequently reported pattern in the mock dataset.</p></div>`).join("")}</div><div class="alert alert-warn" style="margin-top:18px">Awareness data is presented for education and prevention, not prediction.</div></div></div>`;
+    </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Extracted Incident</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script>
+        const c = shell("citizen", "Report");
+
+        const analysisJSON = sessionStorage.getItem("linkageX_analysis");
+
+        if (!analysisJSON) {
+            c.innerHTML = pageHead(
+                "No Analysis Found",
+                "We could not find the analyzed complaint. Please submit your complaint again."
+            );
+
+            c.innerHTML += `
+                <div class="card">
+                    <div class="alert alert-warn">
+                        <strong>Analysis unavailable.</strong>
+                        <p>Please return to the complaint page and submit your report again.</p>
+                    </div>
+
+                    <div class="actions" style="margin-top:18px">
+                        <a class="btn btn-primary" href="complaint.html">
+                            Back to Complaint
+                        </a>
+                    </div>
+                </div>
+            `;
+        } else {
+
+            const result = JSON.parse(analysisJSON);
+            const incident = result.incident || {};
+            const missingFields = result.missing_fields || [];
+
+            c.innerHTML = pageHead(
+                "We Understood Your Incident",
+                "The system extracted the following information from your complaint. Please review it before continuing."
+            );
+
+            c.innerHTML += `
+                <div class="alert alert-info" style="margin-bottom:16px">
+                    <strong>Review before continuing:</strong>
+                    Extracted information is based on your complaint text and may require confirmation or additional details.
+                </div>
+            `;
+
+            function displayValue(value) {
+
+                if (value === null || value === undefined) {
+                    return "Not provided";
+                }
+
+                if (Array.isArray(value)) {
+                    if (value.length === 0) {
+                        return "Not provided";
+                    }
+
+                    return value.join(", ");
+                }
+
+                if (typeof value === "string" && value.trim() === "") {
+                    return "Not provided";
+                }
+
+                return value;
+            }
+
+            function statusFor(field) {
+                return missingFields.includes(field)
+                    ? `<span class="badge badge-warn">Needs confirmation</span>`
+                    : `<span class="badge badge-success">Extracted</span>`;
+            }
+
+            const fields = [
+                [
+                    "Crime Category",
+                    displayValue(incident.crime_category),
+                    "crime_category"
+                ],
+                [
+                    "Crime Type",
+                    displayValue(incident.crime_subcategory),
+                    "crime_subcategory"
+                ],
+                [
+                    "Channel",
+                    displayValue(incident.channels),
+                    "channels"
+                ],
+                [
+                    "Attacker / Entity",
+                    displayValue(
+                        incident.organizations?.length
+                            ? incident.organizations
+                            : null
+                    ),
+                    "attacker_action"
+                ],
+                [
+                    "Deception Method",
+                    displayValue(incident.deception),
+                    "deception"
+                ],
+                [
+                    "Victim Action",
+                    displayValue(incident.victim_action),
+                    "victim_action"
+                ],
+                [
+                    "Amount",
+                    incident.amounts && incident.amounts.length
+                        ? incident.amounts.map(a => `₹${Number(a).toLocaleString("en-IN")}`).join(", ")
+                        : "Not provided",
+                    "amounts"
+                ],
+                [
+                    "Outcome",
+                    displayValue(incident.outcome),
+                    "outcome"
+                ],
+                [
+                    "Payment Method",
+                    displayValue(incident.payment_method),
+                    "payment_method"
+                ],
+                [
+                    "Location",
+                    displayValue(incident.locations),
+                    "locations"
+                ]
+            ];
+
+            c.innerHTML += `
+                <div class="card">
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Extracted Information</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                ${fields.map(f => `
+                                    <tr>
+                                        <td>
+                                            <strong>${f[0]}</strong>
+                                        </td>
+
+                                        <td>
+                                            ${f[1]}
+                                        </td>
+
+                                        <td>
+                                            ${statusFor(f[2])}
+                                        </td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <div class="actions" style="margin-top:18px">
+                        <a class="btn btn-primary" href="missing-info.html">
+                            Continue Review →
+                        </a>
+
+                        <a class="btn btn-secondary" href="complaint.html">
+                            Back
+                        </a>
+                    </div>
+
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

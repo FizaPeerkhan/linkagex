@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Missing Information</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+    <script src="../js/data.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const c=shell("citizen","Report");c.innerHTML=pageHead("Help us complete your incident","We identified most of the incident details. We need two additional pieces of information.");
+        c.innerHTML+=`<div class="card"><div class="kpi-row"><div><div class="callout-title">Adaptive questionnaire</div><h3 style="margin:0">2 of 3 questions</h3></div><span class="status status-new">Only relevant missing fields</span></div><div class="progress" style="margin:18px 0 25px"><span style="width:66%"></span></div><div id="questionBox"></div><div class="actions"><button class="btn btn-primary" id="nextQ">Next →</button></div></div>`;
+        let q=0;const qs=[{t:"When did this incident happen?",html:'<input type="date" id="qdate" value="2026-08-28">'},{t:"How did the person contact you?",html:'<div class="grid grid-3">'+["WhatsApp","Phone call","SMS","Email","Website","Other"].map(x=>`<label class="card" style="cursor:pointer;margin:0"><input type="radio" name="contact" value="${x}"> ${x}</label>`).join("")+'</div>'}];
+        function renderQ(){document.getElementById("questionBox").innerHTML=`<h3>${qs[q].t}</h3>${qs[q].html}`};renderQ();
+        document.getElementById("nextQ").onclick=()=>{if(q===0){q=1;document.getElementById("nextQ").textContent="Continue to Review →";renderQ();document.querySelector(".progress span").style.width="100%"}else location.href="review.html"};
+    </script>
+</body>
+</html>
