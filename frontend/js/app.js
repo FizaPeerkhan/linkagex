@@ -17,7 +17,6 @@ function toast(message) {
     document.createElement("div");
 
   el.className = "toast";
-
   el.textContent = message;
 
   root.appendChild(el);
@@ -29,7 +28,6 @@ function toast(message) {
 }
 
 
-
 /* =========================================================
    STATUS CLASS
 ========================================================= */
@@ -39,30 +37,23 @@ function statusClass(s) {
   const x =
     String(s ?? "").toLowerCase();
 
-
   if (x.includes("new"))
     return "status-new";
-
 
   if (x.includes("reviewed"))
     return "status-reviewed";
 
-
   if (x.includes("linked"))
     return "status-linked";
-
 
   if (x.includes("unlinked"))
     return "status-unlinked";
 
-
   if (x.includes("flagged"))
     return "status-flagged";
 
-
   return "status-saved";
 }
-
 
 
 /* =========================================================
@@ -73,7 +64,6 @@ function esc(s) {
 
   return String(s ?? "").replace(
     /[&<>"']/g,
-
     m => ({
       "&": "&amp;",
       "<": "&lt;",
@@ -84,7 +74,6 @@ function esc(s) {
   );
 
 }
-
 
 
 /* =========================================================
@@ -98,18 +87,11 @@ function getCurrentUser() {
     const storedUser =
       sessionStorage.getItem("csUser");
 
-
     if (!storedUser) {
-
       return null;
-
     }
 
-
-    return JSON.parse(
-      storedUser
-    );
-
+    return JSON.parse(storedUser);
 
   }
 
@@ -127,7 +109,6 @@ function getCurrentUser() {
 }
 
 
-
 /* =========================================================
    INITIALIZE APPLICATION SHELL
 ========================================================= */
@@ -142,7 +123,6 @@ function initShell(role, active) {
    * Role comes from the authenticated backend session.
    * It is NOT selected by the user on the frontend.
    */
-
 
   if (
     role !== "citizen" &&
@@ -159,7 +139,6 @@ function initShell(role, active) {
     return;
 
   }
-
 
 
   /* =======================================================
@@ -268,7 +247,6 @@ function initShell(role, active) {
         ];
 
 
-
   /* =======================================================
      SIDEBAR GROUPS
   ======================================================= */
@@ -276,21 +254,16 @@ function initShell(role, active) {
   const groupedItems = [
 
     "Report",
-
     "Cases",
-
     "Potential Linkages",
-
     "Upload Report",
-
     "Profile"
 
   ];
 
 
-
   /* =======================================================
-     BUILD SIDEBAR NAVIGATION
+     BUILD SIDEBAR
   ======================================================= */
 
   const sidebarNavigation =
@@ -299,7 +272,6 @@ function initShell(role, active) {
       (n, i) => {
 
         const startsGroup =
-
           i === 0 ||
           groupedItems.includes(
             n[0]
@@ -343,20 +315,16 @@ function initShell(role, active) {
               `
 
               : ""
-
           }
 
 
           <a
-
             class="nav-item ${
               active === n[0]
                 ? "active"
                 : ""
             }"
-
             href="${n[1]}"
-
           >
 
             <span class="nav-icon">
@@ -370,23 +338,18 @@ function initShell(role, active) {
 
           ${
             i === nav.length - 1
-
               ? "</div>"
-
               : ""
-
           }
 
         `;
 
       }
-
     ).join("");
 
 
-
   /* =======================================================
-     INSERT SIDEBAR
+     SIDEBAR
   ======================================================= */
 
   document.body.insertAdjacentHTML(
@@ -400,9 +363,7 @@ function initShell(role, active) {
         id="sidebar"
       >
 
-
         <div class="brand">
-
 
           <span
             class="brand-mark"
@@ -426,19 +387,15 @@ function initShell(role, active) {
 
           </div>
 
-
         </div>
 
 
         ${sidebarNavigation}
 
-
       </aside>
 
     `
-
   );
-
 
 
   /* =======================================================
@@ -448,17 +405,12 @@ function initShell(role, active) {
   const userName =
 
     user?.full_name ||
-
     user?.name ||
-
     (
       role === "citizen"
-
         ? "Citizen"
-
         : "Investigator"
     );
-
 
 
   const initials =
@@ -480,28 +432,24 @@ function initShell(role, active) {
 
       .join("")
 
-      ||
+    ||
 
-      (
-        role === "citizen"
-          ? "CZ"
-          : "IN"
-      );
-
+    (
+      role === "citizen"
+        ? "CZ"
+        : "IN"
+    );
 
 
   const accountLabel =
 
     role === "citizen"
-
       ? "Citizen Account"
-
       : "Investigator Account";
 
 
-
   /* =======================================================
-     MAIN CONTENT SHELL
+     MAIN APPLICATION
   ======================================================= */
 
   document.body.insertAdjacentHTML(
@@ -512,109 +460,76 @@ function initShell(role, active) {
 
       <div class="main">
 
-
         <header class="topbar">
 
-
-          <div>
-
+          <div class="topbar-left">
 
             <button
-
               class="mobile-menu"
-
               id="mobileMenu"
-
               type="button"
-
               aria-label="Open navigation"
-
             >
-
               ☰
-
             </button>
 
 
-            <span class="topbar-title">
+            <div>
 
-              ${
+              <div class="topbar-title">
 
-                role === "citizen"
+                ${
+                  role === "citizen"
+                    ? "Citizen Portal"
+                    : "Investigator Intelligence"
+                }
 
-                  ? "Citizen Portal"
-
-                  : "Investigator Intelligence"
-
-              }
-
-            </span>
+              </div>
 
 
-            <div class="topbar-sub">
+              <div class="topbar-sub">
 
-              ${
+                ${
+                  role === "citizen"
+                    ? "Secure reporting & awareness"
+                    : "Structured incident analysis & linkage support"
+                }
 
-                role === "citizen"
-
-                  ? "Secure reporting & awareness"
-
-                  : "Structured incident analysis & linkage support"
-
-              }
+              </div>
 
             </div>
 
-
           </div>
-
 
 
           <div class="user-chip">
 
-
-            <span>
-
+            <span class="user-name">
               ${esc(userName)}
-
             </span>
 
 
             <span
-
               class="avatar"
-
               title="${esc(accountLabel)}"
-
             >
-
               ${esc(initials)}
-
             </span>
 
-
           </div>
-
 
         </header>
 
 
-
         <div
-
           class="content"
-
           id="content"
-
         ></div>
-
 
       </div>
 
     `
-
   );
-
 
 
   /* =======================================================
@@ -622,7 +537,6 @@ function initShell(role, active) {
   ======================================================= */
 
   const mobileMenu =
-
     document.getElementById(
       "mobileMenu"
     );
@@ -632,13 +546,10 @@ function initShell(role, active) {
 
     mobileMenu.onclick = () => {
 
-
       const sidebar =
-
         document.getElementById(
           "sidebar"
         );
-
 
       if (sidebar) {
 
@@ -655,7 +566,6 @@ function initShell(role, active) {
 }
 
 
-
 /* =========================================================
    PAGE HEADER
 ========================================================= */
@@ -670,51 +580,38 @@ function pageHead(
 
     <div class="page-head">
 
-
       <div>
-
 
         <div class="eyebrow-dark">
 
           ${
-
             title.includes("Case")
-
               ? "CASE INTELLIGENCE"
-
               : "LINKAGEX INTELLIGENCE"
-
           }
 
         </div>
 
 
         <h1>
-
           ${esc(title)}
-
         </h1>
 
 
         <p>
-
           ${esc(sub)}
-
         </p>
-
 
       </div>
 
 
       ${action}
 
-
     </div>
 
   `;
 
 }
-
 
 
 /* =========================================================
@@ -728,19 +625,16 @@ function shell(
 
   document.body.innerHTML = "";
 
-
   initShell(
     role,
     active
   );
-
 
   return document.getElementById(
     "content"
   );
 
 }
-
 
 
 /* =========================================================
@@ -764,9 +658,130 @@ function badge(s) {
 }
 
 
+/* =========================================================
+   INCIDENT VALUE FORMATTER
+========================================================= */
+
+function formatIncidentValue(
+  value,
+  key = ""
+) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+
+    return "Not provided";
+
+  }
+
+
+  /* -------------------------------------------------------
+     AMOUNTS
+  ------------------------------------------------------- */
+
+  if (key === "amounts") {
+
+    const amounts =
+      Array.isArray(value)
+        ? value
+        : [value];
+
+
+    const validAmounts =
+      amounts.filter(
+        amount =>
+          amount !== null &&
+          amount !== undefined &&
+          amount !== ""
+      );
+
+
+    if (
+      validAmounts.length === 0
+    ) {
+
+      return "Not provided";
+
+    }
+
+
+    return validAmounts
+      .map(
+        amount => {
+
+          const numeric =
+            Number(amount);
+
+
+          if (
+            Number.isNaN(numeric)
+          ) {
+
+            return String(amount);
+
+          }
+
+
+          return (
+            "₹" +
+            numeric.toLocaleString(
+              "en-IN"
+            )
+          );
+
+        }
+      )
+      .join(", ");
+
+  }
+
+
+  /* -------------------------------------------------------
+     ARRAYS
+  ------------------------------------------------------- */
+
+  if (Array.isArray(value)) {
+
+    if (value.length === 0) {
+      return "Not provided";
+    }
+
+
+    return value
+      .map(
+        item =>
+          String(item).trim()
+      )
+      .filter(Boolean)
+      .join(", ");
+
+  }
+
+
+  /* -------------------------------------------------------
+     EMPTY STRINGS
+  ------------------------------------------------------- */
+
+  if (
+    typeof value === "string" &&
+    value.trim() === ""
+  ) {
+
+    return "Not provided";
+
+  }
+
+
+  return String(value);
+
+}
+
 
 /* =========================================================
-   STRUCTURED INCIDENT FIELD
+   INCIDENT FIELD
 ========================================================= */
 
 function field(
@@ -776,10 +791,16 @@ function field(
   editable = false
 ) {
 
+  const displayValue =
+    formatIncidentValue(
+      value,
+      key
+    );
+
+
   return `
 
     <div class="field">
-
 
       <div class="field-label">
 
@@ -789,32 +810,24 @@ function field(
 
 
       <div
-
         class="field-value"
-
         data-field="${esc(key)}"
-
       >
 
-        ${esc(value)}
+        ${esc(displayValue)}
 
 
         ${
-
           editable
 
             ? `
 
               <button
-
+                type="button"
                 class="edit-link"
-
                 onclick="editField('${esc(key)}')"
-
               >
-
                 Edit
-
               </button>
 
             `
@@ -823,9 +836,7 @@ function field(
 
         }
 
-
       </div>
-
 
     </div>
 
@@ -833,6 +844,81 @@ function field(
 
 }
 
+
+/* =========================================================
+   INCIDENT FIELD DEFINITIONS
+
+   These fields match the LinkageX NLP schema.
+========================================================= */
+
+const INCIDENT_FIELD_DEFINITIONS = [
+
+  {
+    label: "Crime Category",
+    key: "crime_category"
+  },
+
+  {
+    label: "Crime Type",
+    key: "crime_subcategory"
+  },
+
+  {
+    label: "Incident Date",
+    key: "incident_date"
+  },
+
+  {
+    label: "Modus Operandi",
+    key: "modus_operandi"
+  },
+
+  {
+    label: "Deception Method",
+    key: "deception"
+  },
+
+  {
+    label: "Victim Action",
+    key: "victim_action"
+  },
+
+  {
+    label: "Attacker Action",
+    key: "attacker_action"
+  },
+
+  {
+    label: "Outcome",
+    key: "outcome"
+  },
+
+  {
+    label: "Channel",
+    key: "channels"
+  },
+
+  {
+    label: "Payment Method",
+    key: "payment_method"
+  },
+
+  {
+    label: "Amount",
+    key: "amounts"
+  },
+
+  {
+    label: "Organizations",
+    key: "organizations"
+  },
+
+  {
+    label: "Location",
+    key: "locations"
+  }
+
+];
 
 
 /* =========================================================
@@ -840,7 +926,7 @@ function field(
 ========================================================= */
 
 function renderIncident(
-  incident = CS.incident,
+  incident = {},
   editable = false
 ) {
 
@@ -848,171 +934,40 @@ function renderIncident(
 
     <div class="card">
 
-
       <div class="section-head">
 
-
         <h3>
-
           Structured Incident
-
         </h3>
 
-
         <span>
-
           Standardized incident representation
-
         </span>
 
-
       </div>
-
 
 
       <div class="incident-grid">
 
-
-        ${field(
-
-          "Crime Category",
-
-          incident.crimeCategory,
-
-          "crimeCategory",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Crime Type",
-
-          incident.crimeType,
-
-          "crimeType",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Channel",
-
-          incident.channel,
-
-          "channel",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Attacker / Entity",
-
-          incident.attackerEntity,
-
-          "attackerEntity",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Deception Method",
-
-          incident.deceptionMethod,
-
-          "deceptionMethod",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Victim Action",
-
-          incident.victimAction,
-
-          "victimAction",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Amount Lost",
-
-          incident.amount
-
-            ? "₹" +
-              incident.amount
-                .toLocaleString("en-IN")
-
-            : "Not provided",
-
-          "amount",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Outcome",
-
-          incident.outcome,
-
-          "outcome",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Incident Date",
-
-          incident.incidentDate ||
-            "Not provided",
-
-          "incidentDate",
-
-          editable
-
-        )}
-
-
-        ${field(
-
-          "Location",
-
-          incident.location ||
-            "Not provided",
-
-          "location",
-
-          editable
-
-        )}
-
+        ${
+          INCIDENT_FIELD_DEFINITIONS
+            .map(
+              definition =>
+
+                field(
+                  definition.label,
+                  incident[
+                    definition.key
+                  ],
+                  definition.key,
+                  editable
+                )
+
+            )
+            .join("")
+        }
 
       </div>
-
 
     </div>
 
@@ -1020,6 +975,73 @@ function renderIncident(
 
 }
 
+
+/* =========================================================
+   LOAD CURRENT ANALYSIS
+========================================================= */
+
+function getStoredAnalysis() {
+
+  const stored =
+    sessionStorage.getItem(
+      "linkageX_analysis"
+    );
+
+
+  if (!stored) {
+    return null;
+  }
+
+
+  try {
+
+    const result =
+      JSON.parse(stored);
+
+
+    if (
+      !result ||
+      !result.data ||
+      !result.data.incident
+    ) {
+
+      return null;
+
+    }
+
+
+    return result;
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Unable to parse LinkageX analysis:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE CURRENT ANALYSIS
+========================================================= */
+
+function saveStoredAnalysis(
+  result
+) {
+
+  sessionStorage.setItem(
+    "linkageX_analysis",
+    JSON.stringify(result)
+  );
+
+}
 
 
 /* =========================================================
@@ -1028,66 +1050,244 @@ function renderIncident(
 
 function editField(key) {
 
-
   const el =
-
     document.querySelector(
-
       `[data-field="${key}"]`
-
     );
 
 
   if (!el) return;
 
 
+  if (
+    el.querySelector("input")
+  ) {
 
-  const current =
+    return;
 
-    el.textContent
+  }
 
-      .replace(
-        " Edit",
-        ""
-      )
 
-      .trim();
+  const result =
+    getStoredAnalysis();
 
+
+  if (!result) {
+
+    toast(
+      "Complaint information could not be found."
+    );
+
+    return;
+
+  }
+
+
+  const incident =
+    result.data.incident;
+
+
+  const originalValue =
+    incident[key];
+
+
+  let inputValue = "";
+
+
+  if (
+    Array.isArray(
+      originalValue
+    )
+  ) {
+
+    inputValue =
+      originalValue.join(", ");
+
+  }
+
+  else if (
+    originalValue !== null &&
+    originalValue !== undefined
+  ) {
+
+    inputValue =
+      String(originalValue);
+
+  }
+
+
+  /* -------------------------------------------------------
+     DATE
+  ------------------------------------------------------- */
+
+  if (
+    key === "incident_date"
+  ) {
+
+    el.innerHTML = `
+
+      <input
+        type="date"
+        class="incident-edit-input"
+        value="${esc(inputValue)}"
+        aria-label="Edit incident date"
+      >
+
+
+      <button
+        type="button"
+        class="edit-link"
+        onclick="saveEdited('${esc(key)}')"
+      >
+        Save
+      </button>
+
+
+      <button
+        type="button"
+        class="edit-link"
+        onclick="cancelEdit('${esc(key)}')"
+      >
+        Cancel
+      </button>
+
+    `;
+
+  }
+
+
+  /* -------------------------------------------------------
+     NORMAL TEXT
+  ------------------------------------------------------- */
+
+  else {
+
+    if (
+      key === "amounts"
+    ) {
+
+      const amount =
+        Array.isArray(
+          originalValue
+        )
+          ? originalValue[0]
+          : originalValue;
+
+
+      inputValue =
+        amount !== null &&
+        amount !== undefined
+          ? String(amount)
+          : "";
+
+    }
+
+
+    el.innerHTML = `
+
+      <input
+        type="text"
+        class="incident-edit-input"
+        value="${esc(inputValue)}"
+        aria-label="Edit ${esc(key)}"
+      >
+
+
+      <button
+        type="button"
+        class="edit-link"
+        onclick="saveEdited('${esc(key)}')"
+      >
+        Save
+      </button>
+
+
+      <button
+        type="button"
+        class="edit-link"
+        onclick="cancelEdit('${esc(key)}')"
+      >
+        Cancel
+      </button>
+
+    `;
+
+  }
+
+
+  const input =
+    el.querySelector("input");
+
+
+  if (input) {
+
+    input.focus();
+
+
+    /*
+     * Do not select date inputs because
+     * browsers handle date selection themselves.
+     */
+
+    if (
+      key !== "incident_date"
+    ) {
+
+      input.select();
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   CANCEL EDIT
+========================================================= */
+
+function cancelEdit(key) {
+
+  const result =
+    getStoredAnalysis();
+
+
+  if (!result) {
+    return;
+  }
+
+
+  const incident =
+    result.data.incident;
+
+
+  const el =
+    document.querySelector(
+      `[data-field="${key}"]`
+    );
+
+
+  if (!el) {
+    return;
+  }
 
 
   el.innerHTML = `
 
-    <input
-
-      value="${esc(
-
-        current
-
-          .replace(
-            /^₹/,
-            ""
-          )
-
-          .replaceAll(
-            ",",
-            ""
-          )
-
-      )}"
-
-    >
+    ${esc(
+      formatIncidentValue(
+        incident[key],
+        key
+      )
+    )}
 
 
     <button
-
+      type="button"
       class="edit-link"
-
-      onclick="saveEdited('${esc(key)}')"
-
+      onclick="editField('${esc(key)}')"
     >
-
-      Save
-
+      Edit
     </button>
 
   `;
@@ -1095,122 +1295,407 @@ function editField(key) {
 }
 
 
+/* =========================================================
+   NORMALIZE LIST VALUE
+========================================================= */
+
+function normalizeListValue(
+  value
+) {
+
+  if (
+    value === null ||
+    value === undefined
+  ) {
+
+    return [];
+
+  }
+
+
+  return String(value)
+    .split(",")
+    .map(
+      item =>
+        item.trim()
+    )
+    .filter(Boolean);
+
+}
+
 
 /* =========================================================
-   SAVE EDITED FIELD
+   SAVE EDITED INCIDENT FIELD
 ========================================================= */
 
 function saveEdited(key) {
 
-
   const el =
-
     document.querySelector(
-
       `[data-field="${key}"]`
-
     );
 
 
   if (!el) return;
 
 
-
   const input =
-
-    el.querySelector(
-      "input"
-    );
+    el.querySelector("input");
 
 
   if (!input) return;
 
 
-
-  let val =
-    input.value;
-
+  const result =
+    getStoredAnalysis();
 
 
-  /* =======================================================
-     AMOUNT FORMATTING
-  ======================================================= */
+  if (!result) {
 
-  if (key === "amount") {
+    toast(
+      "Complaint information could not be found."
+    );
 
-
-    const numericValue =
-
-      Number(
-
-        val
-
-          .replace(
-            /,/g,
-            ""
-          )
-
-          .replace(
-            /₹/g,
-            ""
-          )
-
-      );
-
-
-    val =
-
-      numericValue
-
-        ? "₹" +
-          numericValue
-            .toLocaleString("en-IN")
-
-        : "Not provided";
+    return;
 
   }
 
 
+  const incident =
+    result.data.incident;
+
+
+  const rawValue =
+    input.value.trim();
+
 
   /* =======================================================
-     UPDATE FIELD
+     INCIDENT DATE
   ======================================================= */
 
-  el.textContent =
-    val + " ";
+  if (
+    key === "incident_date"
+  ) {
+
+    incident.incident_date =
+      rawValue;
+
+  }
 
 
+  /* =======================================================
+     AMOUNT
+  ======================================================= */
 
-  el.insertAdjacentHTML(
+  else if (
+    key === "amounts"
+  ) {
 
-    "beforeend",
+    const cleaned =
+      rawValue
+        .replace(/₹/g, "")
+        .replace(/,/g, "")
+        .trim();
 
-    `
 
-      <button
+    if (
+      cleaned === ""
+    ) {
 
-        class="edit-link"
+      incident.amounts = [];
 
-        onclick="editField('${esc(key)}')"
+    }
 
-      >
+    else {
 
-        Edit
+      const numericValue =
+        Number(cleaned);
 
-      </button>
 
-    `
+      if (
+        Number.isNaN(
+          numericValue
+        ) ||
+        numericValue < 0
+      ) {
 
+        toast(
+          "Please enter a valid amount."
+        );
+
+        return;
+
+      }
+
+
+      incident.amounts = [
+        numericValue
+      ];
+
+    }
+
+  }
+
+
+  /* =======================================================
+     LIST FIELDS
+  ======================================================= */
+
+  else if (
+
+    [
+      "modus_operandi",
+      "deception",
+      "victim_action",
+      "attacker_action",
+      "outcome",
+      "channels",
+      "payment_method",
+      "organizations",
+      "locations",
+      "phones",
+      "emails",
+      "upi_ids",
+      "urls"
+    ].includes(key)
+
+  ) {
+
+    incident[key] =
+      normalizeListValue(
+        rawValue
+      );
+
+  }
+
+
+  /* =======================================================
+     NORMAL TEXT FIELDS
+  ======================================================= */
+
+  else {
+
+    incident[key] =
+      rawValue;
+
+  }
+
+
+  /* =======================================================
+     UPDATE MISSING FIELDS
+  ======================================================= */
+
+  let missingFields =
+
+    Array.isArray(
+      result.data.missing_fields
+    )
+
+      ? [
+          ...result.data.missing_fields
+        ]
+
+      : [];
+
+
+  const currentValue =
+    incident[key];
+
+
+  const hasValue =
+
+    Array.isArray(
+      currentValue
+    )
+
+      ? currentValue.length > 0
+
+      : String(
+          currentValue ?? ""
+        ).trim() !== "";
+
+
+  if (hasValue) {
+
+    missingFields =
+      missingFields.filter(
+        fieldName =>
+          fieldName !== key
+      );
+
+  }
+
+  else {
+
+    if (
+      !missingFields.includes(key)
+    ) {
+
+      missingFields.push(key);
+
+    }
+
+  }
+
+
+  result.data.incident =
+    incident;
+
+  result.data.missing_fields =
+    missingFields;
+
+
+  /* =======================================================
+     PERSIST UPDATED ANALYSIS
+  ======================================================= */
+
+  saveStoredAnalysis(
+    result
   );
 
 
+  /* =======================================================
+     UPDATE DISPLAY
+  ======================================================= */
+
+  const displayValue =
+    formatIncidentValue(
+      incident[key],
+      key
+    );
+
+
+  el.innerHTML = `
+
+    ${esc(displayValue)}
+
+
+    <button
+      type="button"
+      class="edit-link"
+      onclick="editField('${esc(key)}')"
+    >
+      Edit
+    </button>
+
+  `;
+
 
   toast(
-    "Field updated for review."
+    "Field updated successfully."
   );
 
 }
 
+
+/* =========================================================
+   BUILD FINALIZED CASE
+========================================================= */
+
+function buildFinalizedCase(
+  victimType = "me"
+) {
+
+  const result =
+    getStoredAnalysis();
+
+
+  if (!result) {
+    return null;
+  }
+
+
+  const data =
+    result.data || {};
+
+
+  const incident =
+    {
+      ...(data.incident || {})
+    };
+
+
+  return {
+
+    complaint_text:
+      data.complaint_text || "",
+
+    incident:
+      incident,
+
+    missing_fields: [],
+
+    victim_type:
+      victimType,
+
+    finalized_at:
+      new Date().toISOString()
+
+  };
+
+}
+
+
+/* =========================================================
+   SAVE FINALIZED CASE
+========================================================= */
+
+function saveFinalizedCase(
+  victimType = "me"
+) {
+
+  const finalizedCase =
+    buildFinalizedCase(
+      victimType
+    );
+
+
+  if (!finalizedCase) {
+
+    toast(
+      "Unable to finalize complaint."
+    );
+
+    return false;
+
+  }
+
+
+  sessionStorage.setItem(
+    "linkageX_final_case",
+    JSON.stringify(
+      finalizedCase
+    )
+  );
+
+
+  /*
+   * Keep the analysis synchronized
+   * with the finalized incident.
+   */
+
+  const result =
+    getStoredAnalysis();
+
+
+  if (result) {
+
+    result.data.missing_fields =
+      [];
+
+    result.data.incident =
+      finalizedCase.incident;
+
+    saveStoredAnalysis(
+      result
+    );
+
+  }
+
+
+  return true;
+
+}
 
 
 /* =========================================================
@@ -1219,16 +1704,7 @@ function saveEdited(key) {
 
 function logout() {
 
-
   sessionStorage.clear();
-
-
-  /*
-   * login.html is located directly inside /frontend.
-   * Citizen/investigator pages are one directory deeper,
-   * so ../login.html is the correct path.
-   */
-
 
   window.location.href =
     "../login.html";

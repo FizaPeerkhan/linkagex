@@ -1,21 +1,869 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Missing Information</title>
+
+    <title>LinkageX — Missing Information</title>
+
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
 </head>
+
 <body>
-    <script src="../js/data.js"></script>
-    <script src="../js/app.js"></script>
-    <script>
-        const c=shell("citizen","Report");c.innerHTML=pageHead("Help us complete your incident","We identified most of the incident details. We need two additional pieces of information.");
-        c.innerHTML+=`<div class="card"><div class="kpi-row"><div><div class="callout-title">Adaptive questionnaire</div><h3 style="margin:0">2 of 3 questions</h3></div><span class="status status-new">Only relevant missing fields</span></div><div class="progress" style="margin:18px 0 25px"><span style="width:66%"></span></div><div id="questionBox"></div><div class="actions"><button class="btn btn-primary" id="nextQ">Next →</button></div></div>`;
-        let q=0;const qs=[{t:"When did this incident happen?",html:'<input type="date" id="qdate" value="2026-08-28">'},{t:"How did the person contact you?",html:'<div class="grid grid-3">'+["WhatsApp","Phone call","SMS","Email","Website","Other"].map(x=>`<label class="card" style="cursor:pointer;margin:0"><input type="radio" name="contact" value="${x}"> ${x}</label>`).join("")+'</div>'}];
-        function renderQ(){document.getElementById("questionBox").innerHTML=`<h3>${qs[q].t}</h3>${qs[q].html}`};renderQ();
-        document.getElementById("nextQ").onclick=()=>{if(q===0){q=1;document.getElementById("nextQ").textContent="Continue to Review →";renderQ();document.querySelector(".progress span").style.width="100%"}else location.href="review.html"};
-    </script>
+
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+
+<script>
+
+    /* =========================================================
+       APPLICATION SHELL
+    ========================================================== */
+
+    const c = shell("citizen", "Report");
+
+
+    /* =========================================================
+       LOAD NLP ANALYSIS
+    ========================================================== */
+
+    const analysisJSON =
+        sessionStorage.getItem("linkageX_analysis");
+
+
+    if (!analysisJSON) {
+
+        c.innerHTML = pageHead(
+            "No Analysis Found",
+            "We could not find your complaint analysis."
+        );
+
+        c.innerHTML += `
+            <div class="card">
+
+                <div class="alert alert-warn">
+
+                    <strong>
+                        Analysis unavailable.
+                    </strong>
+
+                    <p>
+                        Please return to the complaint page
+                        and submit your complaint again.
+                    </p>
+
+                </div>
+
+                <div class="actions" style="margin-top:18px">
+
+                    <a
+                        class="btn btn-primary"
+                        href="complaint.html"
+                    >
+                        Back to Complaint
+                    </a>
+
+                </div>
+
+            </div>
+        `;
+
+        throw new Error("No NLP analysis found.");
+
+    }
+
+
+    /* =========================================================
+       PARSE ANALYSIS
+    ========================================================== */
+
+    let result;
+
+    try {
+
+        result = JSON.parse(analysisJSON);
+
+    } catch (error) {
+
+        console.error(
+            "Unable to parse analysis:",
+            error
+        );
+
+        c.innerHTML = pageHead(
+            "Analysis Error",
+            "The complaint analysis could not be read."
+        );
+
+        c.innerHTML += `
+            <div class="card">
+
+                <div class="alert alert-warn">
+
+                    <strong>
+                        Invalid analysis data.
+                    </strong>
+
+                    <p>
+                        Please submit your complaint again.
+                    </p>
+
+                </div>
+
+                <div class="actions" style="margin-top:18px">
+
+                    <a
+                        class="btn btn-primary"
+                        href="complaint.html"
+                    >
+                        Back to Complaint
+                    </a>
+
+                </div>
+
+            </div>
+        `;
+
+        throw error;
+
+    }
+
+
+    /* =========================================================
+       GET INCIDENT + MISSING FIELDS
+    ========================================================== */
+
+    const data = result.data || {};
+
+    let incident = {
+        ...(data.incident || {})
+    };
+
+    let missingFields = [
+        ...(data.missing_fields || [])
+    ];
+
+console.log("FULL ANALYSIS:", result);
+console.log("INCIDENT:", incident);
+console.log(
+    "MISSING FIELDS FROM BACKEND:",
+    JSON.stringify(missingFields)
+);
+
+    console.log(
+        "Current incident:",
+        incident
+    );
+
+    console.log(
+        "Missing fields:",
+        missingFields
+    );
+
+
+    /* =========================================================
+       NO MISSING INFORMATION
+    ========================================================== */
+
+    if (missingFields.length === 0) {
+
+        c.innerHTML = pageHead(
+            "Incident Information Complete",
+            "We have enough information to continue. Please review your incident before submitting."
+        );
+
+        c.innerHTML += `
+
+            <div class="card">
+
+                <div class="alert alert-success">
+
+                    <strong>
+                        No additional information is required.
+                    </strong>
+
+                    <p>
+                        The system extracted the required
+                        incident information from your complaint.
+                    </p>
+
+                </div>
+
+                <div class="actions" style="margin-top:20px">
+
+                    <a
+                        class="btn btn-primary"
+                        href="review.html"
+                    >
+                        Continue to Review →
+                    </a>
+
+                    <a
+                        class="btn btn-secondary"
+                        href="extraction.html"
+                    >
+                        Back
+                    </a>
+
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    /* =========================================================
+       QUESTION DEFINITIONS
+    ========================================================== */
+
+    else {
+
+        const questionDefinitions = {
+
+            payment_method: {
+                title: "How did you make the payment?",
+                description:
+                    "Please select the method you used to send the money.",
+                html: `
+                    <div class="grid grid-3">
+
+                        ${[
+                            "UPI",
+                            "Bank Transfer",
+                            "Credit/Debit Card",
+                            "Mobile Wallet",
+                            "Cash",
+                            "Other"
+                        ].map(method => `
+                            <label
+                                class="card"
+                                style="cursor:pointer;margin:0"
+                            >
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="${method}"
+                                >
+                                ${method}
+                            </label>
+                        `).join("")}
+
+                    </div>
+                `
+            },
+
+
+            crime_category: {
+                title: "What type of cybercrime occurred?",
+                description:
+                    "Please select the category that best describes your incident.",
+                html: `
+                    <select
+                        id="crime_category"
+                        class="input"
+                        style="width:100%"
+                    >
+                        <option value="">Select a category</option>
+                        <option>Financial Fraud</option>
+                        <option>Hacking & Unauthorized Access</option>
+                        <option>E-Commerce & Job Fraud</option>
+                        <option>Ransomware & Malware</option>
+                        <option>Social Media Crimes</option>
+                        <option>Online Harassment & Threats</option>
+                        <option>Others</option>
+                    </select>
+                `
+            },
+
+
+            crime_subcategory: {
+                title: "What type of cybercrime best describes your complaint?",
+                description:
+                    "Please select the option that best matches your incident.",
+                html: `
+                    <input
+                        id="crime_subcategory"
+                        class="input"
+                        type="text"
+                        placeholder="Enter the type of cybercrime"
+                        style="width:100%"
+                    >
+                `
+            },
+
+
+            modus_operandi: {
+                title: "How did the person carry out the scam or attack?",
+                description:
+                    "Briefly describe the method used.",
+                html: `
+                    <textarea
+                        id="modus_operandi"
+                        class="input"
+                        rows="4"
+                        placeholder="For example: fake loan offer, phishing link, impersonation..."
+                        style="width:100%"
+                    ></textarea>
+                `
+            },
+
+
+            deception: {
+                title: "How were you deceived?",
+                description:
+                    "Describe how the person convinced or misled you.",
+                html: `
+                    <textarea
+                        id="deception"
+                        class="input"
+                        rows="4"
+                        placeholder="For example: fake offer, impersonation, false promise..."
+                        style="width:100%"
+                    ></textarea>
+                `
+            },
+
+
+            victim_action: {
+                title: "What action did you take?",
+                description:
+                    "Select or describe the action you took after interacting with the person.",
+                html: `
+                    <select
+                        id="victim_action"
+                        class="input"
+                        style="width:100%"
+                    >
+                        <option value="">Select an action</option>
+                        <option>Paid</option>
+                        <option>Clicked a Link</option>
+                        <option>Shared Information</option>
+                        <option>Downloaded a File</option>
+                        <option>Logged In</option>
+                        <option>Contacted the Person</option>
+                        <option>Other</option>
+                    </select>
+                `
+            },
+
+
+            attacker_action: {
+                title: "What did the person do?",
+                description:
+                    "Describe the action taken by the suspected attacker or scammer.",
+                html: `
+                    <textarea
+                        id="attacker_action"
+                        class="input"
+                        rows="4"
+                        placeholder="For example: requested payment, sent a phishing link..."
+                        style="width:100%"
+                    ></textarea>
+                `
+            },
+
+
+            outcome: {
+                title: "What happened after the incident?",
+                description:
+                    "Select or describe the outcome.",
+                html: `
+                    <select
+                        id="outcome"
+                        class="input"
+                        style="width:100%"
+                    >
+                        <option value="">Select an outcome</option>
+                        <option>Money Lost</option>
+                        <option>Account Compromised</option>
+                        <option>Data Stolen</option>
+                        <option>Scammer Stopped Responding</option>
+                        <option>Threat Continued</option>
+                        <option>Other</option>
+                    </select>
+                `
+            },
+
+
+            channels: {
+                title: "How did the person contact you?",
+                description:
+                    "Select the communication channel used.",
+                html: `
+                    <div class="grid grid-3">
+
+                        ${[
+                            "WhatsApp",
+                            "Phone Call",
+                            "SMS",
+                            "Email",
+                            "Website",
+                            "Social Media",
+                            "Other"
+                        ].map(channel => `
+                            <label
+                                class="card"
+                                style="cursor:pointer;margin:0"
+                            >
+                                <input
+                                    type="radio"
+                                    name="channels"
+                                    value="${channel}"
+                                >
+                                ${channel}
+                            </label>
+                        `).join("")}
+
+                    </div>
+                `
+            },
+            incident_date: {
+  title: "When did this incident happen?",
+  description: "Please provide the date when the incident occurred.",
+  html: `
+    <input
+      type="date"
+      id="answer"
+      class="input"
+    >
+
+    <label
+      style="
+        display:block;
+        margin-top:12px;
+      "
+    >
+      <input
+        type="checkbox"
+        id="dateUnknown"
+      >
+      I don't know
+    </label>
+  `
+},
+
+
+            amounts: {
+                title: "How much money was involved?",
+                description:
+                    "Enter the amount involved in the incident.",
+                html: `
+                    <input
+                        id="amounts"
+                        class="input"
+                        type="number"
+                        min="0"
+                        placeholder="Enter amount in INR"
+                        style="width:100%"
+                    >
+                `
+            }
+
+        };
+
+
+        /* =====================================================
+           FILTER TO SUPPORTED QUESTIONS
+        ====================================================== */
+
+        let questions =
+            missingFields
+                .map(field => ({
+                    field,
+                    definition:
+                        questionDefinitions[field]
+                }))
+                .filter(item => item.definition);
+
+
+        /*
+         * If the backend reports a field that does not have
+         * a questionnaire yet, we do not invent a question.
+         */
+
+
+        /* =====================================================
+           PAGE HEADER
+        ====================================================== */
+
+        c.innerHTML = pageHead(
+            "Help us complete your incident",
+            "We identified some information that may need confirmation."
+        );
+
+
+        /* =====================================================
+           NO SUPPORTED QUESTIONS
+        ====================================================== */
+
+        if (questions.length === 0) {
+
+            c.innerHTML += `
+
+                <div class="card">
+
+                    <div class="alert alert-info">
+
+                        <strong>
+                            Additional information may be required.
+                        </strong>
+
+                        <p>
+                            Some fields require confirmation, but
+                            there is currently no questionnaire
+                            available for them.
+                        </p>
+
+                    </div>
+
+                    <div class="actions" style="margin-top:20px">
+
+                        <a
+                            class="btn btn-primary"
+                            href="review.html"
+                        >
+                            Continue to Review →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =====================================================
+           ADAPTIVE QUESTIONNAIRE
+        ====================================================== */
+
+        else {
+
+            let currentQuestion = 0;
+
+            c.innerHTML += `
+
+                <div class="card">
+
+                    <div class="kpi-row">
+
+                        <div>
+
+                            <div class="callout-title">
+                                Adaptive questionnaire
+                            </div>
+
+                            <h3
+                                id="questionCounter"
+                                style="margin:0"
+                            >
+                                Question 1 of ${questions.length}
+                            </h3>
+
+                        </div>
+
+                        <span class="status status-new">
+                            Only relevant missing fields
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="progress"
+                        style="margin:18px 0 25px"
+                    >
+                        <span
+                            id="progressBar"
+                            style="width:${100 / questions.length}%"
+                        ></span>
+                    </div>
+
+
+                    <div id="questionBox"></div>
+
+
+                    <div
+                        class="actions"
+                        style="margin-top:22px"
+                    >
+
+                        <button
+                            class="btn btn-secondary"
+                            id="backQ"
+                            style="display:none"
+                        >
+                            ← Back
+                        </button>
+
+                        <button
+                            class="btn btn-primary"
+                            id="nextQ"
+                        >
+                            Next →
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            /* =================================================
+               RENDER QUESTION
+            ================================================== */
+
+            function renderQuestion() {
+
+                const item =
+                    questions[currentQuestion];
+
+                document.getElementById(
+                    "questionCounter"
+                ).textContent =
+                    `Question ${currentQuestion + 1} of ${questions.length}`;
+
+
+                document.getElementById(
+                    "progressBar"
+                ).style.width =
+                    `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+
+                document.getElementById(
+                    "questionBox"
+                ).innerHTML = `
+
+                    <h3>
+                        ${item.definition.title}
+                    </h3>
+
+                    <p
+                        style="
+                            margin-top:-8px;
+                            margin-bottom:20px;
+                            opacity:.75;
+                        "
+                    >
+                        ${item.definition.description}
+                    </p>
+
+                    ${item.definition.html}
+
+                `;
+
+
+                document.getElementById(
+                    "backQ"
+                ).style.display =
+                    currentQuestion > 0
+                        ? "inline-flex"
+                        : "none";
+
+
+                document.getElementById(
+                    "nextQ"
+                ).textContent =
+                    currentQuestion === questions.length - 1
+                        ? "Continue to Review →"
+                        : "Next →";
+
+            }
+
+
+            /* =================================================
+               READ CURRENT ANSWER
+            ================================================== */
+
+            function getAnswer(field) {
+
+                const radios =
+                    document.querySelectorAll(
+                        `input[name="${field}"]:checked`
+                    );
+
+
+                if (radios.length > 0) {
+
+                    return radios[0].value;
+
+                }
+
+
+                const input =
+                    document.getElementById(field);
+
+
+                if (input) {
+
+                    return input.value.trim();
+
+                }
+
+
+                return "";
+
+            }
+
+
+            /* =================================================
+               SAVE CURRENT ANSWER
+            ================================================== */
+
+            function saveCurrentAnswer() {
+
+                const field =
+                    questions[currentQuestion].field;
+
+                const answer =
+                    getAnswer(field);
+
+
+                if (!answer) {
+
+                    alert(
+                        "Please provide an answer before continuing."
+                    );
+
+                    return false;
+
+                }
+
+
+                /*
+                 * Convert single-value answers into the same
+                 * structure expected by the incident object.
+                 */
+
+                const listFields = [
+                    "modus_operandi",
+                    "deception",
+                    "victim_action",
+                    "attacker_action",
+                    "outcome",
+                    "channels",
+                    "payment_method"
+                ];
+
+
+                if (listFields.includes(field)) {
+
+                    incident[field] = [answer];
+
+                } else if (field === "amounts") {
+
+                    incident[field] = [
+                        Number(answer)
+                    ];
+
+                } else {
+
+                    incident[field] = answer;
+
+                }
+
+
+                return true;
+
+            }
+
+
+            /* =================================================
+               NEXT BUTTON
+            ================================================== */
+
+            document.getElementById(
+                "nextQ"
+            ).onclick = () => {
+
+                if (!saveCurrentAnswer()) {
+                    return;
+                }
+
+
+                if (
+                    currentQuestion <
+                    questions.length - 1
+                ) {
+
+                    currentQuestion++;
+
+                    renderQuestion();
+
+                } else {
+
+                    /*
+                     * Remove fields that have now been completed.
+                     */
+
+                    missingFields =
+                        missingFields.filter(
+                            field =>
+                                !questions.some(
+                                    q =>
+                                        q.field === field
+                                )
+                        );
+
+
+                    /*
+                     * Save updated incident back into
+                     * the same analysis object.
+                     */
+
+                    data.incident = incident;
+
+                    data.missing_fields =
+                        missingFields;
+
+
+                    result.data = data;
+
+
+                    sessionStorage.setItem(
+                        "linkageX_analysis",
+                        JSON.stringify(result)
+                    );
+
+
+                    location.href =
+                        "review.html";
+
+                }
+
+            };
+
+
+            /* =================================================
+               BACK BUTTON
+            ================================================== */
+
+            document.getElementById(
+                "backQ"
+            ).onclick = () => {
+
+                if (currentQuestion > 0) {
+
+                    currentQuestion--;
+
+                    renderQuestion();
+
+                }
+
+            };
+
+
+            renderQuestion();
+
+        }
+    }
+
+</script>
+
 </body>
 </html>

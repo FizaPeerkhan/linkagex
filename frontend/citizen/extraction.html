@@ -329,39 +329,37 @@ const missingFields = data.missing_fields || [];
                FIELD STATUS
             ================================================== */
 
-            function statusFor(
-                value,
-                fieldName
-            ) {
+function statusFor(value, fieldName) {
 
-                const missing =
-                    missingFields.includes(
-                        fieldName
-                    );
+    // Backend explicitly marked this field as missing
+    if (missingFields.includes(fieldName)) {
 
+        return `
+            <span class="badge badge-warn">
+                Needs confirmation
+            </span>
+        `;
 
-                if (
-                    missing ||
-                    !hasValue(value)
-                ) {
+    }
 
-                    return `
-                        <span class="badge badge-warn">
-                            Needs confirmation
-                        </span>
-                    `;
+    // NLP successfully extracted a value
+    if (hasValue(value)) {
 
-                }
+        return `
+            <span class="badge badge-success">
+                Extracted
+            </span>
+        `;
 
+    }
 
-                return `
-                    <span class="badge badge-success">
-                        Extracted
-                    </span>
-                `;
-
-            }
-
+    // Field is optional and was not detected
+    return `
+        <span class="badge">
+            Not detected
+        </span>
+    `;
+}
 
 
             /* =================================================
@@ -533,7 +531,11 @@ const missingFields = data.missing_fields || [];
 
             ];
 
-
+console.log("TEST STATUS:", {
+    payment: statusFor(incident.payment_method, "payment_method"),
+    organization: statusFor(incident.organizations, "organizations"),
+    location: statusFor(incident.locations, "locations")
+});
 
             /* =================================================
                RENDER TABLE

@@ -1,21 +1,464 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Review Complaint</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/components.css">
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Review Complaint | LinkageX</title>
+
+  <link
+    rel="stylesheet"
+    href="../css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/components.css"
+  >
+
 </head>
+
+
 <body>
-    <script src="../js/data.js"></script>
-    <script src="../js/app.js"></script>
-    <script>
-        const c=shell("citizen","Report");c.innerHTML=pageHead("Review Your Complaint Information","Please check the information below before submitting your incident.");
-        c.innerHTML+=`<div class="alert alert-warn" style="margin-bottom:16px">This information was automatically extracted from your complaint. Please correct anything that is inaccurate.</div>`;
-        c.innerHTML+=renderIncident(CS.incident,true);
-        c.innerHTML+=`<div class="card section"><div class="callout-title">Victim information</div><h3>Is this complaint about you or someone else?</h3><div class="grid grid-2"><label class="card" style="margin:0"><input type="radio" name="victim" checked> Me</label><label class="card" style="margin:0"><input type="radio" name="victim"> Someone else</label></div><p class="note" style="margin-top:12px">Profile information is separate from victim information. If reporting for someone else, the victim's age group and region can be captured without changing your account profile.</p></div>`;
-        c.innerHTML+=`<div class="actions" style="margin-top:16px"><a class="btn btn-secondary" href="missing-info.html">← Back</a><button class="btn btn-primary" onclick="location.href='success.html'">Confirm & Submit →</button></div>`;
-    </script>
+
+
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+
+
+<script>
+
+/* =========================================================
+   INITIALIZE LINKAGEX CITIZEN SHELL
+========================================================= */
+
+const c =
+  shell(
+    "citizen",
+    "Report"
+  );
+
+
+/* =========================================================
+   LOAD COMPLAINT ANALYSIS
+========================================================= */
+
+const stored =
+  sessionStorage.getItem(
+    "linkageX_analysis"
+  );
+
+
+/*
+ * If the citizen reaches this page directly,
+ * there is no complaint to review.
+ */
+
+if (!stored) {
+
+  window.location.href =
+    "complaint.html";
+
+}
+
+
+/* =========================================================
+   PARSE ANALYSIS
+========================================================= */
+
+let result;
+
+try {
+
+  result =
+    JSON.parse(stored);
+
+}
+
+catch (error) {
+
+  console.error(
+    "Unable to parse LinkageX analysis:",
+    error
+  );
+
+  window.location.href =
+    "complaint.html";
+
+}
+
+
+/* =========================================================
+   EXTRACT DATA
+========================================================= */
+
+const data =
+  result.data || {};
+
+
+let incident =
+  {
+    ...(data.incident || {})
+  };
+
+
+const missingFields =
+  Array.isArray(
+    data.missing_fields
+  )
+    ? data.missing_fields
+    : [];
+
+
+/* =========================================================
+   SAFETY CHECK
+========================================================= */
+
+if (
+  !data.incident
+) {
+
+  window.location.href =
+    "complaint.html";
+
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+c.innerHTML =
+  pageHead(
+    "Review Your Complaint Information",
+    "Please check the extracted information carefully before submitting your incident."
+  );
+
+
+/* =========================================================
+   AUTOMATED EXTRACTION NOTICE
+========================================================= */
+
+c.innerHTML += `
+
+  <div
+    class="alert alert-warn"
+    style="margin-bottom:16px"
+  >
+
+    <strong>
+      Review required
+    </strong>
+
+    <br>
+
+    LinkageX automatically extracted the information below
+    from your complaint. Please verify that it is accurate
+    before submitting.
+
+  </div>
+
+`;
+
+
+/* =========================================================
+   MISSING INFORMATION NOTICE
+========================================================= */
+
+if (missingFields.length > 0) {
+
+  c.innerHTML += `
+
+    <div
+      class="alert alert-warn"
+      style="margin-bottom:16px"
+    >
+
+      Some information was not available in the original
+      complaint. Please use the Edit option below if you
+      need to provide or correct any information.
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   STRUCTURED INCIDENT
+========================================================= */
+
+c.innerHTML +=
+  renderIncident(
+    incident,
+    true
+  );
+
+
+/* =========================================================
+   ORIGINAL COMPLAINT
+========================================================= */
+
+c.innerHTML += `
+
+  <div
+    class="card section"
+    style="margin-top:16px"
+  >
+
+    <div class="section-head">
+
+      <h3>
+        Original Complaint
+      </h3>
+
+      <span>
+        Submitted description
+      </span>
+
+    </div>
+
+
+    <div
+      class="field-value"
+      style="
+        white-space:pre-wrap;
+        line-height:1.7;
+      "
+    >
+
+      ${esc(
+        data.complaint_text ||
+        "No complaint text available."
+      )}
+
+    </div>
+
+  </div>
+
+`;
+
+
+/* =========================================================
+   VICTIM INFORMATION
+========================================================= */
+
+c.innerHTML += `
+
+  <div
+    class="card section"
+    style="margin-top:16px"
+  >
+
+    <div class="callout-title">
+      Victim information
+    </div>
+
+
+    <h3>
+      Is this complaint about you or someone else?
+    </h3>
+
+
+    <div class="grid grid-2">
+
+      <label
+        class="card"
+        style="margin:0; cursor:pointer"
+      >
+
+        <input
+          type="radio"
+          name="victim"
+          value="me"
+          checked
+        >
+
+        <strong>
+          Me
+        </strong>
+
+        <br>
+
+        <span class="note">
+          I am the person affected by this incident.
+        </span>
+
+      </label>
+
+
+      <label
+        class="card"
+        style="margin:0; cursor:pointer"
+      >
+
+        <input
+          type="radio"
+          name="victim"
+          value="someone_else"
+        >
+
+        <strong>
+          Someone else
+        </strong>
+
+        <br>
+
+        <span class="note">
+          I am submitting this complaint on behalf of another person.
+        </span>
+
+      </label>
+
+    </div>
+
+
+    <p
+      class="note"
+      style="margin-top:12px"
+    >
+
+      Your account profile information is separate from
+      the victim information in this complaint.
+
+    </p>
+
+  </div>
+
+`;
+
+
+/* =========================================================
+   FINAL CONFIRMATION NOTICE
+========================================================= */
+
+c.innerHTML += `
+
+  <div
+    class="alert"
+    style="margin-top:16px"
+  >
+
+    <strong>
+      Before you submit
+    </strong>
+
+    <br>
+
+    Please make sure the structured information above
+    accurately represents the incident. You can edit
+    individual fields if required.
+
+  </div>
+
+`;
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+c.innerHTML += `
+
+  <div
+    class="actions"
+    style="margin-top:16px"
+  >
+
+    <a
+      class="btn btn-secondary"
+      href="missing-info.html"
+    >
+      ← Back
+    </a>
+
+
+    <button
+      class="btn btn-primary"
+      type="button"
+      id="confirmSubmit"
+    >
+      Confirm & Submit →
+    </button>
+
+  </div>
+
+`;
+
+
+/* =========================================================
+   CONFIRM & SUBMIT
+========================================================= */
+
+const confirmButton =
+  document.getElementById(
+    "confirmSubmit"
+  );
+
+
+confirmButton.addEventListener(
+  "click",
+  () => {
+
+
+    /* -----------------------------------------------
+       Get selected victim type
+    ----------------------------------------------- */
+
+    const selectedVictim =
+      document.querySelector(
+        'input[name="victim"]:checked'
+      );
+
+
+    const victimType =
+      selectedVictim
+        ? selectedVictim.value
+        : "me";
+
+
+    /* -----------------------------------------------
+       Save finalized case
+       Uses the helper from app.js.
+    ----------------------------------------------- */
+
+    const saved =
+      saveFinalizedCase(
+        victimType
+      );
+
+
+    if (!saved) {
+
+      toast(
+        "Unable to submit the complaint."
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------
+       Continue to confirmation page
+    ----------------------------------------------- */
+
+    window.location.href =
+      "success.html";
+
+  }
+);
+
+</script>
+
+
 </body>
+
 </html>
