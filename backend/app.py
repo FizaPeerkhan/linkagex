@@ -1,5 +1,5 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, jsonify  # type: ignore[import-not-found]
+from flask_cors import CORS  # type: ignore[import-not-found]
 
 from services.nlp_service import analyze_complaint
 from services.linkage_service import find_related_cases
