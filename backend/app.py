@@ -1,5 +1,5 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, jsonify  # type: ignore[import-not-found]
+from flask_cors import CORS  # type: ignore[import-not-found]
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
