@@ -2,49 +2,1072 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Historical Case Details | LinkageX</title>
   <link rel="stylesheet" href="../css/style.css">
+
   <style>
-    .case-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .detail-item{padding:12px;border:1px solid var(--border,#e5e7eb);border-radius:9px;background:var(--surface,#fff);min-width:0}
-    .detail-label{font-size:10px;text-transform:uppercase;letter-spacing:.045em;color:var(--muted,#6b7280);margin-bottom:5px;font-weight:700}
-    .detail-value{font-size:13px;line-height:1.5;overflow-wrap:anywhere;color:var(--text,#1f2937)}
-    .complaint-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.65;color:var(--text,#1f2937)}
-    .case-actions{display:flex;gap:9px;flex-wrap:wrap}
-    .detail-section{margin-top:18px}
-    @media(max-width:800px){.case-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:520px){.case-detail-grid{grid-template-columns:1fr}}
+    /* =========================================
+       LINKAGEX — HISTORICAL CASE DETAILS
+       Page-specific styling only
+    ========================================= */
+
+    #content {
+      --case-void: #05070d;
+      --case-panel: #0a0f18;
+      --case-panel-2: #0d1420;
+      --case-line: rgba(148, 197, 224, 0.14);
+      --case-line-strong: rgba(148, 197, 224, 0.27);
+      --case-ink: #e9f1f8;
+      --case-dim: #8fa0b6;
+      --case-faint: #5b6a80;
+      --case-cyan: #54d9ff;
+      --case-amber: #ffb454;
+      --case-green: #5ee69b;
+      --case-violet: #b98bff;
+
+      color: var(--case-ink);
+      min-width: 0;
+    }
+
+    #content * {
+      box-sizing: border-box;
+    }
+
+    #content .case-page {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-width: 0;
+      padding-bottom: 32px;
+    }
+
+    /* Loading and error states */
+
+    #content .case-state {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 22px;
+      background:
+        radial-gradient(ellipse at top left, rgba(84, 217, 255, 0.065), transparent 50%),
+        var(--case-panel);
+      border: 1px solid var(--case-line);
+      border-radius: 14px;
+      color: var(--case-dim);
+    }
+
+    #content .case-state h2 {
+      margin: 0 0 7px;
+      color: var(--case-ink);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    #content .case-state p {
+      margin: 5px 0 0;
+      color: var(--case-dim);
+      font-size: 13px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    #content .case-state-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 38px;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--case-line-strong);
+      border-radius: 10px;
+      color: var(--case-cyan);
+      background: rgba(84, 217, 255, 0.07);
+      font-size: 18px;
+    }
+
+    #content .case-spinner {
+      flex: 0 0 18px;
+      width: 18px;
+      height: 18px;
+      margin: 3px 0 0;
+      border: 2px solid rgba(84, 217, 255, 0.17);
+      border-top-color: var(--case-cyan);
+      border-radius: 50%;
+      animation: case-spin 0.8s linear infinite;
+    }
+
+    @keyframes case-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Page header */
+
+    #content .historical-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 22px;
+      padding: 5px 0 19px;
+      border-bottom: 1px solid var(--case-line);
+      min-width: 0;
+    }
+
+    #content .historical-head-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    #content .historical-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--case-cyan);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    #content .historical-eyebrow::before {
+      content: "";
+      width: 18px;
+      height: 1px;
+      background: var(--case-cyan);
+      opacity: 0.8;
+    }
+
+    #content .historical-head h1 {
+      margin: 0;
+      color: var(--case-ink);
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.2;
+      font-weight: 650;
+      letter-spacing: -0.045em;
+      overflow-wrap: anywhere;
+    }
+
+    #content .historical-head-description {
+      max-width: 670px;
+      margin: 11px 0 0;
+      color: var(--case-dim);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    #content .historical-head-description strong {
+      color: #cbd8e6;
+      font-weight: 500;
+    }
+
+    #content .historical-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 9px;
+      flex-shrink: 0;
+      padding-top: 18px;
+    }
+
+    #content .historical-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 9px 13px;
+      border: 1px solid var(--case-line-strong);
+      border-radius: 8px;
+      background: rgba(13, 20, 32, 0.84);
+      color: var(--case-ink);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 550;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition:
+        border-color 0.18s ease,
+        background 0.18s ease,
+        transform 0.18s ease;
+    }
+
+    #content .historical-btn:hover {
+      border-color: rgba(84, 217, 255, 0.55);
+      background: rgba(84, 217, 255, 0.07);
+      transform: translateY(-1px);
+    }
+
+    #content .historical-btn-primary {
+      border-color: rgba(84, 217, 255, 0.35);
+      background: rgba(84, 217, 255, 0.1);
+      color: var(--case-cyan);
+    }
+
+    #content .historical-btn-primary:hover {
+      background: rgba(84, 217, 255, 0.15);
+    }
+
+    /* Source record banner */
+
+    #content .record-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 13px 16px;
+      border: 1px solid rgba(185, 139, 255, 0.2);
+      border-radius: 10px;
+      background: linear-gradient(
+        105deg,
+        rgba(185, 139, 255, 0.07),
+        rgba(10, 15, 24, 0.88) 65%
+      );
+    }
+
+    #content .record-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    #content .record-banner-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 34px;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(185, 139, 255, 0.22);
+      border-radius: 9px;
+      background: rgba(185, 139, 255, 0.08);
+      color: var(--case-violet);
+      font-size: 15px;
+    }
+
+    #content .record-banner-title {
+      margin: 0;
+      color: var(--case-ink);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    #content .record-banner-subtitle {
+      margin: 4px 0 0;
+      color: var(--case-dim);
+      font-size: 11px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    #content .record-source {
+      padding: 5px 8px;
+      border: 1px solid var(--case-line);
+      border-radius: 5px;
+      color: var(--case-dim);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    /* General panels */
+
+    #content .historical-panel {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--case-line);
+      border-radius: 13px;
+      background:
+        radial-gradient(ellipse at top left, rgba(84, 217, 255, 0.025), transparent 48%),
+        var(--case-panel);
+    }
+
+    #content .historical-panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 17px 19px;
+      border-bottom: 1px solid var(--case-line);
+    }
+
+    #content .historical-section-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    #content .historical-section-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 32px;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--case-line);
+      border-radius: 8px;
+      background: var(--case-panel-2);
+      color: var(--case-cyan);
+      font-size: 15px;
+    }
+
+    #content .historical-section-title h2 {
+      margin: 1px 0 5px;
+      color: var(--case-ink);
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    #content .historical-section-title p {
+      margin: 0;
+      color: var(--case-dim);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    #content .section-count {
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      border: 1px solid var(--case-line);
+      border-radius: 6px;
+      color: var(--case-dim);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    #content .historical-panel-body {
+      padding: 18px;
+      min-width: 0;
+    }
+
+    /* Structured detail grid */
+
+    #content .case-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      min-width: 0;
+    }
+
+    #content .detail-item {
+      position: relative;
+      min-width: 0;
+      padding: 13px 14px;
+      border: 1px solid rgba(148, 197, 224, 0.1);
+      border-radius: 8px;
+      background: rgba(13, 20, 32, 0.78);
+      transition:
+        border-color 0.18s ease,
+        background 0.18s ease;
+    }
+
+    #content .detail-item:hover {
+      border-color: var(--case-line-strong);
+      background: rgba(15, 24, 38, 0.9);
+    }
+
+    #content .detail-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+      color: var(--case-faint);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px;
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+
+    #content .detail-label::before {
+      content: "";
+      flex: 0 0 4px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--case-cyan);
+      opacity: 0.75;
+    }
+
+    #content .detail-value {
+      color: #dbe6f1;
+      font-size: 12px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    #content .detail-value.is-missing {
+      color: #5f6d81;
+      font-style: italic;
+      font-size: 11px;
+    }
+
+    #content .detail-value.is-amount {
+      color: var(--case-amber);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    #content .detail-value.is-id {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+    }
+
+    /* Original complaint */
+
+    #content .complaint-panel {
+      border-color: rgba(255, 180, 84, 0.18);
+      background:
+        radial-gradient(ellipse at top left, rgba(255, 180, 84, 0.035), transparent 50%),
+        var(--case-panel);
+    }
+
+    #content .complaint-panel .historical-section-icon {
+      border-color: rgba(255, 180, 84, 0.2);
+      color: var(--case-amber);
+      background: rgba(255, 180, 84, 0.05);
+    }
+
+    #content .complaint-content {
+      padding: 19px 21px;
+      color: #c8d5e4;
+      font-size: 13px;
+      line-height: 1.9;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    #content .complaint-content.is-empty {
+      color: var(--case-faint);
+      font-style: italic;
+    }
+
+    /* Repository annotation notice */
+
+    #content .annotation-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 12px 13px;
+      border: 1px solid rgba(255, 180, 84, 0.15);
+      border-radius: 8px;
+      background: rgba(255, 180, 84, 0.035);
+      color: var(--case-dim);
+      font-size: 11px;
+      line-height: 1.75;
+    }
+
+    #content .annotation-notice-icon {
+      flex-shrink: 0;
+      color: var(--case-amber);
+      font-size: 14px;
+    }
+
+    /* Interpretation guardrail */
+
+    #content .interpretation-note {
+      padding: 15px 17px;
+      border: 1px solid rgba(84, 217, 255, 0.17);
+      border-radius: 10px;
+      background: rgba(84, 217, 255, 0.035);
+    }
+
+    #content .interpretation-note-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 6px;
+      color: var(--case-cyan);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    #content .interpretation-note p {
+      margin: 0;
+      color: var(--case-dim);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    #content .interpretation-note strong {
+      color: #dbe6f1;
+      font-weight: 500;
+    }
+
+    /* Error actions */
+
+    #content .error-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 1050px) {
+      #content .historical-head {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #content .historical-actions {
+        justify-content: flex-start;
+        padding-top: 3px;
+      }
+
+      #content .case-detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      #content .case-page {
+        gap: 13px;
+      }
+
+      #content .historical-head {
+        padding-bottom: 15px;
+      }
+
+      #content .historical-head h1 {
+        font-size: 25px;
+      }
+
+      #content .historical-head-description {
+        font-size: 12px;
+      }
+
+      #content .historical-actions {
+        width: 100%;
+      }
+
+      #content .historical-btn {
+        flex: 1 1 auto;
+      }
+
+      #content .record-banner {
+        align-items: flex-start;
+      }
+
+      #content .record-source {
+        max-width: 100%;
+      }
+
+      #content .historical-panel-header {
+        padding: 14px;
+      }
+
+      #content .historical-panel-body {
+        padding: 12px;
+      }
+
+      #content .case-detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      #content .detail-item {
+        padding: 11px;
+      }
+
+      #content .detail-label {
+        font-size: 8px;
+      }
+
+      #content .detail-value {
+        font-size: 11px;
+      }
+
+      #content .complaint-content {
+        padding: 15px;
+        font-size: 12px;
+      }
+
+      #content .section-count {
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      #content .case-detail-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #content *,
+      #content *::before,
+      #content *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
-<body>
-<script src="../js/data.js"></script>
-<script src="../js/app.js"></script>
-<script>
-const API_BASE = "http://127.0.0.1:5000";
-const caseId = new URLSearchParams(location.search).get("case") || "";
-const c = shell("investigator", "Cases");
-c.innerHTML = `<div id="case-loading" class="card"><p>Loading historical case ${esc(caseId || "") || "…"}…</p></div><div id="case-content"></div>`;
 
-function value(v){if(v===null||v===undefined||String(v).trim()===""||String(v).toLowerCase()==="nan")return "Not recorded";return String(v)}
-function item(label,v){return `<div class="detail-item"><div class="detail-label">${esc(label)}</div><div class="detail-value">${esc(value(v))}</div></div>`}
-function renderCase(d){
-  document.getElementById("case-loading").style.display="none";
-  const amount=(d.amount_lost!==null&&d.amount_lost!==undefined&&String(d.amount_lost)!==""&&Number.isFinite(Number(d.amount_lost)))?`${esc(d.currency||"INR")} ${Number(d.amount_lost).toLocaleString("en-IN")}`:"Not recorded";
-  const identifiers=[['Phone',d.phone],['Email',d.email],['UPI ID',d.upi],['URL',d.url],['Domain',d.domain],['Transaction ID',d.transaction_id],['Bank account',d.bank_account],['IFSC code',d.ifsc_code],['Crypto wallet',d.crypto_wallet],['IP address',d.ip_address],['Social account',d.social_account],['Organization',d.organization],['Person reference',d.person_reference]];
-  const signals=[['Crime category',d.crime_category],['Crime subcategory',d.crime_subcategory],['Attack variant',d.attack_variant],['Attack pattern',d.attack_pattern],['Incident date',d.incident_date],['Incident time',d.incident_time],['Complaint date',d.complaint_date],['Location',d.location],['Jurisdiction',d.jurisdiction],['Communication channel',d.channel],['Platform / service',d.platform_or_service],['Payment method',d.payment_method],['Amount lost',amount],['Loss occurred',d.loss_occurred],['Victim action',d.victim_action],['Attacker action',d.attacker_action],['Deception method',d.deception_method],['Outcome',d.outcome],['Event type',d.event_type],['Language',d.language],['Source type',d.source_type]];
-  document.getElementById("case-content").innerHTML=`<div class="page-head"><div><div class="eyebrow-dark">CASE INTELLIGENCE</div><h1>${esc(d.case_id||caseId)}</h1><p>Historical case from LINKAGEX_MASTER_CASES_V2.csv. Similarity results are investigative leads, not attribution findings.</p></div><div class="case-actions"><a class="btn btn-secondary" href="related-cases.html">← Related Cases</a><a class="btn btn-primary" href="linkage.html">New Linkage Search</a></div></div><div class="card"><div class="section-head"><h3>Incident Summary</h3><span class="tag">${esc(value(d.nlp_status))}</span></div><div class="case-detail-grid">${signals.map(([k,v])=>item(k,v)).join("")}</div></div><div class="card detail-section"><div class="section-head"><h3>Original Complaint</h3></div><div class="complaint-text">${esc(value(d.complaint_text))}</div></div><div class="card detail-section"><div class="section-head"><h3>Identifiers and Entities</h3><span>Compare only where source data supports it</span></div><div class="case-detail-grid">${identifiers.map(([k,v])=>item(k,v)).join("")}</div></div><div class="card detail-section"><div class="section-head"><h3>Repository Annotations</h3></div><div class="case-detail-grid">${[['Incident cluster ID',d.incident_cluster_id],['Campaign ID',d.campaign_id],['Attacker entity ID',d.attacker_entity_id],['Evidence types',d.evidence_types],['Annotation source',d.annotation_source],['Annotation confidence',d.annotation_confidence]].map(([k,v])=>item(k,v)).join("")}</div><p class="card-sub" style="margin-top:12px">Repository annotations describe the historical record. They are not automatically evidence that a newly submitted complaint belongs to the same cluster or campaign.</p></div>`;
-}
-async function loadCase(){
-  if(!caseId){document.getElementById("case-loading").innerHTML='<div class="alert alert-warn">No case ID was provided. Return to Related Cases and select a historical case.</div>';return;}
-  try{
-    const response=await fetch(`${API_BASE}/api/cases/${encodeURIComponent(caseId)}`);
-    const data=await response.json();
-    if(!response.ok||data.status!=="success")throw new Error(data.message||"Case could not be loaded.");
-    renderCase(data.case);
-  }catch(error){document.getElementById("case-loading").innerHTML=`<div class="alert alert-warn"><strong>Could not load ${esc(caseId)}.</strong><p>${esc(error.message||"Make sure the Flask backend is running and the master dataset path is correct.")}</p><p>Start the backend, then refresh this page.</p></div>`;}
-}
-loadCase();
-</script>
+<body>
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    "use strict";
+
+    const API_BASE = "http://127.0.0.1:5000";
+    const caseId = new URLSearchParams(location.search).get("case") || "";
+
+    const content = shell("investigator", "Cases");
+
+    content.innerHTML = `
+      <div class="case-page">
+        <div id="case-loading" class="case-state" role="status" aria-live="polite">
+          <div class="case-spinner" aria-hidden="true"></div>
+          <div>
+            <h2>Retrieving historical case</h2>
+            <p>Loading record ${esc(caseId || "…")} from the LinkageX case repository.</p>
+          </div>
+        </div>
+        <div id="case-content"></div>
+      </div>
+    `;
+
+    /* -----------------------------------------
+       Data formatting helpers
+    ----------------------------------------- */
+
+    function value(v) {
+      if (
+        v === null ||
+        v === undefined ||
+        String(v).trim() === "" ||
+        String(v).toLowerCase().trim() === "nan"
+      ) {
+        return "Not recorded";
+      }
+
+      return String(v);
+    }
+
+    function isMissing(v) {
+      return value(v) === "Not recorded";
+    }
+
+    function item(label, v, options = {}) {
+      const displayValue = options.displayValue !== undefined
+        ? options.displayValue
+        : value(v);
+
+      const classes = ["detail-value"];
+
+      if (isMissing(displayValue)) {
+        classes.push("is-missing");
+      }
+
+      if (options.amount && !isMissing(displayValue)) {
+        classes.push("is-amount");
+      }
+
+      if (options.identifier && !isMissing(displayValue)) {
+        classes.push("is-id");
+      }
+
+      return `
+        <div class="detail-item">
+          <div class="detail-label">${esc(label)}</div>
+          <div class="${classes.join(" ")}">${esc(displayValue)}</div>
+        </div>
+      `;
+    }
+
+    function sectionHeader(icon, title, description, count) {
+      return `
+        <div class="historical-panel-header">
+          <div class="historical-section-title">
+            <div class="historical-section-icon" aria-hidden="true">${icon}</div>
+            <div>
+              <h2>${esc(title)}</h2>
+              <p>${esc(description)}</p>
+            </div>
+          </div>
+          ${count !== undefined
+            ? `<span class="section-count">${esc(String(count).padStart(2, "0"))} FIELDS</span>`
+            : ""}
+        </div>
+      `;
+    }
+
+    /* -----------------------------------------
+       Render the historical record
+    ----------------------------------------- */
+
+    function renderCase(d) {
+      if (!d || typeof d !== "object") {
+        throw new Error("The API returned an empty or invalid case record.");
+      }
+
+      const loading = document.getElementById("case-loading");
+      const caseContent = document.getElementById("case-content");
+
+      if (loading) {
+        loading.style.display = "none";
+      }
+
+      const displayCaseId = value(d.case_id || caseId);
+
+      let amount = "Not recorded";
+
+      if (
+        d.amount_lost !== null &&
+        d.amount_lost !== undefined &&
+        String(d.amount_lost).trim() !== "" &&
+        Number.isFinite(Number(d.amount_lost))
+      ) {
+        amount = `${value(d.currency || "INR")} ${Number(d.amount_lost).toLocaleString("en-IN", {
+          maximumFractionDigits: 2
+        })}`;
+      }
+
+      const identifiers = [
+        ["Phone", d.phone],
+        ["Email", d.email],
+        ["UPI ID", d.upi],
+        ["URL", d.url],
+        ["Domain", d.domain],
+        ["Transaction ID", d.transaction_id],
+        ["Bank account", d.bank_account],
+        ["IFSC code", d.ifsc_code],
+        ["Crypto wallet", d.crypto_wallet],
+        ["IP address", d.ip_address],
+        ["Social account", d.social_account],
+        ["Organization", d.organization],
+        ["Person reference", d.person_reference]
+      ];
+
+      const signals = [
+        ["Crime category", d.crime_category],
+        ["Crime subcategory", d.crime_subcategory],
+        ["Attack variant", d.attack_variant],
+        ["Attack pattern", d.attack_pattern],
+        ["Incident date", d.incident_date],
+        ["Incident time", d.incident_time],
+        ["Complaint date", d.complaint_date],
+        ["Location", d.location],
+        ["Jurisdiction", d.jurisdiction],
+        ["Communication channel", d.channel],
+        ["Platform / service", d.platform_or_service],
+        ["Payment method", d.payment_method],
+        ["Amount lost", amount],
+        ["Loss occurred", d.loss_occurred],
+        ["Victim action", d.victim_action],
+        ["Attacker action", d.attacker_action],
+        ["Deception method", d.deception_method],
+        ["Outcome", d.outcome],
+        ["Event type", d.event_type],
+        ["Language", d.language],
+        ["Source type", d.source_type]
+      ];
+
+      const annotations = [
+        ["Incident cluster ID", d.incident_cluster_id],
+        ["Campaign ID", d.campaign_id],
+        ["Attacker entity ID", d.attacker_entity_id],
+        ["Evidence types", d.evidence_types],
+        ["Annotation source", d.annotation_source],
+        ["Annotation confidence", d.annotation_confidence]
+      ];
+
+      caseContent.innerHTML = `
+        <div class="historical-head">
+          <div class="historical-head-main">
+            <div class="historical-eyebrow">Case Intelligence / Historical Records</div>
+            <h1>${esc(displayCaseId)}</h1>
+            <p class="historical-head-description">
+              Review the source complaint, structured incident attributes,
+              identifiers, and repository annotations associated with this historical record.
+              <strong>Similarity is an investigative lead, not proof of attribution.</strong>
+            </p>
+          </div>
+
+          <div class="historical-actions">
+            <a class="historical-btn"
+               href="related-cases.html"
+               aria-label="Return to related cases">
+              <span aria-hidden="true">←</span>
+              Related Cases
+            </a>
+
+            <a class="historical-btn historical-btn-primary"
+               href="linkage.html">
+              <span aria-hidden="true">⌕</span>
+              New Linkage Search
+            </a>
+          </div>
+        </div>
+
+        <div class="record-banner">
+          <div class="record-banner-left">
+            <div class="record-banner-icon" aria-hidden="true">◈</div>
+            <div>
+              <p class="record-banner-title">Historical repository record</p>
+              <p class="record-banner-subtitle">
+                Source: LINKAGEX_MASTER_CASES_V2.csv
+              </p>
+            </div>
+          </div>
+
+          <span class="record-source">ID: ${esc(displayCaseId)}</span>
+        </div>
+
+        <!-- Incident summary -->
+
+        <section class="historical-panel" aria-labelledby="incident-summary-title">
+          ${sectionHeader(
+            "◫",
+            "Incident Summary",
+            "Structured attributes extracted or recorded for this incident.",
+            signals.length
+          )}
+
+          <div class="historical-panel-body">
+            <div class="case-detail-grid">
+              ${signals.map(([label, val]) =>
+                item(
+                  label,
+                  val,
+                  {
+                    amount: label === "Amount lost",
+                    identifier: [
+                      "Incident date",
+                      "Complaint date",
+                      "Incident time"
+                    ].includes(label)
+                  }
+                )
+              ).join("")}
+            </div>
+          </div>
+        </section>
+
+        <!-- Original complaint -->
+
+        <section class="historical-panel complaint-panel" aria-labelledby="complaint-title">
+          ${sectionHeader(
+            "≡",
+            "Original Complaint",
+            "Complaint text preserved from the historical case record."
+          )}
+
+          <div
+            id="complaint-text"
+            class="complaint-content ${isMissing(d.complaint_text) ? "is-empty" : ""}"
+          >${esc(value(d.complaint_text))}</div>
+        </section>
+
+        <!-- Identifiers and entities -->
+
+        <section class="historical-panel" aria-labelledby="identifiers-title">
+          ${sectionHeader(
+            "⌘",
+            "Identifiers and Entities",
+            "Recorded identifiers that may support evidence-based comparison.",
+            identifiers.length
+          )}
+
+          <div class="historical-panel-body">
+            <div class="case-detail-grid">
+              ${identifiers.map(([label, val]) =>
+                item(label, val, {
+                  identifier: true
+                })
+              ).join("")}
+            </div>
+          </div>
+        </section>
+
+        <!-- Repository annotations -->
+
+        <section class="historical-panel" aria-labelledby="annotations-title">
+          ${sectionHeader(
+            "⌁",
+            "Repository Annotations",
+            "Existing cluster, campaign, entity, and evidence metadata.",
+            annotations.length
+          )}
+
+          <div class="historical-panel-body">
+            <div class="case-detail-grid">
+              ${annotations.map(([label, val]) =>
+                item(label, val, {
+                  identifier: [
+                    "Incident cluster ID",
+                    "Campaign ID",
+                    "Attacker entity ID"
+                  ].includes(label)
+                })
+              ).join("")}
+            </div>
+
+            <div class="annotation-notice">
+              <span class="annotation-notice-icon" aria-hidden="true">⚠</span>
+              <span>
+                Repository annotations describe the historical record.
+                They do not automatically establish that a newly submitted complaint
+                belongs to the same incident cluster, campaign, or attacker entity.
+                Validate associations against supporting evidence.
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Investigation guardrail -->
+
+        <div class="interpretation-note">
+          <div class="interpretation-note-title">
+            <span aria-hidden="true">ⓘ</span>
+            Investigative interpretation
+          </div>
+          <p>
+            This page presents historical source data and repository annotations.
+            Similarity scores or shared attributes should be treated as
+            <strong>leads for further review</strong>, not conclusive findings.
+            Check the original evidence, consider alternative explanations,
+            and document the basis for any linkage decision.
+          </p>
+        </div>
+      `;
+    }
+
+    /* -----------------------------------------
+       Loading and error handling
+    ----------------------------------------- */
+
+    function showError(title, message, includeCaseId = true) {
+      const loading = document.getElementById("case-loading");
+      const caseContent = document.getElementById("case-content");
+
+      if (caseContent) {
+        caseContent.innerHTML = "";
+      }
+
+      if (!loading) {
+        return;
+      }
+
+      loading.style.display = "flex";
+      loading.setAttribute("role", "alert");
+
+      loading.innerHTML = `
+        <div class="case-state-icon" aria-hidden="true">!</div>
+
+        <div style="min-width:0;flex:1">
+          <h2>${esc(title)}</h2>
+          ${includeCaseId && caseId
+            ? `<p>Case reference: <strong>${esc(caseId)}</strong></p>`
+            : ""}
+          <p>${esc(message)}</p>
+
+          <div class="error-actions">
+            <button type="button" class="historical-btn historical-btn-primary" id="retry-load">
+              ↻ Retry
+            </button>
+
+            <a href="related-cases.html" class="historical-btn">
+              ← Related Cases
+            </a>
+          </div>
+        </div>
+      `;
+
+      const retryButton = document.getElementById("retry-load");
+
+      if (retryButton) {
+        retryButton.addEventListener("click", loadCase);
+      }
+    }
+
+    async function loadCase() {
+      if (!caseId) {
+        showError(
+          "No case selected",
+          "No case ID was provided in the page URL. Return to Related Cases and select a historical record.",
+          false
+        );
+        return;
+      }
+
+      const loading = document.getElementById("case-loading");
+
+      if (loading) {
+        loading.style.display = "flex";
+        loading.setAttribute("role", "status");
+
+        loading.innerHTML = `
+          <div class="case-spinner" aria-hidden="true"></div>
+          <div>
+            <h2>Retrieving historical case</h2>
+            <p>Loading record ${esc(caseId)} from the LinkageX case repository.</p>
+          </div>
+        `;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_BASE}/api/cases/${encodeURIComponent(caseId)}`,
+          {
+            method: "GET",
+            headers: {
+              "Accept": "application/json"
+            }
+          }
+        );
+
+        let data;
+
+        try {
+          data = await response.json();
+        } catch {
+          throw new Error(
+            "The backend returned an invalid response. Check that the Flask API is running and returning JSON."
+          );
+        }
+
+        if (!response.ok || data.status !== "success") {
+          throw new Error(
+            data.message || `Case request failed with HTTP ${response.status}.`
+          );
+        }
+
+        if (!data.case) {
+          throw new Error("The response did not contain a case record.");
+        }
+
+        renderCase(data.case);
+
+      } catch (error) {
+        console.error("LinkageX historical case loading error:", error);
+
+        const message = error instanceof TypeError
+          ? "The API could not be reached. Start the Flask backend and verify that it is listening at http://127.0.0.1:5000. If the browser reports a CORS error, configure the backend to allow requests from the frontend origin."
+          : (error.message || "An unexpected error occurred while loading the case.");
+
+        showError(
+          "Could not load historical case",
+          message
+        );
+      }
+    }
+
+    loadCase();
+  </script>
 </body>
 </html>

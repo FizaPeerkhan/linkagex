@@ -2,90 +2,969 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Report Incident</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Submit Complaint — LinkageX</title>
+
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sidebar-w: 248px;
+            --topbar-h: 64px;
+
+            --void: #05070d;
+            --panel: #0a0f18;
+            --panel-2: #0d1420;
+            --line: rgba(148,197,224,.14);
+            --line-strong: rgba(148,197,224,.28);
+            --ink: #e9f1f8;
+            --ink-dim: #8fa0b6;
+            --ink-faint: #5b6a80;
+            --cyan: #54d9ff;
+            --cyan-soft: rgba(84,217,255,.16);
+            --amber: #ffb454;
+            --green: #5ee69b;
+            --red: #ff7a7a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: var(--void);
+            color: var(--ink);
+            font-family: 'IBM Plex Sans', sans-serif;
+            line-height: 1.55;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img,
+        svg {
+            display: block;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        button {
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--cyan);
+            outline-offset: 2px;
+        }
+
+        /* APP SHELL */
+
+        .app-shell {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .app-shell::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(var(--line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 64px 64px;
+            opacity: .22;
+            mask-image: radial-gradient(
+                ellipse 90% 70% at 20% 0%,
+                black,
+                transparent 75%
+            );
+        }
+
+        /* SIDEBAR: same fixed width as dashboard and inspiration */
+
+        .sidebar {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 var(--sidebar-w);
+            width: var(--sidebar-w);
+            min-width: var(--sidebar-w);
+            max-width: var(--sidebar-w);
+            min-height: 100vh;
+            height: auto;
+            overflow-y: visible;
+            display: flex;
+            flex-direction: column;
+            padding: 22px 0 18px;
+            background: var(--panel);
+            border-right: 1px solid var(--line);
+            color: var(--ink);
+            transform: none;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 22px 22px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .sidebar-brand svg {
+            width: 26px;
+            height: 26px;
+            flex: 0 0 26px;
+        }
+
+        .sidebar-brand span {
+            color: var(--ink);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .sidebar-role {
+            padding: 16px 22px 10px;
+            color: var(--cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: 1px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            padding: 10px 22px;
+            border-left: 2px solid transparent;
+            color: var(--ink-dim);
+            font-size: .9rem;
+            transition: color .18s, background .18s, border-color .18s;
+        }
+
+        .sidebar-nav a svg {
+            width: 17px;
+            height: 17px;
+            flex: 0 0 17px;
+            opacity: .85;
+        }
+
+        .sidebar-nav a:hover {
+            color: var(--ink);
+            background: rgba(148,197,224,.05);
+        }
+
+        .sidebar-nav a.active {
+            color: var(--cyan);
+            background: var(--cyan-soft);
+            border-left-color: var(--cyan);
+        }
+
+        .sidebar-foot {
+            padding: 14px 22px 0;
+            margin-top: 10px;
+            border-top: 1px solid var(--line);
+        }
+
+        .sidebar-foot a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 14px;
+            color: var(--ink-faint);
+            font-size: .85rem;
+        }
+
+        .sidebar-foot a:hover {
+            color: var(--red);
+        }
+
+        .sidebar-foot svg {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+        }
+
+        /* MAIN COLUMN: sidebar remains in flex flow, no extra offset */
+
+        .main-col {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex: 1 1 0;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 100vh;
+            margin-left: 0;
+        }
+
+        /* HEADER: transparent glass style matching the inspiration */
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            display: flex;
+            flex: 0 0 var(--topbar-h);
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            width: 100%;
+            height: var(--topbar-h);
+            min-height: var(--topbar-h);
+            padding: 0 30px;
+            background: rgba(10,15,24,.72);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .topbar-crumb {
+            min-width: 0;
+            color: var(--ink-faint);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .76rem;
+            letter-spacing: .02em;
+        }
+
+        .topbar-crumb b {
+            color: var(--ink-dim);
+            font-weight: 500;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 0 0 auto;
+        }
+
+        .user-meta {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.25;
+            text-align: right;
+        }
+
+        .user-meta b {
+            max-width: 180px;
+            overflow: hidden;
+            color: var(--ink);
+            font-size: .85rem;
+            font-weight: 500;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-meta span {
+            color: var(--ink-faint);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: .68rem;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            border: 1px solid var(--line-strong);
+            border-radius: 50%;
+            background: var(--cyan-soft);
+            color: var(--cyan);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: .85rem;
+            font-weight: 600;
+        }
+
+        /* PAGE CONTENT */
+
+        .content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1600px;
+            min-width: 0;
+            margin: 0 auto;
+            padding: 34px 32px 60px;
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .page-head h1 {
+            margin: 0 0 8px;
+            color: var(--ink);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(25px, 2.4vw, 34px);
+            line-height: 1.2;
+        }
+
+        .page-head p {
+            max-width: 700px;
+            margin: 0;
+            color: var(--ink-dim);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* PROGRESS TRACKER */
+
+        .steps {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 26px;
+            padding: 16px 20px;
+            overflow-x: auto;
+            border: 1px solid var(--line-strong);
+            background: var(--panel);
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--ink-faint);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .step.active {
+            color: var(--cyan);
+        }
+
+        .step .num {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            place-items: center;
+            border: 1px solid var(--line-strong);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+        }
+
+        .step.active .num {
+            border-color: var(--cyan);
+            background: var(--cyan);
+            color: var(--void);
+        }
+
+        .step-line {
+            height: 1px;
+            min-width: 18px;
+            max-width: 90px;
+            flex: 1 1 30px;
+            background: var(--line-strong);
+        }
+
+        /* COMPLAINT FORM LAYOUT */
+
+        .complaint-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(260px, 1fr);
+            align-items: stretch;
+            gap: 20px;
+        }
+
+        .complaint-layout > .card {
+            min-width: 0;
+            margin: 0;
+            padding: 25px;
+            border: 1px solid var(--line-strong);
+            border-radius: 12px;
+            background: linear-gradient(145deg, #0d1420, #080d16);
+            box-shadow: none;
+            color: var(--ink);
+        }
+
+        .complaint-layout > .card::before,
+        .complaint-layout > .card::after {
+            display: none;
+        }
+
+        .callout-title {
+            margin-bottom: 16px;
+            color: var(--cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+
+        .complaint-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        #complaintText {
+            display: block;
+            width: 100%;
+            min-height: 245px;
+            padding: 15px 16px;
+            resize: vertical;
+            border: 1px solid var(--line-strong);
+            border-radius: 9px;
+            outline: none;
+            background: #060910;
+            color: var(--ink);
+            font: 14px/1.8 'IBM Plex Sans', sans-serif;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        #complaintText:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(84,217,255,.09);
+        }
+
+        #complaintText::placeholder {
+            color: var(--ink-faint);
+        }
+
+        .complaint-hint {
+            margin-top: 10px;
+            color: var(--ink-dim);
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        .complaint-layout h3 {
+            margin: 0 0 12px;
+            color: var(--ink);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 19px;
+        }
+
+        .complaint-layout .card-sub {
+            color: var(--ink-dim);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .complaint-layout .alert {
+            line-height: 1.75;
+            overflow-wrap: anywhere;
+            border-radius: 8px;
+        }
+
+        .complaint-layout .alert strong {
+            color: var(--ink);
+        }
+
+        .complaint-layout .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .complaint-layout .actions .btn {
+            min-height: 44px;
+        }
+
+        .complaint-layout .divider {
+            height: 1px;
+            margin: 22px 0;
+            border: 0;
+            background: var(--line);
+        }
+
+        .next-steps {
+            display: grid;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .next-step strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--ink);
+        }
+
+        .next-step p {
+            margin: 0;
+            color: var(--ink-dim);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* LOADING STATE */
+
+        .loading-screen {
+            display: grid;
+            min-height: 300px;
+            place-items: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 20px;
+            border: 3px solid var(--line-strong);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            animation: complaint-spin .8s linear infinite;
+        }
+
+        .loading-copy h3 {
+            margin-bottom: 10px;
+            color: var(--ink);
+        }
+
+        .loading-copy p {
+            color: var(--ink-dim);
+            line-height: 1.8;
+        }
+
+        @keyframes complaint-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: fixed;
+                inset: 0 auto 0 0;
+                z-index: 1000;
+                width: var(--sidebar-w);
+                min-width: var(--sidebar-w);
+                max-width: var(--sidebar-w);
+                height: 100vh;
+                min-height: 100vh;
+                overflow-y: auto;
+                transform: translateX(-100%);
+                transition: transform .22s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-col {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .content {
+                padding: 24px 18px 50px;
+            }
+
+            .complaint-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .topbar {
+                gap: 12px;
+                padding: 0 16px;
+            }
+
+            .topbar-crumb {
+                font-size: 11px;
+            }
+
+            .user-meta b {
+                max-width: 100px;
+            }
+
+            .content {
+                padding: 20px 14px 40px;
+            }
+
+            .complaint-layout > .card {
+                padding: 18px;
+            }
+
+            .steps {
+                gap: 8px;
+                padding: 12px;
+            }
+
+            .step {
+                gap: 6px;
+                font-size: 12px;
+            }
+
+            .step .num {
+                width: 27px;
+                height: 27px;
+                flex-basis: 27px;
+            }
+
+            #complaintText {
+                min-height: 210px;
+            }
+
+            .complaint-layout .actions {
+                flex-direction: column;
+            }
+
+            .complaint-layout .actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .001ms !important;
+                transition-duration: .001ms !important;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <script src="../js/data.js"></script>
     <script src="../js/app.js"></script>
+
     <script>
-        const c = shell("citizen","Report");
-        c.innerHTML = pageHead("Report a Cybercrime Incident","Tell us what happened in your own words. You do not need to know the crime category.");
-        c.innerHTML += `<div class="steps"><div class="step active"><span class="num">1</span> Describe</div><div class="step-line"></div><div class="step"><span class="num">2</span> Understand</div><div class="step-line"></div><div class="step"><span class="num">3</span> Review</div><div class="step-line"></div><div class="step"><span class="num">4</span> Submit</div></div>`;
-        c.innerHTML += `<div class="grid grid-2"><div class="card"><div class="callout-title">Unstructured complaint</div><textarea id="complaintText" rows="9" placeholder="Describe what happened…">I received a WhatsApp message offering me a personal loan. They asked me to pay ₹15,000 as a processing fee and after I paid, they stopped responding.</textarea><div class="alert alert-info" style="margin-top:13px">Avoid entering passwords, OTPs, PINs, banking credentials or other unnecessary sensitive information.</div><div class="actions" style="margin-top:15px"><button class="btn btn-primary" id="submitComplaint">Submit Complaint →</button><button class="btn btn-secondary" onclick="toast('Draft saved locally for this demo.')">Save Draft</button></div></div><div class="card"><div class="callout-title">About this step</div><h3>Start with your story</h3>
-        <p class="card-sub">
-    Your complaint is analyzed by the LinkageX NLP service,
-    which extracts incident details and identifies information
-    that may need confirmation.
-</p><div class="divider"></div><div class="alert alert-warn"><strong>Important:</strong> Profile information is separate from victim information. If you are reporting for someone else, that distinction is collected later in the review flow.</div></div></div>`;
-       document.getElementById("submitComplaint").onclick = async () => {
-    const text = document.getElementById("complaintText").value.trim();
+        /*
+         * Complaint page shell.
+         * Sidebar stays in normal flex flow on desktop so its width
+         * matches dashboard.html without an additional left margin.
+         */
+        function complaintShell(activeLabel) {
+            const icons = {
+                dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>',
+                complaint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>',
+                list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+                awareness: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M12 8v5"/><path d="M12 16.2h.01"/></svg>',
+                guidance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.5 2.5 0 014.9.8c0 1.7-2.4 2-2.4 3.6"/><path d="M12 17.2h.01"/></svg>',
+                signout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>'
+            };
 
-    if (!text) {
-        toast("Please describe what happened.");
-        return;
-    }
+            const nav = [
+                ["dashboard", "Dashboard", "dashboard.html"],
+                ["complaint", "Submit Complaint", "complaint.html"],
+                ["list", "My Complaints", "complaints.html"],
+                ["awareness", "Regional Awareness", "awareness.html"],
+                ["guidance", "Safety Center", "guidance.html"]
+            ];
 
-    document.getElementById("content").innerHTML = `
-        <div class="loading-screen">
-            <div>
-                <div class="spinner"></div>
-                <div class="loading-copy">
-                    <h3>Analyzing your report</h3>
-                    <p>
-                        Complaint received · Identifying incident details ·
-                        Structuring information · Checking missing information
-                    </p>
+            const storedAccount = (() => {
+                try {
+                    return JSON.parse(
+                        localStorage.getItem("linkageXCitizenAccount") || "null"
+                    );
+                } catch (error) {
+                    return null;
+                }
+            })();
+
+            const citizenName =
+                (storedAccount && storedAccount.name) ||
+                sessionStorage.getItem("linkageXCitizenName") ||
+                "Citizen";
+
+            const safeCitizenName = String(citizenName)
+                .replace(/[&<>"']/g, "");
+
+            const initial = (String(citizenName).trim().charAt(0) || "C")
+                .toUpperCase();
+
+            document.body.innerHTML = `
+                <div class="app-shell">
+                    <aside class="sidebar">
+                        <div class="sidebar-brand">
+                            <svg viewBox="0 0 30 30">
+                                <circle cx="8" cy="9" r="2.6" fill="#54d9ff"/>
+                                <circle cx="22" cy="8" r="2.2" fill="#54d9ff"/>
+                                <circle cx="15" cy="21" r="2.6" fill="#ffb454"/>
+                                <path d="M8 9 L22 8 M8 9 L15 21 M22 8 L15 21"
+                                      stroke="#54d9ff" stroke-width="1" opacity=".55"/>
+                            </svg>
+                            <span>LinkageX</span>
+                        </div>
+
+                        <div class="sidebar-role">Citizen Portal</div>
+
+                        <ul class="sidebar-nav">
+                            ${nav.map(([key, label, href]) => `
+                                <li>
+                                    <a href="${href}" class="${label === activeLabel ? "active" : ""}">
+                                        ${icons[key]}
+                                        <span>${label}</span>
+                                    </a>
+                                </li>
+                            `).join("")}
+                        </ul>
+
+                        <div class="sidebar-foot">
+                            <a href="#" id="signOutLink">
+                                ${icons.signout}
+                                <span>Sign out</span>
+                            </a>
+                        </div>
+                    </aside>
+
+                    <div class="main-col">
+                        <header class="topbar">
+                            <div class="topbar-crumb">
+                                LinkageX / <b>${activeLabel}</b>
+                            </div>
+
+                            <a class="topbar-user" href="profile.html" aria-label="Open profile">
+                                <div class="user-meta">
+                                    <b>${safeCitizenName}</b>
+                                    <span>Citizen</span>
+                                </div>
+                                <div class="user-chip">${initial}</div>
+                            </a>
+                        </header>
+
+                        <main class="content" id="content"></main>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `;
 
-    try {
-        const response = await fetch("http://127.0.0.1:5000/api/analyze", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                complaint_text: text
-            })
-        });
+                <div id="toast-root" class="toast-root"></div>
+            `;
 
-        if (!response.ok) {
-            throw new Error("API request failed");
+            document.getElementById("signOutLink").addEventListener("click", function (event) {
+                event.preventDefault();
+
+                if (typeof toast === "function") {
+                    toast("Signed out (prototype only).");
+                }
+            });
+
+            return document.getElementById("content");
         }
 
-        const result = await response.json();
+        const c = complaintShell("Submit Complaint");
 
-        // Store the NLP result for the next pages
-        sessionStorage.setItem(
-            "linkageX_analysis",
-            JSON.stringify(result)
+        c.innerHTML = pageHead(
+            "Report a Cybercrime Incident",
+            "Tell us what happened in your own words. You do not need to know the crime category."
         );
 
-        // Go to the real extraction page
-        window.location.href = "extraction.html";
+        c.innerHTML += `
+            <div class="steps" aria-label="Complaint submission progress">
+                <div class="step active"><span class="num">1</span><span>Describe</span></div>
+                <div class="step-line"></div>
+                <div class="step"><span class="num">2</span><span>Understand</span></div>
+                <div class="step-line"></div>
+                <div class="step"><span class="num">3</span><span>Review</span></div>
+                <div class="step-line"></div>
+                <div class="step"><span class="num">4</span><span>Submit</span></div>
+            </div>
 
-    } catch (error) {
-        console.error("LinkageX NLP error:", error);
+            <div class="complaint-layout">
+                <div class="card">
+                    <div class="callout-title">Your incident report</div>
 
-        document.getElementById("content").innerHTML = `
-            <div class="card">
-                <div class="alert alert-warn">
-                    <strong>Unable to analyze the complaint.</strong>
-                    <p>Please make sure the LinkageX backend is running and try again.</p>
+                    <label class="complaint-label" for="complaintText">
+                        Describe what happened
+                    </label>
+
+                    <textarea
+                        id="complaintText"
+                        rows="9"
+                        placeholder="Describe what happened, including relevant dates, messages, amounts, or actions..."
+                    >I received a WhatsApp message offering me a personal loan. They asked me to pay ₹15,000 as a processing fee and after I paid, they stopped responding.</textarea>
+
+                    <p class="complaint-hint">
+                        Include the details you remember. You can review the extracted information on the next screen.
+                    </p>
+
+                    <div class="alert alert-info" style="margin-top:16px">
+                        <strong>Protect your information.</strong>
+                        Avoid entering passwords, OTPs, PINs, banking credentials or other unnecessary sensitive information.
+                    </div>
+
+                    <div class="actions" style="margin-top:20px">
+                        <button class="btn btn-primary" id="submitComplaint" type="button">
+                            Submit Complaint →
+                        </button>
+
+                        <button class="btn btn-secondary" id="saveDraft" type="button">
+                            Save Draft
+                        </button>
+                    </div>
                 </div>
-                <div class="actions" style="margin-top:15px">
-                    <button class="btn btn-primary" onclick="location.reload()">
-                        Try Again
-                    </button>
+
+                <div class="card">
+                    <div class="callout-title">About this step</div>
+
+                    <h3>Start with your story</h3>
+
+                    <p class="card-sub">
+                        Your complaint is analyzed by the LinkageX NLP service,
+                        which extracts incident details and identifies information
+                        that may need confirmation.
+                    </p>
+
+                    <div class="divider"></div>
+
+                    <div class="alert alert-warn">
+                        <div>
+                            <strong>Important:</strong>
+                            Profile information is separate from victim information.
+                            If you are reporting for someone else, that distinction
+                            is collected later in the review flow.
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <h3 style="font-size:16px">What happens next?</h3>
+
+                    <div class="next-steps">
+                        <div class="next-step">
+                            <strong>01 · Analyze</strong>
+                            <p>The service identifies key incident details from your description.</p>
+                        </div>
+
+                        <div class="next-step">
+                            <strong>02 · Review</strong>
+                            <p>You can inspect the extracted information and answer relevant questions.</p>
+                        </div>
+
+                        <div class="next-step">
+                            <strong>03 · Confirm</strong>
+                            <p>Review the details before proceeding with the complaint workflow.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
-    }
-};</script>
+
+        document.getElementById("saveDraft").onclick = () => {
+            toast("Draft saved locally for this demo.");
+        };
+
+        document.getElementById("submitComplaint").onclick = async () => {
+            const text = document.getElementById("complaintText").value.trim();
+
+            if (!text) {
+                toast("Please describe what happened.");
+                return;
+            }
+
+            document.getElementById("content").innerHTML = `
+                <div class="loading-screen">
+                    <div>
+                        <div class="spinner"></div>
+                        <div class="loading-copy">
+                            <h3>Analyzing your report</h3>
+                            <p>
+                                Complaint received · Identifying incident details ·
+                                Structuring information · Checking missing information
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/api/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        complaint_text: text
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("API request failed");
+                }
+
+                const result = await response.json();
+
+                sessionStorage.setItem(
+                    "linkageX_analysis",
+                    JSON.stringify(result)
+                );
+
+                window.location.href = "extraction.html";
+
+            } catch (error) {
+                console.error("LinkageX NLP error:", error);
+
+                document.getElementById("content").innerHTML = `
+                    <div class="card">
+                        <div class="alert alert-warn">
+                            <strong>Unable to analyze the complaint.</strong>
+                            <p>Please make sure the LinkageX backend is running and try again.</p>
+                        </div>
+
+                        <div class="actions" style="margin-top:15px">
+                            <button class="btn btn-primary" type="button" onclick="location.reload()">
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+    </script>
 </body>
 </html>

@@ -2,26 +2,788 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Upload Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upload Report — LinkageX</title>
+
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       LINKAGEX — UPLOAD REPORT
+    ===================================================== */
+
+    #content {
+      min-width: 0;
+      color: #e9f1f8;
+    }
+
+    #content .page-head {
+      margin-bottom: 28px;
+    }
+
+    #content .page-head h1 {
+      color: #e9f1f8;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(25px, 2.4vw, 34px);
+      line-height: 1.2;
+    }
+
+    #content .page-head p {
+      max-width: 700px;
+      color: #8fa0b6;
+      line-height: 1.7;
+    }
+
+    /* Page layout */
+
+    #content .upload-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(270px, .85fr);
+      align-items: start;
+      gap: 20px;
+    }
+
+    #content .upload-panel,
+    #content .pipeline-panel {
+      position: relative;
+      min-width: 0;
+      padding: 24px;
+      border: 1px solid rgba(148,197,224,.2);
+      border-radius: 0;
+      background: linear-gradient(145deg, #0d1420, #080d16);
+      color: #e9f1f8;
+      box-shadow: 0 14px 36px rgba(0,0,0,.14);
+    }
+
+    #content .upload-panel::before,
+    #content .upload-panel::after,
+    #content .pipeline-panel::before,
+    #content .pipeline-panel::after {
+      content: "";
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      pointer-events: none;
+    }
+
+    #content .upload-panel::before,
+    #content .pipeline-panel::before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid #54d9ff;
+      border-left: 2px solid #54d9ff;
+    }
+
+    #content .upload-panel::after,
+    #content .pipeline-panel::after {
+      right: -1px;
+      bottom: -1px;
+      border-right: 2px solid #54d9ff;
+      border-bottom: 2px solid #54d9ff;
+    }
+
+    /* Panel headings */
+
+    #content .panel-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    #content .panel-heading h2 {
+      margin: 0 0 6px;
+      color: #e9f1f8;
+      font: 600 18px 'Space Grotesk', sans-serif;
+    }
+
+    #content .panel-heading p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    #content .section-kicker {
+      margin-bottom: 7px;
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    #content .format-badge {
+      flex: 0 0 auto;
+      padding: 5px 8px;
+      border: 1px solid rgba(84,217,255,.24);
+      background: rgba(84,217,255,.06);
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+    }
+
+    /* Drag and drop */
+
+    #content .upload-dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 235px;
+      padding: 28px 20px;
+      border: 1px dashed rgba(84,217,255,.38);
+      border-radius: 0;
+      background:
+        linear-gradient(rgba(84,217,255,.025), rgba(84,217,255,.01)),
+        rgba(5,7,13,.32);
+      text-align: center;
+      transition: border-color .2s, background .2s;
+    }
+
+    #content .upload-dropzone:hover,
+    #content .upload-dropzone.drag {
+      border-color: #54d9ff;
+      background: rgba(84,217,255,.07);
+    }
+
+    #content .upload-icon {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(84,217,255,.28);
+      background: rgba(84,217,255,.08);
+      color: #54d9ff;
+      font: 400 27px 'IBM Plex Sans', sans-serif;
+    }
+
+    #content .upload-dropzone h3 {
+      margin: 0 0 7px;
+      color: #e9f1f8;
+      font: 600 17px 'Space Grotesk', sans-serif;
+    }
+
+    #content .upload-dropzone p {
+      margin: 0 0 14px;
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    #content .upload-dropzone .upload-formats {
+      margin-top: 14px;
+      margin-bottom: 0;
+      color: #5b6a80;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .03em;
+    }
+
+    #content .upload-dropzone .upload-or {
+      margin: 3px 0 12px;
+      color: #5b6a80;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+    }
+
+    #content .selected-file {
+      display: none;
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px;
+      border: 1px solid rgba(84,217,255,.23);
+      background: rgba(84,217,255,.045);
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    #content .selected-file.visible {
+      display: block;
+    }
+
+    #content .selected-file-label {
+      margin-bottom: 4px;
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+    }
+
+    #content .selected-file-name {
+      color: #e9f1f8;
+      font-size: 12px;
+    }
+
+    /* Buttons */
+
+    #content .upload-layout .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 41px;
+      padding: 10px 17px;
+      border: 1px solid rgba(148,197,224,.28);
+      border-radius: 0;
+      background: transparent;
+      color: #e9f1f8;
+      font: 500 12px 'IBM Plex Sans', sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .18s, border-color .18s, transform .18s;
+    }
+
+    #content .upload-layout .btn:hover {
+      border-color: #54d9ff;
+      background: rgba(84,217,255,.08);
+    }
+
+    #content .upload-layout .btn-primary {
+      border-color: #54d9ff;
+      background: #54d9ff;
+      color: #05070d;
+      font-weight: 600;
+      clip-path: polygon(
+        9px 0,
+        100% 0,
+        100% calc(100% - 9px),
+        calc(100% - 9px) 100%,
+        0 100%,
+        0 9px
+      );
+    }
+
+    #content .upload-layout .btn-primary:hover {
+      border-color: #a6edff;
+      background: #a6edff;
+      color: #05070d;
+      transform: translateY(-1px);
+    }
+
+    #content .upload-layout .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #content .upload-layout .divider {
+      height: 1px;
+      margin: 23px 0;
+      border: 0;
+      background: rgba(148,197,224,.14);
+    }
+
+    /* Manual report entry */
+
+    #content .manual-heading {
+      margin-bottom: 11px;
+    }
+
+    #content .manual-heading h3 {
+      margin: 0 0 5px;
+      color: #e9f1f8;
+      font: 600 15px 'Space Grotesk', sans-serif;
+    }
+
+    #content .manual-heading p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    #content #manual {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 175px;
+      padding: 13px 14px;
+      border: 1px solid rgba(148,197,224,.25);
+      border-radius: 0;
+      outline: none;
+      resize: vertical;
+      background: #060910;
+      color: #e9f1f8;
+      font: 400 13px/1.7 'IBM Plex Sans', sans-serif;
+      box-shadow: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    #content #manual::placeholder {
+      color: #5b6a80;
+      opacity: 1;
+    }
+
+    #content #manual:focus {
+      border-color: #54d9ff;
+      box-shadow: 0 0 0 3px rgba(84,217,255,.08);
+    }
+
+    #content .manual-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 13px;
+    }
+
+    #content .manual-hint {
+      color: #5b6a80;
+      font-size: 11px;
+    }
+
+    /* Pipeline */
+
+    #content .pipeline-intro {
+      margin-bottom: 20px;
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    #content .pipeline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    #content .pipeline-step {
+      display: grid;
+      grid-template-columns: 35px minmax(0,1fr);
+      gap: 12px;
+      align-items: start;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(148,197,224,.11);
+    }
+
+    #content .pipeline-step:last-child {
+      border-bottom: 0;
+    }
+
+    #content .pipeline-number {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border: 1px solid rgba(84,217,255,.27);
+      background: rgba(84,217,255,.055);
+      color: #54d9ff;
+      font: 500 11px 'IBM Plex Mono', monospace;
+    }
+
+    #content .pipeline-step h4 {
+      margin: 1px 0 5px;
+      color: #e9f1f8;
+      font: 600 13px 'Space Grotesk', sans-serif;
+    }
+
+    #content .pipeline-step p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    /* Prototype disclosure */
+
+    #content .prototype-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      margin-top: 21px;
+      padding: 14px;
+      border: 1px solid rgba(255,180,84,.2);
+      border-left: 3px solid #ffb454;
+      background: rgba(255,180,84,.04);
+      color: #8fa0b6;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    #content .prototype-note strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #ffb454;
+      font-size: 12px;
+    }
+
+    #content .prototype-mark {
+      flex: 0 0 auto;
+      color: #ffb454;
+      font: 500 16px 'IBM Plex Mono', monospace;
+    }
+
+    /* Loading state */
+
+    #content .loading-screen {
+      display: grid;
+      min-height: 340px;
+      place-items: center;
+      padding: 30px;
+      border: 1px solid rgba(148,197,224,.2);
+      background: linear-gradient(145deg,#0d1420,#080d16);
+      text-align: center;
+    }
+
+    #content .spinner {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto 20px;
+      border: 3px solid rgba(148,197,224,.17);
+      border-top-color: #54d9ff;
+      border-radius: 50%;
+      animation: upload-spin .8s linear infinite;
+    }
+
+    #content .loading-copy h3 {
+      margin: 0 0 9px;
+      color: #e9f1f8;
+      font: 600 19px 'Space Grotesk', sans-serif;
+    }
+
+    #content .loading-copy p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    @keyframes upload-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+
+    @media (max-width: 950px) {
+      #content .upload-layout {
+        grid-template-columns: minmax(0,1fr);
+      }
+
+      #content .pipeline-panel {
+        order: 2;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #content .upload-panel,
+      #content .pipeline-panel {
+        padding: 18px;
+      }
+
+      #content .upload-dropzone {
+        min-height: 210px;
+        padding: 23px 14px;
+      }
+
+      #content .manual-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      #content .manual-actions .btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #content .spinner {
+        animation-duration: 2s;
+      }
+
+      #content *,
+      #content *::before,
+      #content *::after {
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
 
-  <script>
-    const c=shell("investigator","Upload Report");c.innerHTML=pageHead("Upload Existing Report","Convert an existing report into the same standardized incident representation used for citizen complaints.");
+<script>
+  const c = shell("investigator", "Upload Report");
 
-    c.innerHTML+=`<div class="grid grid-2"><div class="card"><div class="upload" id="drop"><div class="upload-icon">↑</div><h3>Drag & drop report here</h3><p>or</p><button class="btn btn-primary" id="browse">Browse Files</button><input id="file" type="file" accept=".pdf,.txt" hidden><p>PDF, TXT • Prototype limit: 10 MB</p></div><div class="divider"></div><div class="callout-title">Or enter report manually</div><textarea id="manual" placeholder="Paste report text here…"></textarea><button class="btn btn-primary" style="margin-top:12px" id="processManual">Process Report →</button></div><div class="card"><div class="alert alert-info">Prototype behavior: file selection and processing are simulated. The frontend does <strong>not</strong> claim to extract real PDF contents without a backend.</div><div class="section"><h3>Processing pipeline</h3><div class="list"><div class="list-item">1. Reading report</div><div class="list-item">2. Extracting incident details</div><div class="list-item">3. Structuring incident</div><div class="list-item">4. Searching related incidents</div></div></div></div></div>`;
+  c.innerHTML = pageHead(
+    "Upload Existing Report",
+    "Convert an existing report into the same standardized incident representation used for citizen complaints."
+  );
 
-    document.getElementById("browse").onclick=()=>document.getElementById("file").click();document.getElementById("file").onchange=e=>process(e.target.files[0]?.name||"Selected report");document.getElementById("processManual").onclick=()=>process("Manual report");
+  c.innerHTML += `
+    <div class="upload-layout">
 
-    const drop=document.getElementById("drop");drop.ondragover=e=>{e.preventDefault();drop.classList.add("drag")};drop.ondragleave=()=>drop.classList.remove("drag");drop.ondrop=e=>{e.preventDefault();drop.classList.remove("drag");process(e.dataTransfer.files[0]?.name||"Dropped report")};
+      <!-- LEFT: UPLOAD AND MANUAL ENTRY -->
+      <section class="upload-panel">
 
-    function process(name){c.innerHTML=`<div class="loading-screen"><div><div class="spinner"></div><div class="loading-copy"><h3>Processing Report</h3><p>${esc(name)} · Reading · Structuring · Searching related incidents</p></div></div></div>`;setTimeout(()=>location.href="case-details.html?case=CC001",1200)}
-  </script>
+        <div class="panel-heading">
+          <div>
+            <div class="section-kicker">01 / INTAKE</div>
+            <h2>Import an incident report</h2>
+            <p>Select an existing report or enter the report text manually.</p>
+          </div>
+          <span class="format-badge">PDF / TXT</span>
+        </div>
+
+        <div class="upload-dropzone" id="drop">
+          <div class="upload-icon">↑</div>
+
+          <h3>Drag and drop your report</h3>
+          <p>Choose a report stored on your device.</p>
+
+          <button class="btn btn-primary" id="browse" type="button">
+            Browse Files
+          </button>
+
+          <div class="upload-or">or drop a file here</div>
+
+          <p class="upload-formats">PDF OR TXT · MAXIMUM 10 MB</p>
+
+          <input
+            id="file"
+            type="file"
+            accept=".pdf,.txt,application/pdf,text/plain"
+            hidden
+          >
+
+          <div class="selected-file" id="selectedFile">
+            <div class="selected-file-label">Selected report</div>
+            <div class="selected-file-name" id="selectedFileName"></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="manual-heading">
+          <div class="section-kicker">02 / MANUAL ENTRY</div>
+          <h3>Enter report text manually</h3>
+          <p>Paste the available incident narrative into the field below.</p>
+        </div>
+
+        <textarea
+          id="manual"
+          placeholder="Paste the existing cybercrime report here..."
+          aria-label="Manual report text"
+        ></textarea>
+
+        <div class="manual-actions">
+          <span class="manual-hint">Use the text from the report.</span>
+
+          <button
+            class="btn btn-primary"
+            id="processManual"
+            type="button"
+          >
+            Process Report →
+          </button>
+        </div>
+
+        <div class="prototype-note">
+          <span class="prototype-mark">!</span>
+          <div>
+            <strong>Prototype limitation</strong>
+            File selection and processing are simulated. This page does not
+            extract real PDF contents or submit report text to a processing
+            backend.
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT: PROCESSING PIPELINE -->
+      <aside class="pipeline-panel">
+
+        <div class="panel-heading">
+          <div>
+            <div class="section-kicker">03 / WORKFLOW</div>
+            <h2>Processing pipeline</h2>
+            <p>How an imported report is intended to move through LinkageX.</p>
+          </div>
+        </div>
+
+        <p class="pipeline-intro">
+          The intended workflow converts a narrative report into structured
+          incident information that investigators can compare against
+          historical incidents.
+        </p>
+
+        <div class="pipeline-list">
+
+          <div class="pipeline-step">
+            <div class="pipeline-number">01</div>
+            <div>
+              <h4>Read report</h4>
+              <p>Receive a report file or manually entered incident narrative.</p>
+            </div>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="pipeline-number">02</div>
+            <div>
+              <h4>Extract incident details</h4>
+              <p>Identify crime type, channels, entities, actions and other available signals.</p>
+            </div>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="pipeline-number">03</div>
+            <div>
+              <h4>Structure incident</h4>
+              <p>Organize the extracted details into standardized incident fields.</p>
+            </div>
+          </div>
+
+          <div class="pipeline-step">
+            <div class="pipeline-number">04</div>
+            <div>
+              <h4>Compare related incidents</h4>
+              <p>Surface potential historical matches for investigator review.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-kicker">EXPECTED OUTPUT</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-number">↗</div>
+          <div>
+            <h4>Structured case record</h4>
+            <p>Review incident details and potential relationships before drawing conclusions.</p>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  `;
+
+  const browseButton = document.getElementById("browse");
+  const fileInput = document.getElementById("file");
+  const drop = document.getElementById("drop");
+  const selectedFile = document.getElementById("selectedFile");
+  const selectedFileName = document.getElementById("selectedFileName");
+  const manualInput = document.getElementById("manual");
+  const processManual = document.getElementById("processManual");
+
+  let selectedReport = null;
+
+  browseButton.addEventListener("click", () => {
+    fileInput.click();
+  });
+
+  function displaySelectedFile(file) {
+    if (!file) return;
+
+    const extension = file.name.split(".").pop().toLowerCase();
+    const allowedExtensions = ["pdf", "txt"];
+
+    if (!allowedExtensions.includes(extension)) {
+      toast("Please select a PDF or TXT file.");
+      fileInput.value = "";
+      selectedReport = null;
+      selectedFile.classList.remove("visible");
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast("The selected file exceeds the 10 MB prototype limit.");
+      fileInput.value = "";
+      selectedReport = null;
+      selectedFile.classList.remove("visible");
+      return;
+    }
+
+    selectedReport = file;
+    selectedFileName.textContent =
+      file.name + " · " + formatFileSize(file.size);
+
+    selectedFile.classList.add("visible");
+    toast("Report selected. Processing is simulated in this prototype.");
+
+    /* Preserve the existing prototype behavior. */
+    process(file.name);
+  }
+
+  fileInput.addEventListener("change", event => {
+    const file = event.target.files && event.target.files[0];
+
+    if (file) {
+      displaySelectedFile(file);
+    }
+  });
+
+  drop.addEventListener("dragover", event => {
+    event.preventDefault();
+    drop.classList.add("drag");
+  });
+
+  drop.addEventListener("dragleave", () => {
+    drop.classList.remove("drag");
+  });
+
+  drop.addEventListener("drop", event => {
+    event.preventDefault();
+    drop.classList.remove("drag");
+
+    const file = event.dataTransfer.files &&
+      event.dataTransfer.files[0];
+
+    if (file) {
+      displaySelectedFile(file);
+    }
+  });
+
+  processManual.addEventListener("click", () => {
+    const reportText = manualInput.value.trim();
+
+    if (!reportText) {
+      toast("Please enter report text before processing.");
+      manualInput.focus();
+      return;
+    }
+
+    process("Manual report");
+  });
+
+  function formatFileSize(bytes) {
+    if (!bytes) return "0 bytes";
+    if (bytes < 1024) return bytes + " bytes";
+    if (bytes < 1024 * 1024) {
+      return (bytes / 1024).toFixed(1) + " KB";
+    }
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+  }
+
+  function process(name) {
+    c.innerHTML = `
+      <div class="loading-screen">
+        <div>
+          <div class="spinner"></div>
+
+          <div class="loading-copy">
+            <div class="section-kicker">LINKAGEX / INTAKE</div>
+            <h3>Processing Report</h3>
+            <p>
+              ${esc(name)} · Reading · Structuring · Searching related incidents
+            </p>
+            <p style="margin-top:8px;color:#5b6a80">
+              Demo workflow — report extraction is simulated.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => {
+      location.href = "case-details.html?case=CC001";
+    }, 1200);
+  }
+</script>
 
 </body>
 </html>

@@ -12,22 +12,20 @@
 
     <title>LinkageX — Extracted Incident</title>
 
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{--void:#05070d;--panel:#0a0f18;--panel-2:#0d1420;--line:rgba(148,197,224,.14);--line-strong:rgba(148,197,224,.28);--ink:#e9f1f8;--ink-dim:#8fa0b6;--ink-faint:#5b6a80;--cyan:#54d9ff;--cyan-soft:rgba(84,217,255,.16);--amber:#ffb454;--amber-soft:rgba(255,180,84,.16);--violet:#b98bff;--green:#5ee69b;--red:#ff7a7a;--sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,sans-serif;--display:'Space Grotesk',var(--sans);--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}html{min-height:100%;background:var(--void)}body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(ellipse at 50% -20%,rgba(84,217,255,.08),transparent 50%),var(--void);font-family:var(--sans);line-height:1.55;font-size:14px}button,input,select,textarea{font:inherit}a{color:var(--cyan);text-decoration:none}a:hover{color:#a6edff}h1,h2,h3,h4,strong,b{color:inherit}h1,h2,h3{font-family:var(--display);letter-spacing:-.025em}h1{font-size:clamp(25px,3vw,36px);line-height:1.15;margin:0 0 8px}h2{font-size:21px;margin:0 0 12px}h3{font-size:16px;margin:0}p{color:var(--ink-dim)}
+.card,.section,.panel{background:linear-gradient(145deg,rgba(13,20,32,.98),rgba(8,13,22,.98));border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 45px rgba(0,0,0,.16)}.card{padding:22px;margin:0 0 18px}.section-head,.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}.page-head{margin:0 0 22px}.page-head p{margin:0;max-width:760px}.section-head{margin-bottom:16px}.section-head h2,.section-head h3{font-family:var(--display)}
+.table-wrap{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:10px}table,.data-table{width:100%;border-collapse:collapse;color:var(--ink)}th{text-align:left;padding:12px 14px;background:rgba(84,217,255,.055);color:var(--ink-dim);font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--line-strong)}td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:rgba(84,217,255,.025)}
+.badge,.status-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);border-radius:999px;padding:4px 9px;font-size:11px;font-weight:600;background:rgba(148,197,224,.07);color:var(--ink-dim)}.badge-success,.status-success{color:var(--green);border-color:rgba(94,230,155,.3);background:rgba(94,230,155,.08)}.badge-warn,.status-warn{color:var(--amber);border-color:rgba(255,180,84,.3);background:rgba(255,180,84,.08)}.badge-danger,.status-danger{color:var(--red);border-color:rgba(255,122,122,.3);background:rgba(255,122,122,.08)}
+.alert{padding:14px 16px;border-radius:10px;border:1px solid var(--line-strong);background:rgba(84,217,255,.06);color:var(--ink-dim)}.alert strong{color:var(--ink)}.alert p{margin:6px 0 0}.alert-info{border-color:rgba(84,217,255,.28);background:rgba(84,217,255,.07)}.alert-warn{border-color:rgba(255,180,84,.3);background:rgba(255,180,84,.07)}
+.btn,.actions a{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line-strong);border-radius:9px;padding:10px 15px;background:rgba(148,197,224,.06);color:var(--ink);font-weight:600;transition:background .15s,border-color .15s;cursor:pointer}.btn:hover,.actions a:hover{background:rgba(84,217,255,.1);border-color:var(--cyan);color:var(--ink)}.btn-primary{background:var(--cyan);border-color:var(--cyan);color:#031018}.btn-primary:hover{background:#a6edff;border-color:#a6edff;color:#031018}.btn-secondary{background:rgba(148,197,224,.05)}.actions{display:flex;flex-wrap:wrap;gap:10px}.divider{height:1px;border:0;background:var(--line);margin:22px 0}
+.incident-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.incident-grid>div,.incident-grid>section{min-width:0;padding:14px 15px;background:rgba(148,197,224,.035);border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere}.incident-grid h4,.incident-grid .label{color:var(--ink-faint);font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}.incident-grid p,.incident-grid .value{margin:0;color:var(--ink)}.entity-context-item{margin:0 0 12px;line-height:1.5;overflow-wrap:anywhere}.entity-context-item:last-child{margin-bottom:0}.context-detail{margin-top:5px;padding-left:10px;border-left:2px solid var(--line-strong);color:var(--ink-dim);font-size:.9em}.context-detail span{color:var(--cyan);font-weight:600}pre,code{font-family:var(--mono)}
+@media(max-width:720px){.card{padding:16px}.incident-grid{grid-template-columns:minmax(0,1fr)}.page-head{gap:10px}th,td{padding:10px}.actions .btn{width:100%}}
 
-    <link
-        rel="stylesheet"
-        href="../css/components.css"
-    >
-
-    <style>
-        .entity-context-item { margin: 0 0 10px; line-height: 1.45; overflow-wrap: anywhere; }
-        .entity-context-item:last-child { margin-bottom: 0; }
-        .context-detail { margin-top: 3px; color: #64748b; font-size: 0.88em; }
-        .context-detail span { font-weight: 600; }
     </style>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 
@@ -406,7 +404,7 @@ function statusFor(value, fieldName) {
 
             function displayContextualDetails(details, fallback, kind) {
                 if (!Array.isArray(details) || details.length === 0) {
-                    return escapeHTML(displayValue(fallback));
+                    return displayValue(fallback);
                 }
 
                 return details.map(item => {
@@ -709,7 +707,11 @@ function statusFor(value, fieldName) {
 
                             field(
                                 "Phone Numbers",
-                                "__LINKAGEX_CONTEXT_PHONES__",
+                                displayContextualDetails(
+                                    incident.phone_details,
+                                    incident.phones,
+                                    "phone"
+                                ),
                                 "phones",
                                 false
                             )
@@ -721,7 +723,11 @@ function statusFor(value, fieldName) {
 
                             field(
                                 "Email Addresses",
-                                "__LINKAGEX_CONTEXT_EMAILS__",
+                                displayContextualDetails(
+                                    incident.email_details,
+                                    incident.emails,
+                                    "email"
+                                ),
                                 "emails",
                                 false
                             )
@@ -733,7 +739,11 @@ function statusFor(value, fieldName) {
 
                             field(
                                 "UPI IDs",
-                                "__LINKAGEX_CONTEXT_UPI__",
+                                displayContextualDetails(
+                                    incident.upi_details,
+                                    incident.upi_ids,
+                                    "upi"
+                                ),
                                 "upi_ids",
                                 false
                             )
@@ -745,7 +755,11 @@ function statusFor(value, fieldName) {
 
                             field(
                                 "URLs",
-                                "__LINKAGEX_CONTEXT_URLS__",
+                                displayContextualDetails(
+                                    incident.url_details,
+                                    incident.urls,
+                                    "url"
+                                ),
                                 "urls",
                                 false
                             )
@@ -791,85 +805,6 @@ function statusFor(value, fieldName) {
                 </div>
 
             `;
-
-            /* =================================================
-               RENDER CONTEXTUAL INDICATORS SAFELY
-
-               The shared field() helper escapes values as text.
-               Keep it for the original layout, then replace only
-               our unique text placeholders with DOM-rendered
-               contextual details. Existing CSS/layout is unchanged.
-            ================================================== */
-
-            function replaceContextPlaceholder(marker, details, fallback, kind) {
-                const walker = document.createTreeWalker(
-                    c,
-                    NodeFilter.SHOW_TEXT
-                );
-
-                const textNodes = [];
-                while (walker.nextNode()) {
-                    if (walker.currentNode.nodeValue.includes(marker)) {
-                        textNodes.push(walker.currentNode);
-                    }
-                }
-
-                for (const textNode of textNodes) {
-                    const sourceText = textNode.nodeValue;
-                    const markerIndex = sourceText.indexOf(marker);
-                    if (markerIndex < 0) continue;
-
-                    const before = sourceText.slice(0, markerIndex);
-                    const after = sourceText.slice(markerIndex + marker.length);
-                    const fragment = document.createDocumentFragment();
-
-                    if (before) {
-                        fragment.appendChild(document.createTextNode(before));
-                    }
-
-                    const template = document.createElement("template");
-                    template.innerHTML = displayContextualDetails(
-                        details,
-                        fallback,
-                        kind
-                    );
-                    fragment.appendChild(template.content);
-
-                    if (after) {
-                        fragment.appendChild(document.createTextNode(after));
-                    }
-
-                    textNode.replaceWith(fragment);
-                }
-            }
-
-            replaceContextPlaceholder(
-                "__LINKAGEX_CONTEXT_PHONES__",
-                incident.phone_details,
-                incident.phones,
-                "phone"
-            );
-
-            replaceContextPlaceholder(
-                "__LINKAGEX_CONTEXT_EMAILS__",
-                incident.email_details,
-                incident.emails,
-                "email"
-            );
-
-            replaceContextPlaceholder(
-                "__LINKAGEX_CONTEXT_UPI__",
-                incident.upi_details,
-                incident.upi_ids,
-                "upi"
-            );
-
-            replaceContextPlaceholder(
-                "__LINKAGEX_CONTEXT_URLS__",
-                incident.url_details,
-                incident.urls,
-                "url"
-            );
 
         }
 

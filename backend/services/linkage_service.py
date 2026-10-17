@@ -1096,9 +1096,10 @@ def find_related_cases(incident, top_k=5):
     # Prefer higher scores, then more distinctive and structured evidence.
     results.sort(
         key=lambda result: (
-            result["score"],
+            bool(result["evidence"]["distinctive"]),
             len(result["evidence"]["distinctive"]),
             len(result["evidence"]["moderate"]),
+            result["score"],
             len(result["evidence"]["common"]),
         ),
         reverse=True,

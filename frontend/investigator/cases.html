@@ -3,22 +3,758 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Case Repository</title>
-  <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
+  <title>Case Repository — LinkageX</title>
 
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       CASE REPOSITORY — PAGE-SPECIFIC UI
+    ===================================================== */
+
+    #content .page-head {
+      margin-bottom: 30px;
+    }
+
+    #content .case-repository-card {
+      min-width: 0;
+      padding: 24px;
+      margin: 0;
+      border: 1px solid rgba(148,197,224,.22);
+      border-radius: 14px;
+      background: linear-gradient(145deg, #0d1420, #080d16);
+      box-shadow: 0 16px 45px rgba(0,0,0,.16);
+    }
+
+    #content .case-repository-card::before,
+    #content .case-repository-card::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      pointer-events: none;
+    }
+
+    #content .case-repository-card::before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid #54d9ff;
+      border-left: 2px solid #54d9ff;
+    }
+
+    #content .case-repository-card::after {
+      right: -1px;
+      bottom: -1px;
+      border-right: 2px solid #54d9ff;
+      border-bottom: 2px solid #54d9ff;
+    }
+
+    /* Search row */
+
+    #content .searchbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    #content .searchbar input {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      margin: 0;
+      padding: 11px 15px;
+      border: 1px solid rgba(148,197,224,.25);
+      border-radius: 8px;
+      outline: none;
+      background: rgba(5,7,13,.72);
+      color: #e9f1f8;
+      font: 400 14px 'IBM Plex Sans', sans-serif;
+      box-shadow: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    #content .searchbar input::placeholder {
+      color: #5b6a80;
+      opacity: 1;
+    }
+
+    #content .searchbar input:focus {
+      border-color: #54d9ff;
+      box-shadow: 0 0 0 3px rgba(84,217,255,.09);
+    }
+
+    #content .searchbar .btn {
+      min-height: 44px;
+      padding: 10px 19px;
+      border: 1px solid rgba(148,197,224,.28);
+      border-radius: 8px;
+      background: rgba(148,197,224,.06);
+      color: #e9f1f8;
+      font: 500 13px 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
+      transition: background .18s, border-color .18s;
+    }
+
+    #content .searchbar .btn:hover {
+      border-color: #54d9ff;
+      background: rgba(84,217,255,.12);
+    }
+
+    /* Filters */
+
+    #content .filters {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 21px;
+    }
+
+    #content .filters select {
+      appearance: none;
+      -webkit-appearance: none;
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 42px;
+      margin: 0;
+      padding: 10px 31px 10px 12px;
+      border: 1px solid rgba(148,197,224,.22);
+      border-radius: 7px;
+      outline: none;
+      background-color: #0a0f18;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2354d9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 11px center;
+      color: #8fa0b6;
+      font: 400 12px 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
+      box-shadow: none;
+      transition: border-color .18s, background-color .18s;
+    }
+
+    #content .filters select:hover {
+      border-color: rgba(84,217,255,.45);
+      color: #e9f1f8;
+    }
+
+    #content .filters select:focus {
+      border-color: #54d9ff;
+      box-shadow: 0 0 0 3px rgba(84,217,255,.08);
+    }
+
+    #content .filters select option {
+      background: #0a0f18;
+      color: #e9f1f8;
+    }
+
+    #content .filter-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0 0 12px;
+      color: #5b6a80;
+      font: 400 11px 'IBM Plex Mono', monospace;
+    }
+
+    #content .filter-meta strong {
+      color: #54d9ff;
+      font-weight: 500;
+    }
+
+    /* Table */
+
+    #content .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      border: 1px solid rgba(148,197,224,.14);
+      border-radius: 10px;
+      background: rgba(5,7,13,.2);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #content .data-table {
+      width: 100%;
+      min-width: 800px;
+      border-collapse: separate;
+      border-spacing: 0;
+      color: #e9f1f8;
+      font: 400 13px 'IBM Plex Sans', sans-serif;
+    }
+
+    #content .data-table thead th {
+      padding: 13px 15px;
+      background: rgba(84,217,255,.055);
+      border: 0;
+      border-bottom: 1px solid rgba(148,197,224,.2);
+      color: #5b6a80;
+      text-align: left;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    #content .data-table tbody td {
+      padding: 15px;
+      border: 0;
+      border-bottom: 1px solid rgba(148,197,224,.1);
+      color: #8fa0b6;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    #content .data-table tbody tr {
+      background: transparent;
+      cursor: pointer;
+      transition: background .16s;
+    }
+
+    #content .data-table tbody tr:hover {
+      background: rgba(84,217,255,.045);
+    }
+
+    #content .data-table tbody tr:focus-visible {
+      outline: 2px solid #54d9ff;
+      outline-offset: -2px;
+    }
+
+    #content .data-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    #content .data-table td:first-child strong {
+      color: #e9f1f8;
+      font: 500 12px 'IBM Plex Mono', monospace;
+    }
+
+    #content .case-id-link {
+      color: #e9f1f8;
+      transition: color .16s;
+    }
+
+    #content .data-table tbody tr:hover .case-id-link {
+      color: #54d9ff;
+    }
+
+    /* Status indicators */
+
+    #content .case-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 9px;
+      border: 1px solid rgba(148,197,224,.22);
+      border-radius: 999px;
+      background: rgba(148,197,224,.06);
+      color: #8fa0b6;
+      font: 500 11px 'IBM Plex Mono', monospace;
+      white-space: nowrap;
+    }
+
+    #content .case-status::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      flex: 0 0 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    #content .case-status.is-new {
+      color: #ffb454;
+      border-color: rgba(255,180,84,.3);
+      background: rgba(255,180,84,.08);
+    }
+
+    #content .case-status.is-review {
+      color: #54d9ff;
+      border-color: rgba(84,217,255,.3);
+      background: rgba(84,217,255,.08);
+    }
+
+    #content .case-status.is-linked {
+      color: #5ee69b;
+      border-color: rgba(94,230,155,.3);
+      background: rgba(94,230,155,.08);
+    }
+
+    #content .case-status.is-unlinked {
+      color: #ffb454;
+      border-color: rgba(255,180,84,.3);
+      background: rgba(255,180,84,.08);
+    }
+
+    #content .case-status.is-flagged {
+      color: #b98bff;
+      border-color: rgba(185,139,255,.3);
+      background: rgba(185,139,255,.08);
+    }
+
+    #content .case-status.is-resolved {
+      color: #5ee69b;
+      border-color: rgba(94,230,155,.3);
+      background: rgba(94,230,155,.08);
+    }
+
+    /* Empty state */
+
+    #content .empty-state {
+      padding: 48px 20px;
+      text-align: center;
+    }
+
+    #content .empty-state .empty-icon {
+      margin-bottom: 12px;
+      color: #54d9ff;
+      font-size: 29px;
+    }
+
+    #content .empty-state h3 {
+      margin: 0 0 8px;
+      color: #e9f1f8;
+      font: 600 17px 'Space Grotesk', sans-serif;
+    }
+
+    #content .empty-state p {
+      color: #8fa0b6;
+      font-size: 13px;
+    }
+
+    #content .empty-state button {
+      margin-top: 18px;
+    }
+
+    /* Responsive layout */
+
+    @media (max-width: 1100px) {
+      #content .filters {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      #content .case-repository-card {
+        padding: 18px;
+      }
+
+      #content .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      #content .case-repository-card {
+        padding: 14px;
+      }
+
+      #content .searchbar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 7px;
+      }
+
+      #content .searchbar .btn {
+        padding: 9px 12px;
+      }
+
+      #content .filters {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      #content .filter-meta {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
   <script src="../js/data.js"></script>
   <script src="../js/app.js"></script>
 
   <script>
-    const c=shell("investigator","Cases");c.innerHTML=pageHead("Case Repository","Search, filter and review standardized cybercrime incidents.");
-    c.innerHTML+=`<div class="card"><div class="searchbar"><input id="search" placeholder="Search case ID, incident type, entity, indicator…"><button class="btn btn-secondary" onclick="document.getElementById('search').value='';render()">Clear</button></div><div class="filters"><select id="category"><option value="">All Categories</option><option>Financial Fraud</option><option>Social Engineering</option></select><select id="type"><option value="">All Crime Types</option><option>Loan Scam</option><option>UPI Fraud</option><option>Phishing</option><option>Fake Job Offer</option></select><select id="channel"><option value="">All Channels</option><option>WhatsApp</option><option>UPI</option><option>Email</option><option>Telegram</option></select><select id="status"><option value="">All Statuses</option><option>New</option><option>Unlinked</option><option>Flagged</option></select><select id="region"><option value="">All Regions</option><option>Mumbai</option><option>Pune</option><option>Delhi</option></select></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Case</th><th>Crime Type</th><th>Date</th><th>Status</th><th>Potential Links</th><th>Region</th><th>Channel</th></tr></thead><tbody id="rows"></tbody></table></div></div>`;
+    const activeQuery = new URLSearchParams(location.search);
+    const initialFilter = (
+      activeQuery.get("filter") || ""
+    ).toLowerCase();
 
-    function render(){let q=document.getElementById("search").value.toLowerCase(),t=document.getElementById("type").value,s=document.getElementById("status").value,r=document.getElementById("region").value,ch=document.getElementById("channel").value;let data=CS.cases.filter(x=>(!q||x.join(" ").toLowerCase().includes(q))&&(!t||x[1]===t)&&(!s||x[3].toLowerCase().includes(s.toLowerCase()))&&(!r||x[5]===r)&&(!ch||x[6]===ch));document.getElementById("rows").innerHTML=data.map(x=>`<tr onclick="location.href='case-details.html?case=${x[0]}'"><td><strong>${x[0]}</strong></td><td>${x[1]}</td><td>${x[2]}</td><td>${badge(x[3])}</td><td>${x[4]}</td><td>${x[5]}</td><td>${x[6]}</td></tr>`).join("")||`<tr><td colspan="7"><div class="empty"><div class="empty-icon">⌕</div><h3>No cases found</h3><p>Try changing the search or filters.</p></div></td></tr>`}
+    const filterNames = {
+      new: "New Cases",
+      unlinked: "Unlinked Cases",
+      flagged: "Flagged Cases"
+    };
 
-    ["search","type","status","region","channel"].forEach(id=>document.getElementById(id).addEventListener("input",render));render();
+    const c = shell("investigator", "Cases");
+
+    /*
+     * Highlight the matching sidebar item when a filtered
+     * case-repository URL is opened.
+     */
+    if (filterNames[initialFilter]) {
+      document.querySelectorAll(".sidebar-nav a").forEach(link => {
+        link.classList.remove("active");
+        link.removeAttribute("aria-current");
+
+        const href = link.getAttribute("href") || "";
+
+        if (href === `cases.html?filter=${initialFilter}`) {
+          link.classList.add("active");
+          link.setAttribute("aria-current", "page");
+        }
+      });
+
+      const breadcrumb = document.querySelector(".topbar-crumb b");
+
+      if (breadcrumb) {
+        breadcrumb.textContent = filterNames[initialFilter];
+      }
+    }
+
+    const heading = filterNames[initialFilter] || "Case Repository";
+
+    const descriptions = {
+      new: "Review newly recorded incidents that require investigator attention.",
+      unlinked: "Review cases without an identified potential linkage.",
+      flagged: "Review incidents flagged for further investigation."
+    };
+
+    c.innerHTML = pageHead(
+      heading,
+      descriptions[initialFilter] ||
+      "Search, filter and review standardized cybercrime incidents."
+    );
+
+    c.innerHTML += `
+      <div class="card case-repository-card">
+
+        <div class="searchbar">
+          <input
+            id="search"
+            type="search"
+            autocomplete="off"
+            placeholder="Search case ID, incident type, entity or indicator..."
+            aria-label="Search cases"
+          >
+
+          <button class="btn btn-secondary" id="clearFilters" type="button">
+            Clear
+          </button>
+        </div>
+
+        <div class="filters">
+          <select id="category" aria-label="Filter by category">
+            <option value="">All Categories</option>
+            <option value="Financial Fraud">Financial Fraud</option>
+            <option value="Social Engineering">Social Engineering</option>
+          </select>
+
+          <select id="type" aria-label="Filter by crime type">
+            <option value="">All Crime Types</option>
+            <option value="Loan Scam">Loan Scam</option>
+            <option value="UPI Fraud">UPI Fraud</option>
+            <option value="Phishing">Phishing</option>
+            <option value="Fake Job Offer">Fake Job Offer</option>
+            <option value="Investment Scam">Investment Scam</option>
+            <option value="Online Shopping Fraud">Online Shopping Fraud</option>
+            <option value="Fraudulent Transfer">Fraudulent Transfer</option>
+          </select>
+
+          <select id="channel" aria-label="Filter by channel">
+            <option value="">All Channels</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="UPI">UPI</option>
+            <option value="Email">Email</option>
+            <option value="Telegram">Telegram</option>
+            <option value="Website">Website</option>
+          </select>
+
+          <select id="status" aria-label="Filter by status">
+            <option value="">All Statuses</option>
+            <option value="New">New</option>
+            <option value="Under Review">Under Review</option>
+            <option value="Potentially Linked">Potentially Linked</option>
+            <option value="Unlinked">Unlinked</option>
+            <option value="Flagged">Flagged</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+
+          <select id="region" aria-label="Filter by region">
+            <option value="">All Regions</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Navi Mumbai">Navi Mumbai</option>
+            <option value="Pune">Pune</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Bengaluru">Bengaluru</option>
+          </select>
+        </div>
+
+        <div class="filter-meta">
+          <span id="resultCount">Loading cases...</span>
+          <span>CASE REPOSITORY / <strong>INVESTIGATOR VIEW</strong></span>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Case ID</th>
+                <th>Crime Type</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Potential Links</th>
+                <th>Region</th>
+                <th>Channel</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+      </div>
+    `;
+
+    const searchInput = document.getElementById("search");
+    const categorySelect = document.getElementById("category");
+    const typeSelect = document.getElementById("type");
+    const channelSelect = document.getElementById("channel");
+    const statusSelect = document.getElementById("status");
+    const regionSelect = document.getElementById("region");
+    const rows = document.getElementById("rows");
+    const resultCount = document.getElementById("resultCount");
+
+    /*
+     * Apply the filter represented by the URL.
+     */
+    if (initialFilter === "new") {
+      statusSelect.value = "New";
+    } else if (initialFilter === "unlinked") {
+      statusSelect.value = "Unlinked";
+    } else if (initialFilter === "flagged") {
+      statusSelect.value = "Flagged";
+    }
+
+    /*
+     * These categories are derived from the existing crime-type
+     * field in the case dataset.
+     */
+    function getCategory(crimeType) {
+      const type = String(crimeType || "").toLowerCase();
+
+      const financialTypes = [
+        "loan scam",
+        "upi fraud",
+        "investment scam",
+        "fraudulent transfer",
+        "online shopping fraud",
+        "payment fraud",
+        "bank fraud"
+      ];
+
+      const socialTypes = [
+        "phishing",
+        "fake job offer",
+        "impersonation",
+        "social engineering"
+      ];
+
+      if (
+        financialTypes.some(item => type.includes(item))
+      ) {
+        return "Financial Fraud";
+      }
+
+      if (
+        socialTypes.some(item => type.includes(item))
+      ) {
+        return "Social Engineering";
+      }
+
+      return "Other";
+    }
+
+    function getStatusClass(status) {
+      const value = String(status || "").toLowerCase();
+
+      if (value.includes("unlinked")) return "is-unlinked";
+      if (value.includes("flagged")) return "is-flagged";
+      if (value.includes("resolved")) return "is-resolved";
+      if (value.includes("review")) return "is-review";
+      if (
+        value.includes("linked") ||
+        value.includes("correlated")
+      ) {
+        return "is-linked";
+      }
+      if (value.includes("new") || value.includes("pending")) {
+        return "is-new";
+      }
+
+      return "";
+    }
+
+    function statusBadge(status) {
+      const className = getStatusClass(status);
+
+      return `
+        <span class="case-status ${className}">
+          ${esc(status || "Not recorded")}
+        </span>
+      `;
+    }
+
+    function render() {
+      const q = searchInput.value.trim().toLowerCase();
+      const category = categorySelect.value;
+      const type = typeSelect.value;
+      const status = statusSelect.value.toLowerCase();
+      const region = regionSelect.value;
+      const channel = channelSelect.value;
+
+      const allCases =
+        typeof CS !== "undefined" && Array.isArray(CS.cases)
+          ? CS.cases
+          : [];
+
+      const filtered = allCases.filter(x => {
+        const caseId = String(x[0] || "");
+        const crimeType = String(x[1] || "");
+        const caseStatus = String(x[3] || "");
+        const caseRegion = String(x[5] || "");
+        const caseChannel = String(x[6] || "");
+
+        const matchesSearch =
+          !q || x.join(" ").toLowerCase().includes(q);
+
+        const matchesCategory =
+          !category || getCategory(crimeType) === category;
+
+        const matchesType =
+          !type || crimeType === type;
+
+        const matchesStatus =
+          !status || caseStatus.toLowerCase().includes(status);
+
+        const matchesRegion =
+          !region || caseRegion === region;
+
+        const matchesChannel =
+          !channel || caseChannel === channel;
+
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesType &&
+          matchesStatus &&
+          matchesRegion &&
+          matchesChannel
+        );
+      });
+
+      resultCount.textContent =
+        `${filtered.length} of ${allCases.length} cases`;
+
+      if (!filtered.length) {
+        rows.innerHTML = `
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <div class="empty-icon">⌕</div>
+                <h3>No matching cases found</h3>
+                <p>Try changing your search or clearing one or more filters.</p>
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  onclick="clearCaseFilters()"
+                >Clear all filters</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      rows.innerHTML = filtered.map(x => {
+        const id = String(x[0] || "");
+        const caseUrl = "case-details.html?case=" +
+          encodeURIComponent(id);
+
+        return `
+          <tr
+            tabindex="0"
+            role="link"
+            aria-label="Open case ${esc(id)}"
+            data-case-url="${esc(caseUrl)}"
+          >
+            <td>
+              <strong class="case-id-link">${esc(id)}</strong>
+            </td>
+            <td>${esc(x[1] || "Not recorded")}</td>
+            <td>${esc(x[2] || "Not recorded")}</td>
+            <td>${statusBadge(x[3])}</td>
+            <td>${esc(x[4] ?? "0")}</td>
+            <td>${esc(x[5] || "Not recorded")}</td>
+            <td>${esc(x[6] || "Not recorded")}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function clearCaseFilters() {
+      searchInput.value = "";
+      categorySelect.value = "";
+      typeSelect.value = "";
+      channelSelect.value = "";
+      statusSelect.value = "";
+      regionSelect.value = "";
+      render();
+    }
+
+    window.clearCaseFilters = clearCaseFilters;
+
+    [
+      searchInput,
+      categorySelect,
+      typeSelect,
+      channelSelect,
+      statusSelect,
+      regionSelect
+    ].forEach(control => {
+      control.addEventListener("input", render);
+      control.addEventListener("change", render);
+    });
+
+    document.getElementById("clearFilters").addEventListener(
+      "click",
+      clearCaseFilters
+    );
+
+    rows.addEventListener("click", event => {
+      const row = event.target.closest("tr[data-case-url]");
+      if (row) {
+        location.href = row.dataset.caseUrl;
+      }
+    });
+
+    rows.addEventListener("keydown", event => {
+      const row = event.target.closest("tr[data-case-url]");
+
+      if (row && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        location.href = row.dataset.caseUrl;
+      }
+    });
+
+    render();
   </script>
-
 </body>
 </html>

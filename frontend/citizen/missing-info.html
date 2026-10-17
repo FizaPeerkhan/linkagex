@@ -1,926 +1,526 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missing Information — LinkageX</title>
 
-    <title>LinkageX — Missing Information</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/components.css">
+<style>
+:root {
+  --void:#05070d;
+  --panel:#0a0f18;
+  --panel-2:#0d1420;
+  --line:rgba(148,197,224,.14);
+  --line-strong:rgba(148,197,224,.28);
+  --ink:#e9f1f8;
+  --ink-dim:#8fa0b6;
+  --ink-faint:#5b6a80;
+  --cyan:#54d9ff;
+  --cyan-soft:rgba(84,217,255,.16);
+  --amber:#ffb454;
+  --amber-soft:rgba(255,180,84,.16);
+  --red:#ff7a7a;
+  --sans:'IBM Plex Sans',sans-serif;
+  --display:'Space Grotesk',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --sidebar-w:248px;
+  --topbar-h:64px;
+}
+*{box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);line-height:1.55}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+button,input,select,textarea{font:inherit}
+h1,h2,h3{font-family:var(--display);margin:0}
+.app-shell{display:flex;min-height:100vh;position:relative}
+.app-shell:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.16;mask-image:radial-gradient(ellipse 90% 70% at 20% 0%,black,transparent 75%)}
+
+.sidebar{position:relative;z-index:2;width:var(--sidebar-w);flex:0 0 var(--sidebar-w);background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 0 18px}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:0 22px 22px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.sidebar-brand svg{width:26px;height:26px;flex:0 0 auto}
+.sidebar-brand span{font-family:var(--display);font-weight:600;font-size:1rem}
+.sidebar-role{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--cyan);padding:16px 22px 10px;text-transform:uppercase}
+.sidebar-nav{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px;flex:1}
+.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:10px 22px;font-size:.9rem;color:var(--ink-dim);border-left:2px solid transparent;transition:.18s}
+.sidebar-nav a svg{width:17px;height:17px;flex:0 0 auto;opacity:.85}
+.sidebar-nav a:hover{color:var(--ink);background:rgba(148,197,224,.05)}
+.sidebar-nav a.active{color:var(--cyan);background:var(--cyan-soft);border-left-color:var(--cyan)}
+.sidebar-foot{padding:14px 22px 0;margin-top:10px;border-top:1px solid var(--line)}
+.sidebar-foot a{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--ink-faint);padding-top:14px}
+.sidebar-foot a:hover{color:var(--red)}
+.sidebar-foot svg{width:16px;height:16px}
+
+.main-col{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{height:var(--topbar-h);flex:0 0 var(--topbar-h);position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 30px;background:rgba(10,15,24,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-crumb{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint)}
+.topbar-crumb b{color:var(--ink-dim);font-weight:500}
+.topbar-user{display:flex;align-items:center;gap:10px}
+.user-chip{width:30px;height:30px;border-radius:50%;background:var(--cyan-soft);border:1px solid var(--line-strong);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:600;font-size:.85rem}
+.user-meta{display:flex;flex-direction:column;line-height:1.25}
+.user-meta b{font-size:.85rem;font-weight:500}
+.user-meta span{font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-transform:uppercase}
+.content{position:relative;z-index:1;padding:34px 34px 70px;max-width:1250px;width:100%;margin:0 auto}
+
+.page-head{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:30px}
+.page-head h1{font-size:clamp(1.4rem,2.4vw,1.9rem);letter-spacing:-.01em;margin-bottom:8px}
+.page-head p{color:var(--ink-dim);font-size:.95rem;max-width:56ch}
+.eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+
+.card{position:relative;background:var(--panel-2);border:1px solid var(--line-strong);padding:24px;min-width:0}
+.card:before,.card:after{content:"";position:absolute;width:14px;height:14px;pointer-events:none}
+.card:before{top:-1px;left:-1px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan)}
+.card:after{bottom:-1px;right:-1px;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan)}
+.steps{display:flex;align-items:center;gap:0;margin:0 0 24px;padding:12px 16px;background:var(--panel);border:1px solid var(--line-strong);overflow-x:auto}
+.step{display:flex;align-items:center;gap:8px;color:var(--ink-faint);font-family:var(--mono);font-size:.7rem;white-space:nowrap}
+.step .num{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--line-strong);background:var(--panel-2)}
+.step.active{color:var(--cyan)}
+.step.active .num{color:var(--cyan);border-color:var(--cyan);background:var(--cyan-soft)}
+.step-line{height:1px;flex:1;min-width:28px;margin:0 12px;background:var(--line-strong)}
+
+.kpi-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.callout-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px}
+.note,.muted{color:var(--ink-dim);font-size:.84rem;line-height:1.65}
+.status{display:inline-flex;align-items:center;gap:7px;padding:4px 9px;border:1px solid rgba(255,180,84,.35);border-radius:999px;font:500 .68rem var(--mono);color:var(--amber);background:var(--amber-soft);white-space:nowrap}
+.status:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.progress{height:5px;background:rgba(148,197,224,.1);overflow:hidden}
+.progress span{display:block;height:100%;background:var(--cyan);transition:width .2s}
+#questionBox{padding-top:2px}
+#questionBox:before{content:"QUESTION";display:block;font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--ink-faint);margin-bottom:7px}
+#questionBox h3{font-size:1.18rem;font-weight:600;margin-bottom:10px}
+.question-description{color:var(--ink-dim);font-size:.9rem;margin-bottom:20px}
+.question-field{max-width:560px}
+input:not([type=radio]):not([type=checkbox]),select,textarea{width:100%;min-height:44px;padding:11px 13px;background:#070c14;border:1px solid var(--line-strong);border-radius:0;color:var(--ink);outline:none}
+textarea{min-height:140px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--ink-faint)}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(84,217,255,.08)}
+input[type=radio],input[type=checkbox]{accent-color:var(--cyan)}
+.option-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.option-card{display:flex;align-items:center;gap:9px;min-height:56px;padding:12px 14px;background:rgba(7,12,20,.72);border:1px solid var(--line-strong);color:var(--ink-dim);font-size:.88rem;cursor:pointer}
+.option-card:has(input:checked){border-color:var(--cyan);background:var(--cyan-soft);color:var(--ink);box-shadow:inset 2px 0 0 var(--cyan)}
+.question-helper{margin-top:8px;font-size:.78rem;color:var(--ink-faint)}
+.checkbox-line{display:flex;align-items:center;gap:9px;margin-top:12px;color:var(--ink-dim);font-size:.85rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border:1px solid var(--line-strong);cursor:pointer;font-weight:500;font-size:.87rem;transition:.2s}
+.btn-primary{background:var(--cyan);color:var(--void);border-color:var(--cyan);clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+.btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--ink)}
+.btn-secondary:hover{border-color:var(--cyan);background:var(--cyan-soft)}
+.alert{padding:16px 18px;border:1px solid var(--line-strong);font-size:.88rem;color:var(--ink-dim);margin-bottom:20px}
+.alert strong{color:var(--ink)}
+.alert p{margin-top:6px}
+.alert-info{border-left:3px solid var(--amber);background:rgba(255,180,84,.05)}
+.alert-danger{border-left:3px solid var(--red);background:rgba(255,122,122,.05)}
+.alert-success{border-left:3px solid #5ee69b;background:rgba(94,230,155,.05)}
+.toast-root{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200}
+.toast{background:var(--panel-2);border:1px solid var(--cyan);padding:11px 18px;box-shadow:0 8px 30px #0008}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);transition:transform .25s;z-index:40}
+  .sidebar.open{transform:translateX(0)}
+  .content{padding:24px 18px 60px}
+  .topbar{padding:0 18px}
+  .option-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .option-grid{grid-template-columns:1fr}
+  .steps{padding:10px 12px}
+  .step-line{margin:0 8px}
+  .card{padding:20px}
+  .kpi-row{flex-direction:column}
+}
+</style>
 </head>
 
 <body>
-
 <script src="../js/data.js"></script>
 <script src="../js/app.js"></script>
 
 <script>
-
-    /* =========================================================
-       APPLICATION SHELL
-    ========================================================== */
-
-    const c = shell("citizen", "Report");
-
-
-    /* =========================================================
-       LOAD NLP ANALYSIS
-    ========================================================== */
-
-    const analysisJSON =
-        sessionStorage.getItem("linkageX_analysis");
-
-
-    if (!analysisJSON) {
-
-        c.innerHTML = pageHead(
-            "No Analysis Found",
-            "We could not find your complaint analysis."
-        );
-
-        c.innerHTML += `
-            <div class="card">
-
-                <div class="alert alert-warn">
-
-                    <strong>
-                        Analysis unavailable.
-                    </strong>
-
-                    <p>
-                        Please return to the complaint page
-                        and submit your complaint again.
-                    </p>
-
-                </div>
-
-                <div class="actions" style="margin-top:18px">
-
-                    <a
-                        class="btn btn-primary"
-                        href="complaint.html"
-                    >
-                        Back to Complaint
-                    </a>
-
-                </div>
-
-            </div>
-        `;
-
-        throw new Error("No NLP analysis found.");
-
-    }
-
-
-    /* =========================================================
-       PARSE ANALYSIS
-    ========================================================== */
-
-    let result;
-
-    try {
-
-        result = JSON.parse(analysisJSON);
-
-    } catch (error) {
-
-        console.error(
-            "Unable to parse analysis:",
-            error
-        );
-
-        c.innerHTML = pageHead(
-            "Analysis Error",
-            "The complaint analysis could not be read."
-        );
-
-        c.innerHTML += `
-            <div class="card">
-
-                <div class="alert alert-warn">
-
-                    <strong>
-                        Invalid analysis data.
-                    </strong>
-
-                    <p>
-                        Please submit your complaint again.
-                    </p>
-
-                </div>
-
-                <div class="actions" style="margin-top:18px">
-
-                    <a
-                        class="btn btn-primary"
-                        href="complaint.html"
-                    >
-                        Back to Complaint
-                    </a>
-
-                </div>
-
-            </div>
-        `;
-
-        throw error;
-
-    }
-
-
-    /* =========================================================
-       GET INCIDENT + MISSING FIELDS
-    ========================================================== */
-
-    const data = result.data || {};
-
-    let incident = {
-        ...(data.incident || {})
-    };
-
-    let missingFields = [
-        ...(data.missing_fields || [])
-    ];
-
-console.log("FULL ANALYSIS:", result);
-console.log("INCIDENT:", incident);
-console.log(
-    "MISSING FIELDS FROM BACKEND:",
-    JSON.stringify(missingFields)
-);
-
-    console.log(
-        "Current incident:",
-        incident
-    );
-
-    console.log(
-        "Missing fields:",
-        missingFields
-    );
-
-    /*
-     * Supplement backend missing_fields with important incident
-     * details that may not have been explicitly marked missing.
-     * A location mentioned as part of a caller's claimed affiliation
-     * is not necessarily the victim's incident location.
-     */
-    // Only a dedicated victim/incident-location field counts here.
-    // Generic extracted mentions may refer to a caller's claimed
-    // organization or another place mentioned in the complaint.
-    const hasIncidentLocation = [
-        incident.incident_location,
-        incident.victim_location
-    ].some(value =>
-        typeof value === "string" && value.trim() !== "" &&
-        value.trim().toLowerCase() !== "unknown"
-    );
-
-    if (!hasIncidentLocation && !missingFields.includes("incident_location")) {
-        missingFields.push("incident_location");
-    }
-
-    const hasIncidentDate =
-        incident.incident_date &&
-        String(incident.incident_date).trim() !== "";
-
-    if (!hasIncidentDate && !missingFields.includes("incident_date")) {
-        missingFields.push("incident_date");
-    }
-
-
-    /* =========================================================
-       NO MISSING INFORMATION
-    ========================================================== */
-
-    if (missingFields.length === 0) {
-
-        c.innerHTML = pageHead(
-            "Incident Information Complete",
-            "We have enough information to continue. Please review your incident before submitting."
-        );
-
-        c.innerHTML += `
-
-            <div class="card">
-
-                <div class="alert alert-success">
-
-                    <strong>
-                        No additional information is required.
-                    </strong>
-
-                    <p>
-                        The system extracted the required
-                        incident information from your complaint.
-                    </p>
-
-                </div>
-
-                <div class="actions" style="margin-top:20px">
-
-                    <a
-                        class="btn btn-primary"
-                        href="review.html"
-                    >
-                        Continue to Review →
-                    </a>
-
-                    <a
-                        class="btn btn-secondary"
-                        href="extraction.html"
-                    >
-                        Back
-                    </a>
-
-                </div>
-
-            </div>
-        `;
-
-    }
-
-
-    /* =========================================================
-       QUESTION DEFINITIONS
-    ========================================================== */
-
-    else {
-
-        const questionDefinitions = {
-
-            payment_method: {
-                title: "How did you make the payment?",
-                description:
-                    "Please select the method you used to send the money.",
-                html: `
-                    <div class="grid grid-3">
-
-                        ${[
-                            "UPI",
-                            "Bank Transfer",
-                            "Credit/Debit Card",
-                            "Mobile Wallet",
-                            "Cash",
-                            "Other"
-                        ].map(method => `
-                            <label
-                                class="card"
-                                style="cursor:pointer;margin:0"
-                            >
-                                <input
-                                    type="radio"
-                                    name="payment_method"
-                                    value="${method}"
-                                >
-                                ${method}
-                            </label>
-                        `).join("")}
-
-                    </div>
-                `
-            },
-
-
-            crime_category: {
-                title: "What type of cybercrime occurred?",
-                description:
-                    "Please select the category that best describes your incident.",
-                html: `
-                    <select
-                        id="crime_category"
-                        class="input"
-                        style="width:100%"
-                    >
-                        <option value="">Select a category</option>
-                        <option>Financial Fraud</option>
-                        <option>Hacking & Unauthorized Access</option>
-                        <option>E-Commerce & Job Fraud</option>
-                        <option>Ransomware & Malware</option>
-                        <option>Social Media Crimes</option>
-                        <option>Online Harassment & Threats</option>
-                        <option>Others</option>
-                    </select>
-                `
-            },
-
-
-            crime_subcategory: {
-                title: "What type of cybercrime best describes your complaint?",
-                description:
-                    "Please select the option that best matches your incident.",
-                html: `
-                    <input
-                        id="crime_subcategory"
-                        class="input"
-                        type="text"
-                        placeholder="Enter the type of cybercrime"
-                        style="width:100%"
-                    >
-                `
-            },
-
-
-            modus_operandi: {
-                title: "How did the person carry out the scam or attack?",
-                description:
-                    "Briefly describe the method used.",
-                html: `
-                    <textarea
-                        id="modus_operandi"
-                        class="input"
-                        rows="4"
-                        placeholder="For example: fake loan offer, phishing link, impersonation..."
-                        style="width:100%"
-                    ></textarea>
-                `
-            },
-
-
-            deception: {
-                title: "How were you deceived?",
-                description:
-                    "Describe how the person convinced or misled you.",
-                html: `
-                    <textarea
-                        id="deception"
-                        class="input"
-                        rows="4"
-                        placeholder="For example: fake offer, impersonation, false promise..."
-                        style="width:100%"
-                    ></textarea>
-                `
-            },
-
-
-            victim_action: {
-                title: "What action did you take?",
-                description:
-                    "Select or describe the action you took after interacting with the person.",
-                html: `
-                    <select
-                        id="victim_action"
-                        class="input"
-                        style="width:100%"
-                    >
-                        <option value="">Select an action</option>
-                        <option>Paid</option>
-                        <option>Clicked a Link</option>
-                        <option>Shared Information</option>
-                        <option>Downloaded a File</option>
-                        <option>Logged In</option>
-                        <option>Contacted the Person</option>
-                        <option>Other</option>
-                    </select>
-                `
-            },
-
-
-            attacker_action: {
-                title: "What did the person do?",
-                description:
-                    "Describe the action taken by the suspected attacker or scammer.",
-                html: `
-                    <textarea
-                        id="attacker_action"
-                        class="input"
-                        rows="4"
-                        placeholder="For example: requested payment, sent a phishing link..."
-                        style="width:100%"
-                    ></textarea>
-                `
-            },
-
-
-            outcome: {
-                title: "What happened after the incident?",
-                description:
-                    "Select or describe the outcome.",
-                html: `
-                    <select
-                        id="outcome"
-                        class="input"
-                        style="width:100%"
-                    >
-                        <option value="">Select an outcome</option>
-                        <option>Money Lost</option>
-                        <option>Account Compromised</option>
-                        <option>Data Stolen</option>
-                        <option>Scammer Stopped Responding</option>
-                        <option>Threat Continued</option>
-                        <option>Other</option>
-                    </select>
-                `
-            },
-
-
-            channels: {
-                title: "How did the person contact you?",
-                description:
-                    "Select the communication channel used.",
-                html: `
-                    <div class="grid grid-3">
-
-                        ${[
-                            "WhatsApp",
-                            "Phone Call",
-                            "SMS",
-                            "Email",
-                            "Website",
-                            "Social Media",
-                            "Other"
-                        ].map(channel => `
-                            <label
-                                class="card"
-                                style="cursor:pointer;margin:0"
-                            >
-                                <input
-                                    type="radio"
-                                    name="channels"
-                                    value="${channel}"
-                                >
-                                ${channel}
-                            </label>
-                        `).join("")}
-
-                    </div>
-                `
-            },
-            incident_date: {
-                title: "When did this incident happen?",
-                description: "Enter the date if you know it. You can choose “I don't know” if you're unsure.",
-                html: `
-                    <input
-                        type="date"
-                        id="incident_date"
-                        class="input"
-                        style="width:100%"
-                    >
-
-                    <label style="display:block;margin-top:12px">
-                        <input type="checkbox" id="dateUnknown">
-                        I don't know
-                    </label>
-                `
-            },
-
-            incident_location: {
-                title: "Where were you when the incident happened?",
-                description: "Enter the city, area, or place where you were affected. A location mentioned in a caller's claimed identity does not count as your incident location.",
-                html: `
-                    <input
-                        type="text"
-                        id="incident_location"
-                        class="input"
-                        placeholder="Enter city, area, or place"
-                        style="width:100%"
-                    >
-
-                    <label style="display:block;margin-top:12px">
-                        <input type="checkbox" id="locationUnknown">
-                        I don't know / prefer not to provide it
-                    </label>
-                `
-            },
-
-
-            amounts: {
-                title: "How much money was involved?",
-                description:
-                    "Enter the amount involved in the incident.",
-                html: `
-                    <input
-                        id="amounts"
-                        class="input"
-                        type="number"
-                        min="0"
-                        placeholder="Enter amount in INR"
-                        style="width:100%"
-                    >
-                `
-            }
-
-        };
-
-
-        /* =====================================================
-           FILTER TO SUPPORTED QUESTIONS
-        ====================================================== */
-
-        let questions =
-            missingFields
-                .map(field => ({
-                    field,
-                    definition:
-                        questionDefinitions[field]
-                }))
-                .filter(item => item.definition);
-
-
-        /*
-         * If the backend reports a field that does not have
-         * a questionnaire yet, we do not invent a question.
-         */
-
-
-        /* =====================================================
-           PAGE HEADER
-        ====================================================== */
-
-        c.innerHTML = pageHead(
-            "Help us complete your incident",
-            "We identified some information that may need confirmation."
-        );
-
-
-        /* =====================================================
-           NO SUPPORTED QUESTIONS
-        ====================================================== */
-
-        if (questions.length === 0) {
-
-            c.innerHTML += `
-
-                <div class="card">
-
-                    <div class="alert alert-info">
-
-                        <strong>
-                            Additional information may be required.
-                        </strong>
-
-                        <p>
-                            Some fields require confirmation, but
-                            there is currently no questionnaire
-                            available for them.
-                        </p>
-
-                    </div>
-
-                    <div class="actions" style="margin-top:20px">
-
-                        <a
-                            class="btn btn-primary"
-                            href="review.html"
-                        >
-                            Continue to Review →
-                        </a>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-
-
-        /* =====================================================
-           ADAPTIVE QUESTIONNAIRE
-        ====================================================== */
-
-        else {
-
-            let currentQuestion = 0;
-
-            c.innerHTML += `
-
-                <div class="card">
-
-                    <div class="kpi-row">
-
-                        <div>
-
-                            <div class="callout-title">
-                                Adaptive questionnaire
-                            </div>
-
-                            <h3
-                                id="questionCounter"
-                                style="margin:0"
-                            >
-                                Question 1 of ${questions.length}
-                            </h3>
-
-                        </div>
-
-                        <span class="status status-new">
-                            Only relevant missing fields
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="progress"
-                        style="margin:18px 0 25px"
-                    >
-                        <span
-                            id="progressBar"
-                            style="width:${100 / questions.length}%"
-                        ></span>
-                    </div>
-
-
-                    <div id="questionBox"></div>
-
-
-                    <div
-                        class="actions"
-                        style="margin-top:22px"
-                    >
-
-                        <button
-                            class="btn btn-secondary"
-                            id="backQ"
-                            style="display:none"
-                        >
-                            ← Back
-                        </button>
-
-                        <button
-                            class="btn btn-primary"
-                            id="nextQ"
-                        >
-                            Next →
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-
-            /* =================================================
-               RENDER QUESTION
-            ================================================== */
-
-            function renderQuestion() {
-
-                const item =
-                    questions[currentQuestion];
-
-                document.getElementById(
-                    "questionCounter"
-                ).textContent =
-                    `Question ${currentQuestion + 1} of ${questions.length}`;
-
-
-                document.getElementById(
-                    "progressBar"
-                ).style.width =
-                    `${((currentQuestion + 1) / questions.length) * 100}%`;
-
-
-                document.getElementById(
-                    "questionBox"
-                ).innerHTML = `
-
-                    <h3>
-                        ${item.definition.title}
-                    </h3>
-
-                    <p
-                        style="
-                            margin-top:-8px;
-                            margin-bottom:20px;
-                            opacity:.75;
-                        "
-                    >
-                        ${item.definition.description}
-                    </p>
-
-                    ${item.definition.html}
-
-                `;
-
-
-                document.getElementById(
-                    "backQ"
-                ).style.display =
-                    currentQuestion > 0
-                        ? "inline-flex"
-                        : "none";
-
-
-                document.getElementById(
-                    "nextQ"
-                ).textContent =
-                    currentQuestion === questions.length - 1
-                        ? "Continue to Review →"
-                        : "Next →";
-
-            }
-
-
-            /* =================================================
-               READ CURRENT ANSWER
-            ================================================== */
-
-            function getAnswer(field) {
-                if (
-                    field === "incident_date" &&
-                    document.getElementById("dateUnknown")?.checked
-                ) {
-                    return "Unknown";
-                }
-
-                if (
-                    field === "incident_location" &&
-                    document.getElementById("locationUnknown")?.checked
-                ) {
-                    return "Unknown";
-                }
-
-                const radios = document.querySelectorAll(
-                    `input[name="${field}"]:checked`
-                );
-
-                if (radios.length > 0) {
-                    return radios[0].value;
-                }
-
-                const input = document.getElementById(field);
-
-                if (input) {
-                    return input.value.trim();
-                }
-
-                return "";
-            }
-
-
-            /* =================================================
-               SAVE CURRENT ANSWER
-            ================================================== */
-
-            function saveCurrentAnswer() {
-
-                const field =
-                    questions[currentQuestion].field;
-
-                const answer =
-                    getAnswer(field);
-
-
-                if (!answer) {
-
-                    alert(
-                        "Please provide an answer before continuing."
-                    );
-
-                    return false;
-
-                }
-
-
-                /*
-                 * Convert single-value answers into the same
-                 * structure expected by the incident object.
-                 */
-
-                const listFields = [
-                    "modus_operandi",
-                    "deception",
-                    "victim_action",
-                    "attacker_action",
-                    "outcome",
-                    "channels",
-                    "payment_method"
-                ];
-
-
-                if (listFields.includes(field)) {
-
-                    incident[field] = [answer];
-
-                } else if (field === "amounts") {
-
-                    incident[field] = [
-                        Number(answer)
-                    ];
-
-                } else if (field === "incident_location") {
-
-                    incident.incident_location = answer;
-
-                    // Keep the existing locations field compatible with
-                    // downstream pages while retaining the dedicated value.
-                    incident.locations = answer === "Unknown"
-                        ? []
-                        : [answer];
-
-                } else if (field === "incident_date") {
-
-                    incident.incident_date = answer;
-
-                } else {
-
-                    incident[field] = answer;
-
-                }
-
-
-                return true;
-
-            }
-
-
-            /* =================================================
-               NEXT BUTTON
-            ================================================== */
-
-            document.getElementById(
-                "nextQ"
-            ).onclick = () => {
-
-                if (!saveCurrentAnswer()) {
-                    return;
-                }
-
-
-                if (
-                    currentQuestion <
-                    questions.length - 1
-                ) {
-
-                    currentQuestion++;
-
-                    renderQuestion();
-
-                } else {
-
-                    /*
-                     * Remove fields that have now been completed.
-                     */
-
-                    missingFields =
-                        missingFields.filter(
-                            field =>
-                                !questions.some(
-                                    q =>
-                                        q.field === field
-                                )
-                        );
-
-
-                    /*
-                     * Save updated incident back into
-                     * the same analysis object.
-                     */
-
-                    data.incident = incident;
-
-                    data.missing_fields =
-                        missingFields;
-
-
-                    result.data = data;
-
-
-                    sessionStorage.setItem(
-                        "linkageX_analysis",
-                        JSON.stringify(result)
-                    );
-
-
-                    location.href =
-                        "review.html";
-
-                }
-
-            };
-
-
-            /* =================================================
-               BACK BUTTON
-            ================================================== */
-
-            document.getElementById(
-                "backQ"
-            ).onclick = () => {
-
-                if (currentQuestion > 0) {
-
-                    currentQuestion--;
-
-                    renderQuestion();
-
-                }
-
-            };
-
-
-            renderQuestion();
-
-        }
-    }
-
+(function () {
+  let account = null;
+
+  try {
+    account = JSON.parse(localStorage.getItem("linkageXCitizenAccount") || "null");
+  } catch (error) {}
+
+  const citizenName =
+    (account && account.name) ||
+    sessionStorage.getItem("linkageXCitizenName") ||
+    "Citizen";
+
+  const initial = (citizenName.trim().charAt(0) || "C").toUpperCase();
+
+  const icons = {
+    dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>',
+    complaint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>',
+    list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+    awareness: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M12 8v5M12 16.2h.01"/></svg>',
+    guidance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.5 2.5 0 014.9.8c0 1.7-2.4 2-2.4 3.6M12 17.2h.01"/></svg>',
+    signout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>'
+  };
+
+  const navItems = [
+    ["dashboard", "Dashboard", "dashboard.html"],
+    ["complaint", "Submit Complaint", "complaint.html"],
+    ["list", "My Complaints", "complaints.html"],
+    ["awareness", "Regional Awareness", "awareness.html"],
+    ["guidance", "Safety Center", "guidance.html"]
+  ];
+
+  const navHtml = navItems.map(([icon, label, href]) => `
+    <li><a class="${label === "Submit Complaint" ? "active" : ""}" href="${href}">
+      ${icons[icon]}<span>${label}</span>
+    </a></li>
+  `).join("");
+
+  const brand = '<svg viewBox="0 0 30 30"><circle cx="8" cy="9" r="2.6" fill="#54d9ff"/><circle cx="22" cy="8" r="2.2" fill="#54d9ff"/><circle cx="15" cy="21" r="2.6" fill="#ffb454"/><path d="M8 9L22 8M8 9L15 21M22 8L15 21" stroke="#54d9ff" stroke-width="1" opacity=".55"/></svg>';
+
+  document.body.innerHTML = `
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">${brand}<span>LinkageX</span></div>
+        <div class="sidebar-role">Citizen Portal</div>
+        <ul class="sidebar-nav">${navHtml}</ul>
+        <div class="sidebar-foot">
+          <a href="#" id="signOutLink">${icons.signout}<span>Sign out</span></a>
+        </div>
+      </aside>
+      <div class="main-col">
+        <header class="topbar">
+          <div class="topbar-crumb">LinkageX / <b>Report</b></div>
+          <a class="topbar-user" href="profile.html" aria-label="Open profile">
+            <div class="user-meta"><b>${escapeHtml(citizenName)}</b><span>citizen</span></div>
+            <div class="user-chip">${initial}</div>
+          </a>
+        </header>
+        <main class="content" id="pageContent"></main>
+      </div>
+    </div>
+    <div id="toast-root" class="toast-root"></div>
+  `;
+
+  const signOut = document.getElementById("signOutLink");
+  if (signOut) {
+    signOut.addEventListener("click", function (event) {
+      event.preventDefault();
+      if (typeof toast === "function") toast("Signed out (prototype only).");
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[char]));
+  }
+})();
 </script>
 
+<script>
+const c = document.getElementById("pageContent");
+
+function pageHead(title, subtitle) {
+  return `<div class="page-head">
+    <div><div class="eyebrow">LinkageX Intelligence</div>
+    <h1>${title}</h1><p>${subtitle || ""}</p></div>
+  </div>`;
+}
+
+const analysisJSON = sessionStorage.getItem("linkageX_analysis");
+
+if (!analysisJSON) {
+  c.innerHTML = pageHead("No Analysis Found", "We could not find your complaint analysis.") +
+    `<div class="card"><div class="alert alert-danger"><strong>Analysis unavailable.</strong>
+    <p>Please return to the complaint page and submit your complaint again.</p></div>
+    <a class="btn btn-primary" href="complaint.html">Back to Complaint</a></div>`;
+} else {
+  let result;
+
+  try {
+    result = JSON.parse(analysisJSON);
+  } catch (error) {
+    console.error("Unable to parse analysis:", error);
+    c.innerHTML = pageHead("Analysis Error", "The complaint analysis could not be read.") +
+      `<div class="card"><div class="alert alert-danger"><strong>Invalid analysis data.</strong>
+      <p>Please submit your complaint again.</p></div>
+      <a class="btn btn-primary" href="complaint.html">Back to Complaint</a></div>`;
+    throw error;
+  }
+
+  const data = result.data || {};
+  const incident = {...(data.incident || {})};
+  let missingFields = [...(data.missing_fields || [])];
+
+  const hasLocation = [
+    incident.incident_location,
+    incident.victim_location
+  ].some(value => typeof value === "string" &&
+    value.trim() !== "" && value.trim().toLowerCase() !== "unknown");
+
+  if (!hasLocation && !missingFields.includes("incident_location")) {
+    missingFields.push("incident_location");
+  }
+
+  const hasDate = incident.incident_date &&
+    String(incident.incident_date).trim() !== "";
+
+  if (!hasDate && !missingFields.includes("incident_date")) {
+    missingFields.push("incident_date");
+  }
+
+  const definitions = {
+    payment_method: {
+      title: "How did you make the payment?",
+      description: "Select the method you used to send the money.",
+      type: "radio",
+      options: ["UPI", "Bank Transfer", "Credit/Debit Card", "Mobile Wallet", "Cash", "Other"]
+    },
+    crime_category: {
+      title: "What type of cybercrime occurred?",
+      description: "Select the category that best describes your incident.",
+      type: "select",
+      options: ["Financial Fraud", "Hacking & Unauthorized Access", "E-Commerce & Job Fraud", "Ransomware & Malware", "Social Media Crimes", "Online Harassment & Threats", "Others"]
+    },
+    crime_subcategory: {
+      title: "What type of cybercrime best describes your complaint?",
+      description: "Select or enter the option that best matches your incident.",
+      type: "text",
+      placeholder: "Enter the type of cybercrime"
+    },
+    modus_operandi: {
+      title: "How did the person carry out the scam or attack?",
+      description: "Briefly describe the method used.",
+      type: "textarea",
+      placeholder: "For example: fake loan offer, phishing link, impersonation..."
+    },
+    deception: {
+      title: "How were you deceived?",
+      description: "Describe how the person convinced or misled you.",
+      type: "textarea",
+      placeholder: "For example: fake offer, impersonation, false promise..."
+    },
+    victim_action: {
+      title: "What action did you take?",
+      description: "Select the action you took after interacting with the person.",
+      type: "select",
+      options: ["Paid", "Clicked a Link", "Shared Information", "Downloaded a File", "Logged In", "Contacted the Person", "Other"]
+    },
+    attacker_action: {
+      title: "What did the person do?",
+      description: "Describe the suspected attacker's action.",
+      type: "textarea",
+      placeholder: "For example: requested payment, sent a phishing link..."
+    },
+    outcome: {
+      title: "What happened after the incident?",
+      description: "Select the outcome that best describes what happened.",
+      type: "select",
+      options: ["Money Lost", "Account Compromised", "Data Stolen", "Scammer Stopped Responding", "Threat Continued", "Other"]
+    },
+    channels: {
+      title: "How did the person contact you?",
+      description: "Select the communication channel used.",
+      type: "radio",
+      options: ["WhatsApp", "Phone Call", "SMS", "Email", "Website", "Social Media", "Other"]
+    },
+    incident_date: {
+      title: "When did this incident happen?",
+      description: "Enter the date if known, or select “I don't know”.",
+      type: "date"
+    },
+    incident_location: {
+      title: "Where were you when the incident happened?",
+      description: "Enter the city, area, or place where you were affected. A caller's claimed affiliation does not count as your incident location.",
+      type: "text",
+      placeholder: "Enter city, area, or place"
+    },
+    amounts: {
+      title: "How much money was involved?",
+      description: "Enter the amount involved in the incident in INR.",
+      type: "number",
+      placeholder: "Enter amount in INR"
+    }
+  };
+
+  function renderInput(field, definition) {
+    const value = incident[field];
+    const existing = Array.isArray(value) ? value[0] : value;
+
+    if (definition.type === "radio") {
+      return `<div class="option-grid">${definition.options.map(option => `
+        <label class="option-card">
+          <input type="radio" name="${field}" value="${option}" ${existing === option ? "checked" : ""}>
+          <span>${option}</span>
+        </label>`).join("")}</div>`;
+    }
+
+    if (definition.type === "select") {
+      return `<div class="question-field"><select id="answerInput">
+        <option value="">Select an option</option>
+        ${definition.options.map(option => `<option ${existing === option ? "selected" : ""}>${option}</option>`).join("")}
+      </select></div>`;
+    }
+
+    if (definition.type === "textarea") {
+      return `<div class="question-field"><textarea id="answerInput" placeholder="${definition.placeholder || ""}">${existing || ""}</textarea></div>`;
+    }
+
+    if (definition.type === "date") {
+      const dateValue = typeof existing === "string" && /^\d{4}-\d{2}-\d{2}$/.test(existing) ? existing : "";
+      return `<div class="question-field">
+        <input id="answerInput" type="date" value="${dateValue}">
+        <label class="checkbox-line"><input type="checkbox" id="unknownInput"> I don't know</label>
+        <p class="question-helper">Use the date when the incident actually occurred, if known.</p>
+      </div>`;
+    }
+
+    if (definition.type === "number") {
+      return `<div class="question-field"><input id="answerInput" type="number" min="0" placeholder="${definition.placeholder || ""}" value="${existing ?? ""}"></div>`;
+    }
+
+    const unknownLocation = field === "incident_location" && existing === "Unknown";
+    return `<div class="question-field">
+      <input id="answerInput" type="text" placeholder="${definition.placeholder || ""}" value="${unknownLocation ? "" : existing || ""}">
+      ${field === "incident_location" ? `<label class="checkbox-line"><input type="checkbox" id="unknownInput" ${unknownLocation ? "checked" : ""}> I don't know / prefer not to provide it</label>` : ""}
+    </div>`;
+  }
+
+  const questions = missingFields
+    .map(field => ({field, definition: definitions[field]}))
+    .filter(item => item.definition);
+
+  if (questions.length === 0) {
+    if (missingFields.length === 0) {
+      c.innerHTML = pageHead("Incident Information Complete", "We have enough information to continue.") +
+        `<div class="card"><div class="alert alert-success"><strong>No additional information is required.</strong>
+        <p>The system extracted the required incident information from your complaint.</p></div>
+        <div class="actions"><a class="btn btn-primary" href="review.html">Continue to Review →</a>
+        <a class="btn btn-secondary" href="extraction.html">Back</a></div></div>`;
+    } else {
+      c.innerHTML = pageHead("Help us complete your incident", "Some fields need confirmation.") +
+        `<div class="card"><div class="alert alert-info"><strong>Additional information may be required.</strong>
+        <p>Some fields require confirmation, but there is currently no questionnaire available for them.</p></div>
+        <a class="btn btn-primary" href="review.html">Continue to Review →</a></div>`;
+    }
+  } else {
+    let currentQuestion = 0;
+    const listFields = ["modus_operandi", "deception", "victim_action", "attacker_action", "outcome", "channels", "payment_method"];
+
+    c.innerHTML = pageHead("Help us complete your incident", "We identified some information that may need confirmation.") +
+      `<div class="steps">
+        <div class="step"><span class="num">1</span> Describe</div><div class="step-line"></div>
+        <div class="step active"><span class="num">2</span> Understand</div><div class="step-line"></div>
+        <div class="step"><span class="num">3</span> Review</div><div class="step-line"></div>
+        <div class="step"><span class="num">4</span> Submit</div>
+      </div>
+      <div class="card">
+        <div class="kpi-row">
+          <div><div class="callout-title">Adaptive questionnaire</div>
+          <h3 id="questionCounter">Question 1 of ${questions.length}</h3>
+          <p class="note" style="margin-top:5px">Only relevant missing information is requested.</p></div>
+          <span class="status">Only relevant missing fields</span>
+        </div>
+        <div class="progress" style="margin:18px 0 25px"><span id="progressBar"></span></div>
+        <div id="questionBox"></div>
+        <div class="actions">
+          <button class="btn btn-secondary" id="backQ" style="display:none">← Back</button>
+          <button class="btn btn-primary" id="nextQ">Next →</button>
+        </div>
+      </div>`;
+
+    function getCurrentAnswer(field) {
+      if ((field === "incident_date" || field === "incident_location") &&
+          document.getElementById("unknownInput")?.checked) return "Unknown";
+
+      const radios = document.querySelectorAll(`input[name="${field}"]:checked`);
+      if (radios.length) return radios[0].value;
+
+      const input = document.getElementById("answerInput");
+      return input ? input.value.trim() : "";
+    }
+
+    function renderQuestion() {
+      const item = questions[currentQuestion];
+
+      document.getElementById("questionCounter").textContent =
+        `Question ${currentQuestion + 1} of ${questions.length}`;
+
+      document.getElementById("progressBar").style.width =
+        `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+      document.getElementById("questionBox").innerHTML = `
+        <h3>${item.definition.title}</h3>
+        <p class="question-description">${item.definition.description}</p>
+        ${renderInput(item.field, item.definition)}
+      `;
+
+      document.getElementById("backQ").style.display =
+        currentQuestion > 0 ? "inline-flex" : "none";
+
+      document.getElementById("nextQ").textContent =
+        currentQuestion === questions.length - 1 ? "Continue to Review →" : "Next →";
+    }
+
+    function saveAnswer() {
+      const field = questions[currentQuestion].field;
+      const answer = getCurrentAnswer(field);
+
+      if (answer === "" || answer === null || answer === undefined) {
+        alert("Please provide an answer before continuing.");
+        return false;
+      }
+
+      if (listFields.includes(field)) {
+        incident[field] = [answer];
+      } else if (field === "amounts") {
+        const amount = Number(answer);
+        if (!Number.isFinite(amount) || amount < 0) {
+          alert("Please enter a valid amount.");
+          return false;
+        }
+        incident[field] = [amount];
+      } else if (field === "incident_location") {
+        incident.incident_location = answer;
+        incident.locations = answer === "Unknown" ? [] : [answer];
+      } else {
+        incident[field] = answer;
+      }
+
+      return true;
+    }
+
+    document.getElementById("nextQ").addEventListener("click", function () {
+      if (!saveAnswer()) return;
+
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      } else {
+        data.incident = incident;
+        data.missing_fields = missingFields.filter(
+          field => !questions.some(question => question.field === field)
+        );
+        result.data = data;
+
+        sessionStorage.setItem("linkageX_analysis", JSON.stringify(result));
+        location.href = "review.html";
+      }
+    });
+
+    document.getElementById("backQ").addEventListener("click", function () {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+      }
+    });
+
+    renderQuestion();
+  }
+}
+</script>
 </body>
 </html>

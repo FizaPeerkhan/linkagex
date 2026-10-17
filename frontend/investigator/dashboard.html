@@ -2,24 +2,1110 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Investigator Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Investigator Dashboard — LinkageX</title>
+
   <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       LINKAGEX — INVESTIGATOR DASHBOARD
+       Sidebar and transparent topbar come from app.js.
+    ===================================================== */
+
+    #content {
+      min-width: 0;
+      color: #e9f1f8;
+    }
+
+    #content .page-head {
+      align-items: flex-end;
+      margin-bottom: 27px;
+    }
+
+    #content .page-head h1 {
+      color: #e9f1f8;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(25px, 2.4vw, 34px);
+      line-height: 1.2;
+    }
+
+    #content .page-head p {
+      max-width: 700px;
+      color: #8fa0b6;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    #content .page-head .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 41px;
+      padding: 10px 17px;
+      border: 1px solid #54d9ff;
+      border-radius: 0;
+      background: #54d9ff;
+      color: #05070d;
+      font: 600 12px 'IBM Plex Sans', sans-serif;
+      text-decoration: none;
+      white-space: nowrap;
+      clip-path: polygon(
+        9px 0,
+        100% 0,
+        100% calc(100% - 9px),
+        calc(100% - 9px) 100%,
+        0 100%,
+        0 9px
+      );
+      transition: background .18s, transform .18s;
+    }
+
+    #content .page-head .btn:hover {
+      background: #a6edff;
+      border-color: #a6edff;
+      color: #05070d;
+      transform: translateY(-1px);
+    }
+
+    /* Dashboard section labels */
+
+    #content .dash-kicker {
+      margin-bottom: 7px;
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    #content .dash-section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 29px 0 15px;
+    }
+
+    #content .dash-section-heading h2 {
+      margin: 0 0 5px;
+      color: #e9f1f8;
+      font: 600 19px 'Space Grotesk', sans-serif;
+    }
+
+    #content .dash-section-heading p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    #content .dash-section-link {
+      color: #54d9ff;
+      font: 500 11px 'IBM Plex Mono', monospace;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    #content .dash-section-link:hover {
+      color: #a6edff;
+    }
+
+    /* =====================================================
+       KPI CARDS
+    ===================================================== */
+
+    #content .dashboard-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    #content .dashboard-metric {
+      position: relative;
+      min-width: 0;
+      min-height: 155px;
+      padding: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(148,197,224,.18);
+      border-radius: 0;
+      background: linear-gradient(145deg, #0d1420, #080d16);
+      box-shadow: 0 12px 30px rgba(0,0,0,.13);
+      transition: border-color .18s, transform .18s;
+    }
+
+    #content .dashboard-metric:hover {
+      border-color: rgba(84,217,255,.4);
+      transform: translateY(-2px);
+    }
+
+    #content .dashboard-metric::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      width: 13px;
+      height: 13px;
+      border-top: 2px solid #54d9ff;
+      border-left: 2px solid #54d9ff;
+      pointer-events: none;
+    }
+
+    #content .metric-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #content .metric-label {
+      color: #8fa0b6;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .055em;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    #content .metric-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      border: 1px solid rgba(84,217,255,.2);
+      background: rgba(84,217,255,.06);
+      color: #54d9ff;
+      font-size: 17px;
+    }
+
+    #content .metric-value {
+      margin-top: 18px;
+      color: #e9f1f8;
+      font: 600 clamp(27px, 2.5vw, 34px)/1 'Space Grotesk', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #content .metric-bottom {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 11px;
+      color: #5b6a80;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    #content .metric-indicator {
+      width: 6px;
+      height: 6px;
+      flex: 0 0 6px;
+      border-radius: 50%;
+      background: #54d9ff;
+    }
+
+    #content .metric-indicator.amber {
+      background: #ffb454;
+    }
+
+    #content .metric-indicator.green {
+      background: #5ee69b;
+    }
+
+    #content .metric-indicator.violet {
+      background: #b98bff;
+    }
+
+    /* =====================================================
+       MAIN DASHBOARD GRID
+    ===================================================== */
+
+    #content .dashboard-main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, .85fr);
+      align-items: stretch;
+      gap: 18px;
+    }
+
+    #content .dashboard-panel {
+      position: relative;
+      min-width: 0;
+      padding: 21px;
+      border: 1px solid rgba(148,197,224,.19);
+      border-radius: 0;
+      background: linear-gradient(145deg, #0d1420, #080d16);
+      color: #e9f1f8;
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    }
+
+    #content .dashboard-panel::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid #54d9ff;
+      border-left: 2px solid #54d9ff;
+      pointer-events: none;
+    }
+
+    #content .dashboard-panel-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    #content .dashboard-panel-heading h3 {
+      margin: 0 0 5px;
+      color: #e9f1f8;
+      font: 600 16px 'Space Grotesk', sans-serif;
+    }
+
+    #content .dashboard-panel-heading p {
+      color: #8fa0b6;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    #content .panel-mini-label {
+      color: #5b6a80;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* =====================================================
+       RECENT CASES TABLE
+    ===================================================== */
+
+    #content .recent-cases-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #content .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      border: 1px solid rgba(148,197,224,.13);
+      border-radius: 0;
+      background: rgba(5,7,13,.18);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #content .data-table {
+      width: 100%;
+      min-width: 570px;
+      border-collapse: separate;
+      border-spacing: 0;
+      color: #e9f1f8;
+      font: 400 12px 'IBM Plex Sans', sans-serif;
+    }
+
+    #content .data-table thead th {
+      padding: 12px 13px;
+      background: rgba(84,217,255,.045);
+      border: 0;
+      border-bottom: 1px solid rgba(148,197,224,.18);
+      color: #5b6a80;
+      text-align: left;
+      font: 500 9px 'IBM Plex Mono', monospace;
+      letter-spacing: .065em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    #content .data-table tbody td {
+      padding: 14px 13px;
+      border: 0;
+      border-bottom: 1px solid rgba(148,197,224,.1);
+      color: #8fa0b6;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    #content .data-table tbody tr {
+      cursor: pointer;
+      transition: background .16s;
+    }
+
+    #content .data-table tbody tr:hover {
+      background: rgba(84,217,255,.045);
+    }
+
+    #content .data-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    #content .data-table tbody td strong {
+      color: #e9f1f8;
+      font: 500 11px 'IBM Plex Mono', monospace;
+    }
+
+    #content .case-id-link {
+      color: #e9f1f8;
+      text-decoration: none;
+    }
+
+    #content .data-table tbody tr:hover .case-id-link {
+      color: #54d9ff;
+    }
+
+    #content .data-table .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border: 1px solid rgba(148,197,224,.2);
+      border-radius: 999px;
+      background: rgba(148,197,224,.05);
+      color: #8fa0b6;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      white-space: nowrap;
+    }
+
+    #content .data-table .status::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      flex: 0 0 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    #content .data-table .status-new,
+    #content .data-table .status-pending {
+      border-color: rgba(255,180,84,.28);
+      background: rgba(255,180,84,.06);
+      color: #ffb454;
+    }
+
+    #content .data-table .status-reviewed,
+    #content .data-table .status-review {
+      border-color: rgba(84,217,255,.28);
+      background: rgba(84,217,255,.06);
+      color: #54d9ff;
+    }
+
+    #content .data-table .status-linked,
+    #content .data-table .status-resolved {
+      border-color: rgba(94,230,155,.28);
+      background: rgba(94,230,155,.06);
+      color: #5ee69b;
+    }
+
+    #content .data-table .status-flagged {
+      border-color: rgba(185,139,255,.28);
+      background: rgba(185,139,255,.06);
+      color: #b98bff;
+    }
+
+    #content .recent-cases-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      color: #5b6a80;
+      font: 400 10px 'IBM Plex Mono', monospace;
+    }
+
+    #content .text-link {
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    #content .text-link:hover {
+      color: #a6edff;
+    }
+
+    /* =====================================================
+       ACTIVITY CHART
+    ===================================================== */
+
+    #content .activity-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #content .activity-summary {
+      padding: 15px;
+      border: 1px solid rgba(148,197,224,.14);
+      background: rgba(5,7,13,.3);
+    }
+
+    #content .activity-summary-label {
+      color: #8fa0b6;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    #content .activity-summary-value {
+      margin-top: 8px;
+      color: #54d9ff;
+      font: 600 28px/1.1 'Space Grotesk', sans-serif;
+    }
+
+    #content .activity-summary-note {
+      margin-top: 6px;
+      color: #5b6a80;
+      font-size: 11px;
+    }
+
+    #content .activity-chart {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0,1fr));
+      align-items: end;
+      gap: 9px;
+      height: 195px;
+      margin-top: 22px;
+      padding: 16px 10px 0;
+      border-bottom: 1px solid rgba(148,197,224,.19);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 43px,
+        rgba(148,197,224,.08) 44px,
+        transparent 45px
+      );
+    }
+
+    #content .activity-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      height: 100%;
+    }
+
+    #content .activity-bar {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      max-width: 34px;
+      min-height: 27px;
+      padding-top: 7px;
+      background: linear-gradient(
+        180deg,
+        rgba(84,217,255,.88),
+        rgba(84,217,255,.18)
+      );
+      border: 1px solid rgba(84,217,255,.26);
+      border-bottom: 0;
+      transition: filter .18s;
+    }
+
+    #content .activity-bar:hover {
+      filter: brightness(1.3);
+    }
+
+    #content .activity-bar span {
+      color: #05070d;
+      font: 600 9px 'IBM Plex Mono', monospace;
+    }
+
+    #content .activity-day {
+      padding-bottom: 8px;
+      color: #5b6a80;
+      font: 500 10px 'IBM Plex Mono', monospace;
+    }
+
+    #content .activity-legend {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 13px;
+      color: #5b6a80;
+      font: 400 10px 'IBM Plex Mono', monospace;
+    }
+
+    #content .legend-key {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    #content .legend-dot {
+      width: 7px;
+      height: 7px;
+      background: #54d9ff;
+    }
+
+    /* =====================================================
+       LOWER PANELS
+    ===================================================== */
+
+    #content .dashboard-bottom-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    #content .research-description {
+      color: #8fa0b6;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    #content .research-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    #content .research-tag {
+      padding: 7px 10px;
+      border: 1px solid rgba(84,217,255,.2);
+      background: rgba(84,217,255,.045);
+      color: #8fa0b6;
+      font: 400 10px 'IBM Plex Mono', monospace;
+    }
+
+    #content .research-principle {
+      display: grid;
+      grid-template-columns: 30px minmax(0,1fr);
+      gap: 12px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(148,197,224,.11);
+    }
+
+    #content .research-principle:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    #content .principle-number {
+      color: #54d9ff;
+      font: 500 11px 'IBM Plex Mono', monospace;
+    }
+
+    #content .research-principle h4 {
+      margin: 0 0 5px;
+      color: #e9f1f8;
+      font: 600 13px 'Space Grotesk', sans-serif;
+    }
+
+    #content .research-principle p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* Investigative guardrail */
+
+    #content .interpretation-panel {
+      border-color: rgba(255,180,84,.2);
+    }
+
+    #content .interpretation-panel::before {
+      border-top-color: #ffb454;
+      border-left-color: #ffb454;
+    }
+
+    #content .interpretation-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    #content .interpretation-icon {
+      display: grid;
+      place-items: center;
+      width: 35px;
+      height: 35px;
+      flex: 0 0 35px;
+      border: 1px solid rgba(255,180,84,.25);
+      background: rgba(255,180,84,.06);
+      color: #ffb454;
+      font-size: 16px;
+    }
+
+    #content .interpretation-title h3 {
+      margin: 0;
+      color: #e9f1f8;
+      font: 600 16px 'Space Grotesk', sans-serif;
+    }
+
+    #content .interpretation-copy {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    #content .interpretation-copy strong {
+      color: #ffb454;
+      font-weight: 600;
+    }
+
+    #content .interpretation-footer {
+      margin-top: 16px;
+      padding-top: 13px;
+      border-top: 1px solid rgba(255,180,84,.15);
+      color: #5b6a80;
+      font: 400 10px/1.7 'IBM Plex Mono', monospace;
+    }
+
+    /* Empty cases */
+
+    #content .dashboard-empty {
+      padding: 25px;
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 1150px) {
+      #content .dashboard-metrics {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+
+      #content .dashboard-main-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+
+      #content .activity-chart {
+        height: 205px;
+      }
+    }
+
+    @media (max-width: 800px) {
+      #content .dashboard-bottom-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      #content .dashboard-metrics {
+        gap: 10px;
+      }
+
+      #content .dashboard-metric {
+        min-height: 140px;
+        padding: 14px;
+      }
+
+      #content .metric-icon {
+        width: 29px;
+        height: 29px;
+        flex-basis: 29px;
+      }
+
+      #content .metric-value {
+        font-size: 27px;
+      }
+
+      #content .dashboard-panel {
+        padding: 16px;
+      }
+
+      #content .activity-chart {
+        gap: 5px;
+        padding-right: 4px;
+        padding-left: 4px;
+      }
+
+      #content .activity-bar span {
+        font-size: 8px;
+      }
+
+      #content .recent-cases-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      #content .page-head .btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
 
-  <script>
-    const c=shell("investigator","Dashboard");c.innerHTML=pageHead("Investigator Intelligence Dashboard","Analyze structured cybercrime incidents and identify potentially related patterns.",`<a class="btn btn-primary" href="upload-report.html">↑ Upload Report</a>`);
+<script>
+  /* =====================================================
+     PAGE SHELL
+  ===================================================== */
 
-    c.innerHTML+=`<div class="grid grid-4"><div class="card metric"><div class="label">Total Cases</div><div class="value">248</div><div class="trend">Repository</div><div class="metric-mark">▤</div></div><div class="card metric"><div class="label">New Cases</div><div class="value">18</div><div class="trend">Requires review</div><div class="metric-mark">＋</div></div><div class="card metric"><div class="label">Potential Linkages</div><div class="value">32</div><div class="trend">Similarity-ranked</div><div class="metric-mark">⌁</div></div><div class="card metric"><div class="label">Unlinked Cases</div><div class="value">41</div><div class="trend">Available for future correlation</div><div class="metric-mark">○</div></div></div>`;
+  const c = shell(
+    "investigator",
+    "Dashboard"
+  );
 
-    c.innerHTML+=`<div class="section grid grid-2"><div class="card"><div class="section-head"><h3>Recent Cases</h3><a class="link-btn" href="cases.html">View repository</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Case ID</th><th>Crime Type</th><th>Date</th><th>Status</th><th>Potential Links</th></tr></thead><tbody>${CS.cases.slice(0,6).map(x=>`<tr onclick="location.href='case-details.html?case=${x[0]}'"><td><strong>${x[0]}</strong></td><td>${x[1]}</td><td>${x[2]}</td><td>${badge(x[3])}</td><td>${x[4]}</td></tr>`).join("")}</tbody></table></div></div><div class="card"><div class="section-head"><h3>Potential Linkage Activity</h3><span>Last 7 days</span></div><div class="chart">${[38,55,44,70,61,83,68].map((v,i)=>`<div class="bar" style="height:${v}%"><span>${v}</span><small>${["M","T","W","T","F","S","S"][i]}</small></div>`).join("")}</div></div></div>`;
+  /* =====================================================
+     PAGE HEADER
+  ===================================================== */
 
-    c.innerHTML+=`<div class="section grid grid-2"><div class="card"><h3>Research lens</h3><p class="card-sub">The platform transforms fragmented reports into standardized incident representations, then ranks potential relationships using measurable signals.</p><div class="tags" style="margin-top:15px">${["Structured fields","Similarity signals","Explainable scores","Clusters","Future correlation"].map(x=>`<span class="tag">${x}</span>`).join("")}</div></div><div class="card"><div class="alert alert-warn"><strong>Interpretation:</strong> Similarity is an investigative lead, not proof of criminal linkage. The interface intentionally uses “potentially related” terminology.</div></div></div>`;
-  </script>
+  c.innerHTML = pageHead(
+    "Investigator Intelligence Dashboard",
+    "Analyze structured cybercrime incidents and identify potentially related patterns.",
+    `<a class="btn btn-primary" href="upload-report.html">↑ Upload Report</a>`
+  );
+
+  /* =====================================================
+     KPI CARDS
+     Original demo figures are preserved.
+  ===================================================== */
+
+  c.innerHTML += `
+    <section class="dashboard-metrics" aria-label="Repository overview">
+
+      <article class="dashboard-metric">
+        <div class="metric-top">
+          <div class="metric-label">Total Cases</div>
+          <div class="metric-icon">▤</div>
+        </div>
+        <div class="metric-value">248</div>
+        <div class="metric-bottom">
+          <span class="metric-indicator"></span>
+          <span>Repository</span>
+        </div>
+      </article>
+
+      <article class="dashboard-metric">
+        <div class="metric-top">
+          <div class="metric-label">New Cases</div>
+          <div class="metric-icon">＋</div>
+        </div>
+        <div class="metric-value">18</div>
+        <div class="metric-bottom">
+          <span class="metric-indicator amber"></span>
+          <span>Requires review</span>
+        </div>
+      </article>
+
+      <article class="dashboard-metric">
+        <div class="metric-top">
+          <div class="metric-label">Potential Linkages</div>
+          <div class="metric-icon">⌁</div>
+        </div>
+        <div class="metric-value">32</div>
+        <div class="metric-bottom">
+          <span class="metric-indicator violet"></span>
+          <span>Similarity-ranked</span>
+        </div>
+      </article>
+
+      <article class="dashboard-metric">
+        <div class="metric-top">
+          <div class="metric-label">Unlinked Cases</div>
+          <div class="metric-icon">○</div>
+        </div>
+        <div class="metric-value">41</div>
+        <div class="metric-bottom">
+          <span class="metric-indicator green"></span>
+          <span>Available for future correlation</span>
+        </div>
+      </article>
+
+    </section>
+  `;
+
+  /* =====================================================
+     RECENT CASES AND ACTIVITY
+  ===================================================== */
+
+  const recentCases = (
+    typeof CS !== "undefined" &&
+    Array.isArray(CS.cases)
+  ) ? CS.cases.slice(0, 6) : [];
+
+  c.innerHTML += `
+    <div class="dash-section-heading">
+      <div>
+        <div class="dash-kicker">Repository / Activity</div>
+        <h2>Investigation Overview</h2>
+        <p>Review the most recent repository entries and the demonstration activity chart.</p>
+      </div>
+    </div>
+
+    <section class="dashboard-main-grid">
+
+      <!-- RECENT CASES -->
+      <article class="dashboard-panel recent-cases-panel">
+
+        <div class="dashboard-panel-heading">
+          <div>
+            <h3>Recent Cases</h3>
+            <p>Latest entries from the case repository dataset.</p>
+          </div>
+
+          <a class="dash-section-link" href="cases.html">
+            View Repository →
+          </a>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Case ID</th>
+                <th>Crime Type</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Links</th>
+              </tr>
+            </thead>
+
+            <tbody id="recentCaseRows">
+              ${
+                recentCases.length
+                  ? recentCases.map(x => `
+                    <tr
+                      tabindex="0"
+                      role="link"
+                      data-case-url="case-details.html?case=${encodeURIComponent(String(x[0] ?? ""))}"
+                      aria-label="Open case ${esc(x[0] ?? "")}"
+                    >
+                      <td>
+                        <strong class="case-id-link">${esc(x[0] ?? "—")}</strong>
+                      </td>
+                      <td>${esc(x[1] ?? "Not recorded")}</td>
+                      <td>${esc(x[2] ?? "Not recorded")}</td>
+                      <td>${badge(x[3] ?? "Unknown")}</td>
+                      <td>${esc(x[4] ?? "0")}</td>
+                    </tr>
+                  `).join("")
+                  : `
+                    <tr>
+                      <td colspan="5">
+                        <div class="dashboard-empty">
+                          No case records are available in CS.cases.
+                        </div>
+                      </td>
+                    </tr>
+                  `
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="recent-cases-footer">
+          <span>SHOWING ${recentCases.length} CASES</span>
+          <a class="text-link" href="cases.html">Explore all cases ↗</a>
+        </div>
+
+      </article>
+
+      <!-- LINKAGE ACTIVITY CHART -->
+      <article class="dashboard-panel activity-panel">
+
+        <div class="dashboard-panel-heading">
+          <div>
+            <h3>Potential Linkage Activity</h3>
+            <p>Illustrative values for the last seven days.</p>
+          </div>
+
+          <span class="panel-mini-label">LAST 7 DAYS</span>
+        </div>
+
+        <div class="activity-summary">
+          <div class="activity-summary-label">
+            Daily activity indicator
+          </div>
+          <div class="activity-summary-value">68</div>
+          <div class="activity-summary-note">
+            Demonstration value for the latest day shown
+          </div>
+        </div>
+
+        <div class="activity-chart" id="activityChart"
+             role="img"
+             aria-label="Illustrative daily potential linkage activity chart">
+          ${[38,55,44,70,61,83,68].map((v,i) => `
+            <div class="activity-column">
+              <div
+                class="activity-bar"
+                style="height:${v}%"
+                title="${v} illustrative activity units"
+              >
+                <span>${v}</span>
+              </div>
+              <div class="activity-day">
+                ${["M","T","W","T","F","S","S"][i]}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="activity-legend">
+          <span class="legend-key">
+            <span class="legend-dot"></span>
+            Activity units
+          </span>
+          <span>ILLUSTRATIVE DATA</span>
+        </div>
+
+      </article>
+
+    </section>
+  `;
+
+  /* =====================================================
+     RESEARCH LENS AND INTERPRETATION
+  ===================================================== */
+
+  c.innerHTML += `
+    <div class="dash-section-heading">
+      <div>
+        <div class="dash-kicker">Methodology / Safeguards</div>
+        <h2>Research and Interpretation</h2>
+        <p>How structured incident information supports exploratory investigation.</p>
+      </div>
+    </div>
+
+    <section class="dashboard-bottom-grid">
+
+      <!-- RESEARCH LENS -->
+      <article class="dashboard-panel">
+
+        <div class="dashboard-panel-heading">
+          <div>
+            <h3>Research Lens</h3>
+            <p>The analytical principles behind LinkageX.</p>
+          </div>
+          <span class="panel-mini-label">OVERVIEW</span>
+        </div>
+
+        <p class="research-description">
+          The platform transforms fragmented reports into standardized incident
+          representations, then ranks potential relationships using measurable
+          signals. Investigators can inspect the surfaced evidence rather than
+          relying only on an unexplained score.
+        </p>
+
+        <div class="research-tags">
+          ${[
+            "Structured fields",
+            "Similarity signals",
+            "Explainable scores",
+            "Incident clusters",
+            "Future correlation"
+          ].map(x => `
+            <span class="research-tag">${esc(x)}</span>
+          `).join("")}
+        </div>
+
+        <div class="research-principle" style="margin-top:18px">
+          <div class="principle-number">01</div>
+          <div>
+            <h4>Standardize</h4>
+            <p>Organize narrative reports into comparable incident fields.</p>
+          </div>
+        </div>
+
+        <div class="research-principle">
+          <div class="principle-number">02</div>
+          <div>
+            <h4>Compare</h4>
+            <p>Review overlap in relevant signals and incident patterns.</p>
+          </div>
+        </div>
+
+        <div class="research-principle">
+          <div class="principle-number">03</div>
+          <div>
+            <h4>Validate</h4>
+            <p>Inspect case evidence before drawing investigative conclusions.</p>
+          </div>
+        </div>
+
+      </article>
+
+      <!-- INTERPRETATION GUARDRAIL -->
+      <article class="dashboard-panel interpretation-panel">
+
+        <div class="interpretation-title">
+          <div class="interpretation-icon">!</div>
+          <div>
+            <div class="dash-kicker">Evidence / Caution</div>
+            <h3>Interpretation Guardrail</h3>
+          </div>
+        </div>
+
+        <div class="interpretation-copy">
+          <strong>Similarity is an investigative lead, not proof of criminal linkage.</strong>
+          <br><br>
+          Two reports may share a channel, crime category, or narrative pattern
+          without involving the same perpetrator. Scores and clusters should
+          direct further review, not determine attribution on their own.
+        </div>
+
+        <div class="interpretation-footer">
+          REVIEW UNDERLYING EVIDENCE · CONFIRM CONTEXT · AVOID AUTOMATIC ATTRIBUTION
+        </div>
+
+        <div class="research-principle" style="margin-top:20px">
+          <div class="principle-number">✓</div>
+          <div>
+            <h4>Use explainable evidence</h4>
+            <p>Inspect which features contributed to a surfaced relationship.</p>
+          </div>
+        </div>
+
+        <div class="research-principle">
+          <div class="principle-number">✓</div>
+          <div>
+            <h4>Keep decisions investigator-led</h4>
+            <p>Human review and additional evidence remain essential.</p>
+          </div>
+        </div>
+
+      </article>
+
+    </section>
+  `;
+
+  /* =====================================================
+     RECENT CASE ROW NAVIGATION
+  ===================================================== */
+
+  const recentCaseRows = document.getElementById("recentCaseRows");
+
+  recentCaseRows.addEventListener("click", event => {
+    const row = event.target.closest("[data-case-url]");
+
+    if (row) {
+      window.location.href = row.dataset.caseUrl;
+    }
+  });
+
+  recentCaseRows.addEventListener("keydown", event => {
+    const row = event.target.closest("[data-case-url]");
+
+    if (row && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      window.location.href = row.dataset.caseUrl;
+    }
+  });
+</script>
 
 </body>
 </html>

@@ -2,18 +2,639 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Investigator Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Investigator Profile — LinkageX</title>
+
   <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       LINKAGEX — INVESTIGATOR PROFILE
+       Shared sidebar and header are provided by app.js.
+    ===================================================== */
+
+    #content {
+      min-width: 0;
+      color: #e9f1f8;
+    }
+
+    #content .page-head {
+      margin-bottom: 30px;
+    }
+
+    #content .page-head h1 {
+      color: #e9f1f8;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(25px, 2.4vw, 34px);
+      line-height: 1.2;
+    }
+
+    #content .page-head p {
+      max-width: 700px;
+      color: #8fa0b6;
+      line-height: 1.7;
+    }
+
+    /* Profile page layout */
+
+    #content .profile-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+      align-items: stretch;
+      gap: 20px;
+    }
+
+    #content .profile-card,
+    #content .scope-card {
+      position: relative;
+      min-width: 0;
+      padding: 25px;
+      border: 1px solid rgba(148,197,224,.2);
+      border-radius: 0;
+      background: linear-gradient(145deg, #0d1420, #080d16);
+      box-shadow: 0 16px 45px rgba(0,0,0,.15);
+      color: #e9f1f8;
+    }
+
+    #content .profile-card::before,
+    #content .profile-card::after,
+    #content .scope-card::before,
+    #content .scope-card::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      pointer-events: none;
+    }
+
+    #content .profile-card::before,
+    #content .scope-card::before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid #54d9ff;
+      border-left: 2px solid #54d9ff;
+    }
+
+    #content .profile-card::after,
+    #content .scope-card::after {
+      right: -1px;
+      bottom: -1px;
+      border-right: 2px solid #54d9ff;
+      border-bottom: 2px solid #54d9ff;
+    }
+
+    /* Section heading */
+
+    #content .profile-section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    #content .eyebrow {
+      margin-bottom: 7px;
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    #content .profile-section-heading h2 {
+      margin: 0 0 6px;
+      color: #e9f1f8;
+      font: 600 19px 'Space Grotesk', sans-serif;
+    }
+
+    #content .profile-section-heading p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    #content .account-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border: 1px solid rgba(94,230,155,.28);
+      background: rgba(94,230,155,.06);
+      color: #5ee69b;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    #content .account-badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #5ee69b;
+    }
+
+    /* Avatar and user summary */
+
+    #content .profile-identity {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding: 17px;
+      border: 1px solid rgba(148,197,224,.15);
+      background: rgba(5,7,13,.3);
+    }
+
+    #content .profile-avatar {
+      display: grid;
+      place-items: center;
+      width: 62px;
+      height: 62px;
+      flex: 0 0 62px;
+      border: 1px solid rgba(84,217,255,.35);
+      background: rgba(84,217,255,.1);
+      color: #54d9ff;
+      font: 600 22px 'Space Grotesk', sans-serif;
+    }
+
+    #content .profile-identity-copy {
+      min-width: 0;
+    }
+
+    #content .profile-identity-copy h3 {
+      margin: 0 0 5px;
+      color: #e9f1f8;
+      font: 600 17px 'Space Grotesk', sans-serif;
+      overflow-wrap: anywhere;
+    }
+
+    #content .profile-identity-copy p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    #content .profile-identity-copy .profile-id {
+      margin-top: 4px;
+      color: #5b6a80;
+      font: 400 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .03em;
+    }
+
+    /* Profile form */
+
+    #content .profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 17px;
+    }
+
+    #content .profile-field {
+      min-width: 0;
+    }
+
+    #content .profile-field label {
+      display: block;
+      margin: 0 0 8px;
+      color: #8fa0b6;
+      font: 500 11px 'IBM Plex Mono', monospace;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    #content .profile-field input {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 43px;
+      margin: 0;
+      padding: 11px 13px;
+      border: 1px solid rgba(148,197,224,.23);
+      border-radius: 0;
+      outline: none;
+      background: #060910;
+      color: #e9f1f8;
+      font: 400 13px 'IBM Plex Sans', sans-serif;
+      box-shadow: none;
+      transition: border-color .18s, box-shadow .18s;
+    }
+
+    #content .profile-field input:focus {
+      border-color: #54d9ff;
+      box-shadow: 0 0 0 3px rgba(84,217,255,.08);
+    }
+
+    #content .profile-field input:disabled {
+      border-color: rgba(148,197,224,.12);
+      background: rgba(148,197,224,.035);
+      color: #5b6a80;
+      cursor: not-allowed;
+    }
+
+    #content .field-hint {
+      margin-top: 6px;
+      color: #5b6a80;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    /* Buttons */
+
+    #content .profile-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 5px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(148,197,224,.13);
+    }
+
+    #content .profile-actions .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 41px;
+      padding: 10px 17px;
+      border: 1px solid rgba(148,197,224,.28);
+      border-radius: 0;
+      background: transparent;
+      color: #e9f1f8;
+      font: 500 12px 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
+      transition: background .18s, border-color .18s;
+    }
+
+    #content .profile-actions .btn-primary {
+      border-color: #54d9ff;
+      background: #54d9ff;
+      color: #05070d;
+      font-weight: 600;
+      clip-path: polygon(
+        9px 0,
+        100% 0,
+        100% calc(100% - 9px),
+        calc(100% - 9px) 100%,
+        0 100%,
+        0 9px
+      );
+    }
+
+    #content .profile-actions .btn-primary:hover {
+      border-color: #a6edff;
+      background: #a6edff;
+    }
+
+    #content .profile-actions .btn-secondary:hover {
+      border-color: #54d9ff;
+      background: rgba(84,217,255,.08);
+    }
+
+    /* Platform scope */
+
+    #content .scope-intro {
+      margin-bottom: 20px;
+      color: #8fa0b6;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    #content .scope-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #content .scope-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(148,197,224,.11);
+    }
+
+    #content .scope-item:last-child {
+      border-bottom: 0;
+    }
+
+    #content .scope-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      border: 1px solid rgba(84,217,255,.22);
+      background: rgba(84,217,255,.055);
+      color: #54d9ff;
+      font-size: 15px;
+    }
+
+    #content .scope-item h3 {
+      margin: 1px 0 5px;
+      color: #e9f1f8;
+      font: 600 13px 'Space Grotesk', sans-serif;
+    }
+
+    #content .scope-item p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    /* Scope tags */
+
+    #content .scope-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    #content .scope-tag {
+      display: inline-flex;
+      padding: 6px 9px;
+      border: 1px solid rgba(148,197,224,.18);
+      background: rgba(148,197,224,.04);
+      color: #8fa0b6;
+      font: 400 10px 'IBM Plex Mono', monospace;
+    }
+
+    /* Disclosure note */
+
+    #content .scope-note {
+      margin-top: 21px;
+      padding: 14px;
+      border: 1px solid rgba(255,180,84,.2);
+      border-left: 3px solid #ffb454;
+      background: rgba(255,180,84,.04);
+      color: #8fa0b6;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    #content .scope-note strong {
+      color: #ffb454;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 950px) {
+      #content .profile-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      #content .profile-card,
+      #content .scope-card {
+        padding: 18px;
+      }
+
+      #content .profile-identity {
+        align-items: flex-start;
+        padding: 13px;
+      }
+
+      #content .profile-avatar {
+        width: 49px;
+        height: 49px;
+        flex-basis: 49px;
+        font-size: 18px;
+      }
+
+      #content .profile-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      #content .profile-actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
 
-  <script>
-    const c=shell("investigator","Profile");c.innerHTML=pageHead("Investigator Profile","Demo account and workspace preferences.");c.innerHTML+=`<div class="grid grid-2"><div class="card"><label>Name<input value="Investigator Demo"></label><label>User ID<input value="INV-0042"></label><label>Role<input value="Investigator" disabled></label><button class="btn btn-primary" onclick="toast('Settings saved locally for this demo.')">Save Changes</button></div><div class="card"><h3>Platform scope</h3><p class="card-sub">This prototype supports structured incident review, similarity exploration, clustering, saving and flagging. It is not a full police case-management system.</p><div class="tags" style="margin-top:14px">${["Case repository","Explainable linkage","Clusters","Future correlation"].map(x=>`<span class="tag">${x}</span>`).join("")}</div></div></div>`;
-  </script>
+<script>
+  const c = shell("investigator", "Profile");
+
+  c.innerHTML = pageHead(
+    "Investigator Profile",
+    "Manage your demo account details and review the scope of the LinkageX investigation workspace."
+  );
+
+  c.innerHTML += `
+    <div class="profile-layout">
+
+      <!-- ACCOUNT DETAILS -->
+      <section class="profile-card">
+
+        <div class="profile-section-heading">
+          <div>
+            <div class="eyebrow">Account / Settings</div>
+            <h2>Account Details</h2>
+            <p>Demo investigator account information.</p>
+          </div>
+
+          <span class="account-badge">Demo Account</span>
+        </div>
+
+        <div class="profile-identity">
+          <div class="profile-avatar" id="profileAvatar">IN</div>
+
+          <div class="profile-identity-copy">
+            <h3 id="profileDisplayName">Investigator Demo</h3>
+            <p>Investigator workspace</p>
+            <p class="profile-id">IDENTIFIER · INV-0042</p>
+          </div>
+        </div>
+
+        <form id="profileForm" class="profile-form">
+
+          <div class="profile-field">
+            <label for="profileName">Name</label>
+            <input
+              id="profileName"
+              name="name"
+              type="text"
+              value="Investigator Demo"
+              autocomplete="name"
+              required
+            >
+            <p class="field-hint">
+              Display name for this prototype account.
+            </p>
+          </div>
+
+          <div class="profile-field">
+            <label for="profileId">User ID</label>
+            <input
+              id="profileId"
+              name="userId"
+              type="text"
+              value="INV-0042"
+              readonly
+            >
+            <p class="field-hint">
+              The demo identifier is read-only.
+            </p>
+          </div>
+
+          <div class="profile-field">
+            <label for="profileRole">Role</label>
+            <input
+              id="profileRole"
+              name="role"
+              type="text"
+              value="Investigator"
+              disabled
+            >
+            <p class="field-hint">
+              Account permissions are not editable from this page.
+            </p>
+          </div>
+
+          <div class="profile-actions">
+            <button class="btn btn-primary" type="submit">
+              Save Changes
+            </button>
+
+            <button class="btn btn-secondary" type="button" id="resetProfile">
+              Reset
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- PLATFORM SCOPE -->
+      <section class="scope-card">
+
+        <div class="profile-section-heading">
+          <div>
+            <div class="eyebrow">Workspace / Capabilities</div>
+            <h2>Platform Scope</h2>
+            <p>What this investigation prototype supports.</p>
+          </div>
+        </div>
+
+        <p class="scope-intro">
+          LinkageX organizes cybercrime reports into structured incidents
+          and helps investigators explore potentially related historical cases.
+        </p>
+
+        <div class="scope-list">
+
+          <div class="scope-item">
+            <div class="scope-icon">▤</div>
+            <div>
+              <h3>Case Repository</h3>
+              <p>Search, filter and review standardized cybercrime records.</p>
+            </div>
+          </div>
+
+          <div class="scope-item">
+            <div class="scope-icon">⌁</div>
+            <div>
+              <h3>Explainable Linkage</h3>
+              <p>Review similarity scores and shared incident signals.</p>
+            </div>
+          </div>
+
+          <div class="scope-item">
+            <div class="scope-icon">◇</div>
+            <div>
+              <h3>Incident Clusters</h3>
+              <p>Explore groups of incidents with potentially common patterns.</p>
+            </div>
+          </div>
+
+          <div class="scope-item">
+            <div class="scope-icon">↗</div>
+            <div>
+              <h3>Future Correlation</h3>
+              <p>Save selected cases for later comparison within the prototype.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="scope-tags">
+          <span class="scope-tag">Case Repository</span>
+          <span class="scope-tag">Similarity Signals</span>
+          <span class="scope-tag">Explainable Scores</span>
+          <span class="scope-tag">Clusters</span>
+          <span class="scope-tag">Future Correlation</span>
+        </div>
+
+        <div class="scope-note">
+          <strong>Important limitation</strong><br>
+          LinkageX assists with exploratory analysis. Similarity scores and
+          cluster membership are investigative leads, not proof of criminal
+          attribution. This prototype is not a full police case-management system.
+        </div>
+
+      </section>
+
+    </div>
+  `;
+
+  const profileForm = document.getElementById("profileForm");
+  const profileName = document.getElementById("profileName");
+  const profileDisplayName = document.getElementById("profileDisplayName");
+  const profileAvatar = document.getElementById("profileAvatar");
+
+  const originalName = "Investigator Demo";
+
+  function updateProfilePreview() {
+    const name = profileName.value.trim() || originalName;
+
+    profileDisplayName.textContent = name;
+
+    profileAvatar.textContent = name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(word => word.charAt(0).toUpperCase())
+      .join("") || "IN";
+  }
+
+  profileName.addEventListener("input", updateProfilePreview);
+
+  profileForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (!profileName.value.trim()) {
+      toast("Please enter a name.");
+      profileName.focus();
+      return;
+    }
+
+    /*
+     * This is a frontend prototype. The save action only shows
+     * demo feedback; it does not update a backend account record.
+     */
+    updateProfilePreview();
+    toast("Settings saved locally for this demo.");
+  });
+
+  document.getElementById("resetProfile").addEventListener("click", () => {
+    profileName.value = originalName;
+    updateProfilePreview();
+    toast("Profile form reset.");
+  });
+
+  updateProfilePreview();
+</script>
 
 </body>
 </html>

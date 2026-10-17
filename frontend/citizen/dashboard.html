@@ -1,21 +1,1069 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Citizen Dashboard</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/components.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Citizen Dashboard — LinkageX</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305070d'/%3E%3Ccircle cx='9' cy='10' r='2.6' fill='%2354d9ff'/%3E%3Ccircle cx='23' cy='9' r='2.2' fill='%2354d9ff'/%3E%3Ccircle cx='16' cy='22' r='2.6' fill='%23ffb454'/%3E%3Cpath d='M9 10 L23 9 M9 10 L16 22 M23 9 L16 22' stroke='%2354d9ff' stroke-width='1' opacity='.6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+  :root {
+    --void: #05070d;
+    --panel: #0a0f18;
+    --panel-2: #0d1420;
+    --line: rgba(148,197,224,.14);
+    --line-strong: rgba(148,197,224,.28);
+    --ink: #e9f1f8;
+    --ink-dim: #8fa0b6;
+    --ink-faint: #5b6a80;
+    --cyan: #54d9ff;
+    --cyan-soft: rgba(84,217,255,.16);
+    --amber: #ffb454;
+    --amber-soft: rgba(255,180,84,.16);
+    --violet: #b98bff;
+    --green: #5ee69b;
+    --red: #ff7a7a;
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --display: 'Space Grotesk', var(--sans);
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sidebar-w: 248px;
+    --topbar-h: 64px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  svg {
+    display: block;
+  }
+
+  ::selection {
+    background: var(--cyan-soft);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--display);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  button {
+    font-family: var(--sans);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: .001ms !important;
+      transition-duration: .001ms !important;
+    }
+  }
+
+  /* Background grid */
+
+  .app-shell {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .app-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: .22;
+    mask-image: radial-gradient(
+      ellipse 90% 70% at 20% 0%,
+      black,
+      transparent 75%
+    );
+  }
+
+  /* SIDEBAR — fixed desktop width */
+
+  .sidebar {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 var(--sidebar-w);
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    max-width: var(--sidebar-w);
+    min-height: 100vh;
+    height: auto;
+    overflow-y: visible;
+    transform: none;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: 22px 0 18px;
+  }
+
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 22px 22px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sidebar-brand svg {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+  }
+
+  .sidebar-brand span {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .sidebar-role {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .04em;
+    color: var(--cyan);
+    padding: 16px 22px 10px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1;
+  }
+
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 22px;
+    font-size: .9rem;
+    color: var(--ink-dim);
+    border-left: 2px solid transparent;
+    transition: color .18s, background .18s, border-color .18s;
+  }
+
+  .sidebar-nav a svg {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+    opacity: .85;
+  }
+
+  .sidebar-nav a:hover {
+    color: var(--ink);
+    background: rgba(148,197,224,.05);
+  }
+
+  .sidebar-nav a.active {
+    color: var(--cyan);
+    background: var(--cyan-soft);
+    border-left-color: var(--cyan);
+  }
+
+  .sidebar-foot {
+    padding: 14px 22px 0;
+    margin-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+
+  .sidebar-foot a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .85rem;
+    color: var(--ink-faint);
+    padding-top: 14px;
+  }
+
+  .sidebar-foot a:hover {
+    color: var(--red);
+  }
+
+  .sidebar-foot a svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+  }
+
+  /* MAIN COLUMN — no duplicate sidebar offset */
+
+  .main-col {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: auto;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  /* HEADER — translucent glass style */
+
+ .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    width: 100%;
+    height: 64px;
+    min-height: 64px;
+    flex: 0 0 64px;
+    padding: 0 30px;
+
+    /* Transparent glass effect */
+    background: rgba(10, 15, 24, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border-bottom: 1px solid rgba(148, 197, 224, 0.14);
+}
+
+  .topbar-crumb {
+    font-family: var(--mono);
+    font-size: .76rem;
+    color: var(--ink-faint);
+    letter-spacing: .02em;
+  }
+
+  .topbar-crumb b {
+    color: var(--ink-dim);
+    font-weight: 500;
+  }
+
+  .topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  .user-chip {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    border-radius: 50%;
+    background: var(--cyan-soft);
+    border: 1px solid var(--line-strong);
+    color: var(--cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: .85rem;
+  }
+
+  .user-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+
+  .user-meta b {
+    font-size: .85rem;
+    font-weight: 500;
+  }
+
+  .user-meta span {
+    font-family: var(--mono);
+    font-size: .68rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  /* PAGE CONTENT */
+
+  .content {
+    position: relative;
+    z-index: 1;
+    padding: 34px 34px 70px;
+    max-width: 1180px;
+    width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+  }
+
+  .page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+
+  .page-head h1 {
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    letter-spacing: -.01em;
+    margin-bottom: 8px;
+  }
+
+  .page-head p {
+    color: var(--ink-dim);
+    font-size: .95rem;
+    max-width: 56ch;
+  }
+
+  /* TOASTS */
+
+  .toast-root {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .toast {
+    background: var(--panel-2);
+    border: 1px solid var(--cyan);
+    color: var(--ink);
+    padding: 11px 18px;
+    font-size: .86rem;
+    font-family: var(--sans);
+    box-shadow: 0 8px 30px rgba(0,0,0,.4);
+    animation: toastIn .25s ease, toastOut .25s ease 2.6s forwards;
+  }
+
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes toastOut {
+    to {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  /* COMPONENTS */
+
+  .grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 960px) {
+    .grid-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .grid-4,
+    .grid-3,
+    .grid-2 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .card {
+    position: relative;
+    background: var(--panel-2);
+    border: 1px solid var(--line-strong);
+    padding: 24px;
+    min-width: 0;
+  }
+
+  .card::before,
+  .card::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+
+  .card::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid var(--cyan);
+    border-left: 2px solid var(--cyan);
+  }
+
+  .card::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid var(--cyan);
+    border-right: 2px solid var(--cyan);
+  }
+
+  .card-title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.02rem;
+    margin: 0 0 6px;
+  }
+
+  .card-sub {
+    font-size: .86rem;
+    color: var(--ink-dim);
+    margin: 0;
+  }
+
+  .action-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .action-card .btn,
+  .action-card > a.btn {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+
+  .section {
+    margin-top: 34px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section-head h3 {
+    font-size: 1.05rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: .87rem;
+    transition: filter .2s, transform .2s, background .2s, border-color .2s;
+  }
+
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--void);
+    clip-path: polygon(
+      9px 0,
+      100% 0,
+      100% calc(100% - 9px),
+      calc(100% - 9px) 100%,
+      0 100%,
+      0 9px
+    );
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--cyan);
+    background: var(--cyan-soft);
+  }
+
+  .link-btn {
+    font-size: .85rem;
+    color: var(--cyan);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .link-btn:hover {
+    text-decoration: underline;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .89rem;
+  }
+
+  .data-table thead th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    padding: 0 14px 10px;
+    border-bottom: 1px solid var(--line-strong);
+    white-space: nowrap;
+  }
+
+  .data-table tbody td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
+
+  .data-table tbody td strong {
+    color: var(--ink);
+    font-weight: 500;
+    font-family: var(--mono);
+    font-size: .85rem;
+  }
+
+  .data-table tbody tr {
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .data-table tbody tr:hover {
+    background: rgba(148,197,224,.05);
+  }
+
+  .data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: .72rem;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+
+  .status-pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+
+  .status-pending {
+    color: var(--amber);
+    background: var(--amber-soft);
+    border-color: rgba(255,180,84,.35);
+  }
+
+  .status-pending::before {
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber);
+  }
+
+  .status-review,
+  .status-under-review {
+    color: var(--cyan);
+    background: var(--cyan-soft);
+    border-color: rgba(84,217,255,.35);
+  }
+
+  .status-review::before,
+  .status-under-review::before {
+    background: var(--cyan);
+    box-shadow: 0 0 6px var(--cyan);
+  }
+
+  .status-resolved {
+    color: var(--green);
+    background: rgba(94,230,155,.12);
+    border-color: rgba(94,230,155,.35);
+  }
+
+  .status-resolved::before {
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  .status-escalated {
+    color: var(--violet);
+    background: rgba(185,139,255,.14);
+    border-color: rgba(185,139,255,.35);
+  }
+
+  .status-escalated::before {
+    background: var(--violet);
+    box-shadow: 0 0 6px var(--violet);
+  }
+
+  .status-default {
+    color: var(--ink-dim);
+    background: rgba(148,197,224,.08);
+    border-color: var(--line-strong);
+  }
+
+  .status-default::before {
+    background: var(--ink-faint);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .list-item {
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .list-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 7px;
+    height: 1.5px;
+    background: var(--cyan);
+  }
+
+  .list-item strong {
+    display: block;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: .92rem;
+    margin-bottom: 4px;
+  }
+
+  .list-item p {
+    font-size: .87rem;
+    color: var(--ink-dim);
+  }
+
+  .alert {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px 18px;
+    border: 1px solid var(--line-strong);
+    font-size: .88rem;
+    color: var(--ink-dim);
+  }
+
+  .alert-info {
+    border-left: 3px solid var(--amber);
+    background: rgba(255,180,84,.05);
+  }
+
+  .alert-danger {
+    border-left: 3px solid var(--red);
+    background: rgba(255,122,122,.05);
+  }
+
+  .alert-success {
+    border-left: 3px solid var(--green);
+    background: rgba(94,230,155,.05);
+  }
+
+  /* MOBILE: same fixed-width drawer, hidden off-canvas */
+
+  @media (max-width: 900px) {
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 40;
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      max-width: var(--sidebar-w);
+      height: 100vh;
+      min-height: 100vh;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform .25s;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .main-col {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .content {
+      padding: 24px 18px 60px;
+    }
+
+    .topbar {
+      padding: 0 18px;
+    }
+  }
+</style>
 </head>
+
 <body>
-    <script src="../js/data.js"></script>
-    <script src="../js/app.js"></script>
-    <script>
-        const c=shell("citizen","Dashboard");
-        c.innerHTML=pageHead("Good evening, Zara","Stay informed. Report safely. Protect yourself from emerging cybercrime patterns.",`<a class="btn btn-primary" href="complaint.html">＋ Submit Complaint</a>`);
-        c.innerHTML+=`<div class="grid grid-4"><div class="card action-card"><h3 class="card-title">Report an Incident</h3><p class="card-sub">Describe what happened and let the system organize the information.</p><a class="btn btn-primary" href="complaint.html">Submit Complaint →</a></div><div class="card action-card"><h3 class="card-title">My Complaints</h3><p class="card-sub">3 submitted incidents</p><strong style="font-size:26px;margin-top:8px">3</strong><a class="btn btn-secondary" href="complaints.html">View Complaints</a></div><div class="card action-card"><h3 class="card-title">Regional Awareness</h3><p class="card-sub">Frequently reported patterns in your region.</p><a class="btn btn-secondary" href="awareness.html">Explore Awareness</a></div><div class="card action-card"><h3 class="card-title">Safety Center</h3><p class="card-sub">Practical actions to take after an incident.</p><a class="btn btn-secondary" href="guidance.html">View Guidance</a></div></div>`;
-        c.innerHTML+=`<div class="section"><div class="card"><div class="section-head"><h3>Recent complaints</h3><a class="link-btn" href="complaints.html">View all</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Case ID</th><th>Type</th><th>Date</th><th>Status</th></tr></thead><tbody>${CS.complaints.map(x=>`<tr onclick="location.href='complaints.html?case=${x[0]}'"><td><strong>${x[0]}</strong></td><td>${x[1]}</td><td>${x[2]}</td><td>${badge(x[3])}</td></tr>`).join("")}</tbody></table></div></div></div>`;
-        c.innerHTML+=`<div class="section grid grid-2"><div class="card"><div class="section-head"><h3>How the platform works</h3></div><div class="list"><div class="list-item"><strong>01 · Describe</strong><p>Tell us what happened in your own words.</p></div><div class="list-item"><strong>02 · Review</strong><p>Check extracted information and answer only relevant missing questions.</p></div><div class="list-item"><strong>03 · Confirm</strong><p>Your corrections remain part of the human validation step.</p></div></div></div><div class="card"><div class="section-head"><h3>Privacy reminder</h3></div><div class="alert alert-info">Never include passwords, OTPs, PINs or banking credentials in a complaint. Review extracted information before confirming.</div></div></div>`;
-    </script>
+<script>
+(function(){
+  var storedAccount = null;
+
+  try {
+    storedAccount = JSON.parse(
+      localStorage.getItem('linkageXCitizenAccount') || 'null'
+    );
+  } catch (err) {}
+
+  var citizenName =
+    (storedAccount && storedAccount.name) ||
+    sessionStorage.getItem('linkageXCitizenName') ||
+    'Citizen';
+
+  var citizenInitial = (citizenName.trim().charAt(0) || 'C').toUpperCase();
+
+  window.LinkageXCitizen = {
+    account: storedAccount || {},
+    name: citizenName,
+    initial: citizenInitial
+  };
+})();
+
+var citizenFirstName =
+  LinkageXCitizen.name.trim().split(/\s+/)[0] || 'Citizen';
+
+(function(){
+
+  /* DEMO DATA */
+
+  var LinkageX = {
+    complaints: [
+      ["INC-4102", "Phishing", "12 Sep 2026", "Under Review"],
+      ["INC-4088", "Fraudulent Transfer", "29 Aug 2026", "Resolved"],
+      ["INC-4071", "Fake Job Offer", "14 Aug 2026", "Pending"]
+    ]
+  };
+
+  /* SHELL HELPERS */
+
+  var ICONS = {
+    dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>',
+
+    complaint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>',
+
+    list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+
+    awareness: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M12 8v5"/><path d="M12 16.2h.01"/></svg>',
+
+    guidance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.5 2.5 0 014.9.8c0 1.7-2.4 2-2.4 3.6"/><path d="M12 17.2h.01"/></svg>',
+
+    signout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>'
+  };
+
+  var NAV = {
+    citizen: [
+      ["dashboard", "Dashboard", "dashboard.html"],
+      ["complaint", "Submit Complaint", "complaint.html"],
+      ["list", "My Complaints", "complaints.html"],
+      ["awareness", "Regional Awareness", "awareness.html"],
+      ["guidance", "Safety Center", "guidance.html"]
+    ]
+  };
+
+  var ROLE_LABEL = {
+    citizen: "Citizen Portal"
+  };
+
+  var ROLE_NAME = {
+    citizen: LinkageXCitizen.name
+  };
+
+  var ROLE_INITIAL = {
+    citizen: LinkageXCitizen.initial
+  };
+
+  var BRAND_SVG = '<svg viewBox="0 0 30 30"><circle cx="8" cy="9" r="2.6" fill="#54d9ff"/><circle cx="22" cy="8" r="2.2" fill="#54d9ff"/><circle cx="15" cy="21" r="2.6" fill="#ffb454"/><path d="M8 9 L22 8 M8 9 L15 21 M22 8 L15 21" stroke="#54d9ff" stroke-width="1" opacity=".55"/></svg>';
+
+  function shell(role, activeLabel) {
+    var navItems = NAV[role] || NAV.citizen;
+
+    var navHtml = navItems.map(function(item) {
+      var key = item[0];
+      var label = item[1];
+      var href = item[2];
+      var active = label === activeLabel ? ' active' : '';
+
+      return '<li><a class="' + active.trim() + '" href="' + href + '">' +
+        (ICONS[key] || '') + '<span>' + label + '</span></a></li>';
+    }).join('');
+
+    document.body.innerHTML =
+      '<div class="app-shell">' +
+        '<aside class="sidebar">' +
+          '<div class="sidebar-brand">' +
+            BRAND_SVG +
+            '<span>LinkageX</span>' +
+          '</div>' +
+          '<div class="sidebar-role">' +
+            (ROLE_LABEL[role] || role) +
+          '</div>' +
+          '<ul class="sidebar-nav">' + navHtml + '</ul>' +
+          '<div class="sidebar-foot">' +
+            '<a href="#" id="signOutLink">' +
+              ICONS.signout +
+              '<span>Sign out</span>' +
+            '</a>' +
+          '</div>' +
+        '</aside>' +
+
+        '<div class="main-col">' +
+          '<header class="topbar">' +
+            '<div class="topbar-crumb">LinkageX / <b>' +
+              activeLabel +
+            '</b></div>' +
+
+            '<a class="topbar-user" href="profile.html" aria-label="Open profile">' +
+              '<div class="user-meta">' +
+                '<b>' + (ROLE_NAME[role] || 'User') + '</b>' +
+                '<span>' + role + '</span>' +
+              '</div>' +
+              '<div class="user-chip">' +
+                (ROLE_INITIAL[role] || 'U') +
+              '</div>' +
+            '</a>' +
+          '</header>' +
+
+          '<main class="content" id="pageContent"></main>' +
+        '</div>' +
+      '</div>' +
+
+      '<div id="toast-root" class="toast-root"></div>';
+
+    document.getElementById('signOutLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      toast('Signed out (prototype only).');
+    });
+
+    return document.getElementById('pageContent');
+  }
+
+  function pageHead(title, subtitle, actionHtml) {
+    return '<div class="page-head">' +
+      '<div><h1>' + title + '</h1><p>' + (subtitle || '') + '</p></div>' +
+      '<div class="page-head-actions">' + (actionHtml || '') + '</div>' +
+      '</div>';
+  }
+
+  var STATUS_CLASS = {
+    "Pending": "status-pending",
+    "Under Review": "status-review",
+    "Resolved": "status-resolved",
+    "Escalated": "status-escalated"
+  };
+
+  function badge(status) {
+    var cls = STATUS_CLASS[status] || "status-default";
+    return '<span class="status-pill ' + cls + '">' + status + '</span>';
+  }
+
+  function toast(msg) {
+    var root = document.getElementById('toast-root');
+    if (!root) return;
+
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    root.appendChild(t);
+
+    setTimeout(function() {
+      t.remove();
+    }, 3000);
+  }
+
+  /* DASHBOARD CONTENT */
+
+  var c = shell("citizen", "Dashboard");
+
+  c.innerHTML = pageHead(
+    "Good evening, " + citizenFirstName,
+    "Stay informed. Report safely. Protect yourself from emerging cybercrime patterns.",
+    '<a class="btn btn-primary" href="complaint.html">＋ Submit Complaint</a>'
+  );
+
+  c.innerHTML +=
+    '<div class="grid grid-4">' +
+
+      '<div class="card action-card">' +
+        '<h3 class="card-title">Report an Incident</h3>' +
+        '<p class="card-sub">Describe what happened and let the system organize the information.</p>' +
+        '<a class="btn btn-primary" href="complaint.html">Submit Complaint →</a>' +
+      '</div>' +
+
+      '<div class="card action-card">' +
+        '<h3 class="card-title">My Complaints</h3>' +
+        '<p class="card-sub">3 submitted incidents</p>' +
+        '<strong style="font-size:26px;margin-top:8px">3</strong>' +
+        '<a class="btn btn-secondary" href="complaints.html">View Complaints</a>' +
+      '</div>' +
+
+      '<div class="card action-card">' +
+        '<h3 class="card-title">Regional Awareness</h3>' +
+        '<p class="card-sub">Frequently reported patterns in your region.</p>' +
+        '<a class="btn btn-secondary" href="awareness.html">Explore Awareness</a>' +
+      '</div>' +
+
+      '<div class="card action-card">' +
+        '<h3 class="card-title">Safety Center</h3>' +
+        '<p class="card-sub">Practical actions to take after an incident.</p>' +
+        '<a class="btn btn-secondary" href="guidance.html">View Guidance</a>' +
+      '</div>' +
+
+    '</div>';
+
+  c.innerHTML +=
+    '<div class="section">' +
+      '<div class="card">' +
+        '<div class="section-head">' +
+          '<h3>Recent complaints</h3>' +
+          '<a class="link-btn" href="complaints.html">View all</a>' +
+        '</div>' +
+
+        '<div class="table-wrap">' +
+          '<table class="data-table">' +
+            '<thead>' +
+              '<tr><th>Case ID</th><th>Type</th><th>Date</th><th>Status</th></tr>' +
+            '</thead>' +
+            '<tbody>' +
+
+              LinkageX.complaints.map(function(x) {
+                return '<tr>' +
+                  '<td><a href="complaints.html"><strong>' + x[0] + '</strong></a></td>' +
+                  '<td>' + x[1] + '</td>' +
+                  '<td>' + x[2] + '</td>' +
+                  '<td>' + badge(x[3]) + '</td>' +
+                '</tr>';
+              }).join('') +
+
+            '</tbody>' +
+          '</table>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  c.innerHTML +=
+    '<div class="section grid grid-2">' +
+
+      '<div class="card">' +
+        '<div class="section-head"><h3>How the platform works</h3></div>' +
+        '<div class="list">' +
+          '<div class="list-item">' +
+            '<strong>01 · Describe</strong>' +
+            '<p>Tell us what happened in your own words.</p>' +
+          '</div>' +
+          '<div class="list-item">' +
+            '<strong>02 · Review</strong>' +
+            '<p>Check extracted information and answer only relevant missing questions.</p>' +
+          '</div>' +
+          '<div class="list-item">' +
+            '<strong>03 · Confirm</strong>' +
+            '<p>Your corrections remain part of the human validation step.</p>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="section-head"><h3>Privacy reminder</h3></div>' +
+        '<div class="alert alert-info">' +
+          'Never include passwords, OTPs, PINs or banking credentials in a complaint. Review extracted information before confirming.' +
+        '</div>' +
+      '</div>' +
+
+    '</div>';
+
+})();
+</script>
 </body>
 </html>

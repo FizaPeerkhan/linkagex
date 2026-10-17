@@ -2,19 +2,710 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Incident Clusters</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Incident Clusters — LinkageX</title>
+
   <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       LINKAGEX — INCIDENT CLUSTERS
+    ===================================================== */
+
+    #content {
+      min-width: 0;
+      color: #e9f1f8;
+    }
+
+    #content .page-head {
+      margin-bottom: 28px;
+    }
+
+    #content .page-head h1 {
+      color: #e9f1f8;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(25px, 2.4vw, 34px);
+      line-height: 1.2;
+    }
+
+    #content .page-head p {
+      max-width: 740px;
+      color: #8fa0b6;
+      line-height: 1.7;
+    }
+
+    /* Overview metrics */
+
+    #content .cluster-overview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    #content .overview-item {
+      min-width: 0;
+      padding: 17px 19px;
+      border: 1px solid rgba(148,197,224,.17);
+      background: linear-gradient(145deg, #0d1420, #080d16);
+    }
+
+    #content .overview-label {
+      margin-bottom: 10px;
+      color: #8fa0b6;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    #content .overview-value {
+      color: #54d9ff;
+      font: 600 28px/1.1 'Space Grotesk', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #content .overview-foot {
+      margin-top: 7px;
+      color: #5b6a80;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* Section heading */
+
+    #content .clusters-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 17px;
+    }
+
+    #content .clusters-heading h2 {
+      margin: 0 0 5px;
+      color: #e9f1f8;
+      font: 600 19px 'Space Grotesk', sans-serif;
+    }
+
+    #content .clusters-heading p {
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    #content .section-kicker {
+      margin-bottom: 6px;
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    #content .cluster-counter {
+      padding: 6px 10px;
+      border: 1px solid rgba(84,217,255,.24);
+      background: rgba(84,217,255,.06);
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      white-space: nowrap;
+    }
+
+    /* Separate cluster cards */
+
+    #content .cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+      gap: 18px;
+    }
+
+    #content .cluster-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 21px;
+      border: 1px solid rgba(148,197,224,.2);
+      border-radius: 0;
+      background: linear-gradient(145deg, #0d1420, #080d16);
+      box-shadow: 0 12px 30px rgba(0,0,0,.16);
+      transition: border-color .2s, background .2s;
+    }
+
+    #content .cluster-card:hover {
+      border-color: rgba(84,217,255,.42);
+      background: linear-gradient(145deg, #101a29, #080d16);
+    }
+
+    #content .cluster-card::before,
+    #content .cluster-card::after {
+      content: "";
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      pointer-events: none;
+    }
+
+    #content .cluster-card::before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid #54d9ff;
+      border-left: 2px solid #54d9ff;
+    }
+
+    #content .cluster-card::after {
+      right: -1px;
+      bottom: -1px;
+      border-right: 2px solid #54d9ff;
+      border-bottom: 2px solid #54d9ff;
+    }
+
+    /* Card header */
+
+    #content .cluster-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    #content .cluster-card-heading {
+      min-width: 0;
+    }
+
+    #content .cluster-index {
+      margin-bottom: 7px;
+      color: #5b6a80;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    #content .cluster-card h3 {
+      margin: 0;
+      color: #e9f1f8;
+      font: 600 17px/1.4 'Space Grotesk', sans-serif;
+      overflow-wrap: anywhere;
+    }
+
+    #content .cluster-count {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 66px;
+      min-height: 66px;
+      padding: 7px 5px;
+      border: 1px solid rgba(84,217,255,.22);
+      background: rgba(84,217,255,.055);
+    }
+
+    #content .cluster-count strong {
+      color: #54d9ff;
+      font: 600 24px/1.1 'Space Grotesk', sans-serif;
+    }
+
+    #content .cluster-count span {
+      margin-top: 4px;
+      color: #8fa0b6;
+      font: 500 9px 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+    }
+
+    /* Case ID network */
+
+    #content .cluster-block {
+      margin-top: 15px;
+    }
+
+    #content .cluster-block-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: #8fa0b6;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    #content .cluster-nodes {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 13px;
+      border: 1px solid rgba(148,197,224,.13);
+      background: rgba(5,7,13,.32);
+      min-height: 55px;
+    }
+
+    #content .node {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 29px;
+      padding: 6px 9px;
+      border: 1px solid rgba(84,217,255,.23);
+      background: rgba(84,217,255,.055);
+      color: #54d9ff;
+      font: 500 10px 'IBM Plex Mono', monospace;
+      overflow-wrap: anywhere;
+    }
+
+    /* Communication channels */
+
+    #content .cluster-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    #content .cluster-channel {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border: 1px solid rgba(148,197,224,.17);
+      background: rgba(148,197,224,.045);
+      color: #8fa0b6;
+      font: 400 10px 'IBM Plex Mono', monospace;
+    }
+
+    #content .cluster-channel::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #54d9ff;
+    }
+
+    /* Cluster metadata */
+
+    #content .cluster-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 17px;
+    }
+
+    #content .cluster-meta-item {
+      min-width: 0;
+      padding: 11px;
+      border: 1px solid rgba(148,197,224,.12);
+      background: rgba(5,7,13,.25);
+    }
+
+    #content .cluster-meta-label {
+      margin-bottom: 6px;
+      color: #5b6a80;
+      font: 500 9px 'IBM Plex Mono', monospace;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    #content .cluster-meta-value {
+      color: #e9f1f8;
+      font: 400 12px/1.55 'IBM Plex Sans', sans-serif;
+      overflow-wrap: anywhere;
+    }
+
+    /* Exploratory analysis disclaimer */
+
+    #content .cluster-disclaimer {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 17px;
+      padding: 13px;
+      border: 1px solid rgba(255,180,84,.2);
+      border-left: 3px solid #ffb454;
+      background: rgba(255,180,84,.04);
+      color: #8fa0b6;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    #content .cluster-disclaimer strong {
+      color: #ffb454;
+    }
+
+    #content .disclaimer-mark {
+      flex: 0 0 auto;
+      color: #ffb454;
+      font: 500 15px 'IBM Plex Mono', monospace;
+    }
+
+    /* Card action */
+
+    #content .cluster-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 17px;
+    }
+
+    #content .cluster-card-actions .cluster-action-label {
+      color: #5b6a80;
+      font: 400 10px 'IBM Plex Mono', monospace;
+    }
+
+    #content .cluster-card-actions button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 9px 13px;
+      border: 1px solid rgba(148,197,224,.25);
+      border-radius: 0;
+      background: transparent;
+      color: #e9f1f8;
+      font: 500 11px 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
+      transition: border-color .18s, background .18s, color .18s;
+    }
+
+    #content .cluster-card-actions button:hover {
+      border-color: #54d9ff;
+      background: rgba(84,217,255,.08);
+      color: #54d9ff;
+    }
+
+    /* Empty state */
+
+    #content .clusters-empty {
+      grid-column: 1 / -1;
+      padding: 45px 20px;
+      border: 1px dashed rgba(148,197,224,.22);
+      background: rgba(5,7,13,.25);
+      text-align: center;
+    }
+
+    #content .clusters-empty h3 {
+      margin: 0 0 8px;
+      color: #e9f1f8;
+      font: 600 18px 'Space Grotesk', sans-serif;
+    }
+
+    #content .clusters-empty p {
+      color: #8fa0b6;
+      font-size: 13px;
+    }
+
+    /* Bottom disclaimer */
+
+    #content .cluster-page-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 24px;
+      padding: 16px;
+      border: 1px solid rgba(148,197,224,.16);
+      background: rgba(5,7,13,.25);
+      color: #8fa0b6;
+      font-size: 12px;
+      line-height: 1.75;
+    }
+
+    #content .cluster-page-note strong {
+      color: #e9f1f8;
+    }
+
+    #content .cluster-page-note-icon {
+      color: #54d9ff;
+      font: 500 16px 'IBM Plex Mono', monospace;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 1000px) {
+      #content .cluster-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
+      #content .cluster-overview {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      #content .overview-item {
+        padding: 14px 16px;
+      }
+
+      #content .overview-value {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      #content .cluster-card {
+        padding: 16px;
+      }
+
+      #content .cluster-meta {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      #content .cluster-card-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      #content .cluster-card-actions button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
 
-  <script>
-    const c=shell("investigator","Potential Linkages");c.innerHTML=pageHead("Incident Clusters","Groups of incidents sharing common structured signals. Clusters are exploratory, not proof of a criminal network.");
-    c.innerHTML+=`<div class="cluster-grid">${CS.clusters.map((x,i)=>`<div class="card cluster-card"><div class="section-head"><h3>${x.name}</h3><span>${x.count} incidents</span></div><div class="cluster-nodes">${x.ids.map(id=>`<span class="node">${id}</span>`).join("")}</div><div class="divider"></div><div class="tags">${x.channels.map(z=>`<span class="tag">${z}</span>`).join("")}</div><p class="note" style="margin-top:10px">Regions: ${x.regions.join(", ")}<br>Date range: ${x.range}</p><button class="btn btn-secondary" onclick="toast('${x.name}: ${x.count} incidents')">View Cluster Details</button></div>`).join("")}</div>`;
-  </script>
+<script>
+  /* =====================================================
+     PAGE SHELL
+  ===================================================== */
+
+  const c = shell(
+    "investigator",
+    "Potential Linkages"
+  );
+
+  /*
+   * This is the clusters page, so highlight its own
+   * navigation item instead of Potential Linkages.
+   */
+  document.querySelectorAll(".sidebar-nav a").forEach(link => {
+    const href = link.getAttribute("href") || "";
+
+    if (href.split("?")[0] === "clusters.html") {
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.classList.remove("active");
+      link.removeAttribute("aria-current");
+    }
+  });
+
+  const breadcrumb = document.querySelector(".topbar-crumb b");
+
+  if (breadcrumb) {
+    breadcrumb.textContent = "Incident Clusters";
+  }
+
+  c.innerHTML = pageHead(
+    "Incident Clusters",
+    "Explore groups of incidents that share structured signals. Each cluster is a starting point for investigation, not proof of a criminal network."
+  );
+
+  /* =====================================================
+     LOAD CLUSTER DATA
+  ===================================================== */
+
+  const clusters = (
+    typeof CS !== "undefined" &&
+    Array.isArray(CS.clusters)
+  ) ? CS.clusters : [];
+
+  const totalIncidents = clusters.reduce(
+    (total, cluster) => total + (Number(cluster.count) || 0),
+    0
+  );
+
+  const allChannels = new Set(
+    clusters.flatMap(cluster =>
+      Array.isArray(cluster.channels) ? cluster.channels : []
+    )
+  );
+
+  c.innerHTML += `
+    <div class="cluster-overview">
+
+      <div class="overview-item">
+        <div class="overview-label">Identified clusters</div>
+        <div class="overview-value">${clusters.length}</div>
+        <div class="overview-foot">Groups available for exploration</div>
+      </div>
+
+      <div class="overview-item">
+        <div class="overview-label">Cluster incident count</div>
+        <div class="overview-value">${totalIncidents}</div>
+        <div class="overview-foot">Sum of incident counts reported by clusters</div>
+      </div>
+
+      <div class="overview-item">
+        <div class="overview-label">Distinct channels</div>
+        <div class="overview-value">${allChannels.size}</div>
+        <div class="overview-foot">Communication channels represented in cluster metadata</div>
+      </div>
+
+    </div>
+
+    <div class="clusters-heading">
+      <div>
+        <div class="section-kicker">Intelligence / Pattern Groups</div>
+        <h2>Cluster Explorer</h2>
+        <p>Review case IDs, channels, regions and date ranges separately for each cluster.</p>
+      </div>
+
+      <span class="cluster-counter">${clusters.length} CLUSTER${clusters.length === 1 ? "" : "S"}</span>
+    </div>
+
+    <div class="cluster-grid" id="clusterGrid"></div>
+
+    <div class="cluster-page-note">
+      <span class="cluster-page-note-icon">ⓘ</span>
+      <div>
+        <strong>Interpretation guidance</strong><br>
+        Clusters group incidents based on the structured data available to the
+        prototype. Shared channels, regions or incident patterns can support
+        further review, but cluster membership does not establish common
+        ownership, a shared attacker, or criminal attribution.
+      </div>
+    </div>
+  `;
+
+  /* =====================================================
+     RENDER CLUSTER CARDS
+  ===================================================== */
+
+  const clusterGrid = document.getElementById("clusterGrid");
+
+  if (!clusters.length) {
+    clusterGrid.innerHTML = `
+      <div class="clusters-empty">
+        <h3>No incident clusters available</h3>
+        <p>The current dataset does not contain any cluster records to display.</p>
+      </div>
+    `;
+  } else {
+    clusterGrid.innerHTML = clusters.map((cluster, index) => {
+      const name = String(cluster.name || `Cluster ${index + 1}`);
+      const count = Number(cluster.count) || 0;
+      const ids = Array.isArray(cluster.ids) ? cluster.ids : [];
+      const channels = Array.isArray(cluster.channels) ? cluster.channels : [];
+      const regions = Array.isArray(cluster.regions) ? cluster.regions : [];
+      const range = String(cluster.range || "Not recorded");
+
+      return `
+        <article class="cluster-card">
+
+          <div class="cluster-card-header">
+            <div class="cluster-card-heading">
+              <div class="cluster-index">
+                CLUSTER / ${String(index + 1).padStart(2, "0")}
+              </div>
+
+              <h3>${esc(name)}</h3>
+            </div>
+
+            <div class="cluster-count">
+              <strong>${count}</strong>
+              <span>Incidents</span>
+            </div>
+          </div>
+
+          <div class="cluster-block">
+            <div class="cluster-block-title">
+              <span>Associated case IDs</span>
+              <span>${ids.length} listed</span>
+            </div>
+
+            <div class="cluster-nodes">
+              ${
+                ids.length
+                  ? ids.map(id => `
+                      <span class="node">${esc(id)}</span>
+                    `).join("")
+                  : '<span class="cluster-action-label">No case IDs recorded</span>'
+              }
+            </div>
+          </div>
+
+          <div class="cluster-block">
+            <div class="cluster-block-title">
+              <span>Communication channels</span>
+            </div>
+
+            <div class="cluster-tags">
+              ${
+                channels.length
+                  ? channels.map(channel => `
+                      <span class="cluster-channel">${esc(channel)}</span>
+                    `).join("")
+                  : '<span class="cluster-action-label">No channels recorded</span>'
+              }
+            </div>
+          </div>
+
+          <div class="cluster-meta">
+            <div class="cluster-meta-item">
+              <div class="cluster-meta-label">Regions</div>
+              <div class="cluster-meta-value">
+                ${regions.length ? regions.map(esc).join(", ") : "Not recorded"}
+              </div>
+            </div>
+
+            <div class="cluster-meta-item">
+              <div class="cluster-meta-label">Date range</div>
+              <div class="cluster-meta-value">${esc(range)}</div>
+            </div>
+          </div>
+
+          <div class="cluster-card-actions">
+            <span class="cluster-action-label">EXPLORATORY GROUPING</span>
+
+            <button
+              type="button"
+              class="view-cluster"
+              data-cluster-index="${index}"
+            >
+              View Cluster Details →
+            </button>
+          </div>
+
+        </article>
+      `;
+    }).join("");
+  }
+
+  /* =====================================================
+     CLUSTER DETAIL ACTION
+  ===================================================== */
+
+  clusterGrid.addEventListener("click", event => {
+    const button = event.target.closest(".view-cluster");
+
+    if (!button) return;
+
+    const index = Number(button.dataset.clusterIndex);
+    const cluster = clusters[index];
+
+    if (!cluster) return;
+
+    const name = String(cluster.name || `Cluster ${index + 1}`);
+    const count = Number(cluster.count) || 0;
+    const ids = Array.isArray(cluster.ids) ? cluster.ids : [];
+
+    toast(
+      `${name}: ${count} incidents · ${ids.length} case IDs listed. Detailed cluster drill-down is not implemented in this prototype.`
+    );
+  });
+</script>
 
 </body>
 </html>
