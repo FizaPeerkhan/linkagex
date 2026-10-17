@@ -1,19 +1,14 @@
 <!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Case Linkage</title>
+
+    <title>Case Linkage | LinkageX</title>
 
     <link rel="stylesheet" href="../css/style.css">
 
     <style>
-        /* =========================================================
-           LINKAGEX CASE LINKAGE — PAGE-SPECIFIC STYLES
-           Uses the shared Investigator design system from style.css
-        ========================================================= */
-
         .linkage-input {
             min-height: 190px;
             resize: vertical;
@@ -61,274 +56,39 @@
             word-break: break-word;
         }
 
-        .results-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .results-count {
-            font-size: 13px;
-            color: var(--muted, #6b7280);
-        }
-
-        .result-card-linkage {
-            border: 1px solid var(--border, #e5e7eb);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 14px;
-            background: #fff;
-        }
-
-        .result-card-linkage:hover {
-            border-color: #cbd5e1;
-        }
-
-        .result-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 20px;
-        }
-
-        .result-case {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .result-rank {
-            color: var(--muted, #6b7280);
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-
-        .result-score-box {
-            min-width: 105px;
-            text-align: right;
-        }
-
-        .result-score {
-            font-size: 25px;
-            font-weight: 750;
-            line-height: 1;
-        }
-
-        .result-score-label {
-            margin-top: 5px;
-            font-size: 11px;
-            color: var(--muted, #6b7280);
-        }
-
-        .relationship-badge {
-            display: inline-flex;
-            align-items: center;
-            margin-top: 8px;
-            padding: 5px 9px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 650;
-            background: #eff6ff;
-            color: #1d4ed8;
-        }
-
-        .evidence-section {
+        .linkage-next {
             margin-top: 18px;
-        }
-
-        .evidence-section + .evidence-section {
-            margin-top: 14px;
-        }
-
-        .evidence-title {
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .evidence-list {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-        }
-
-        .evidence-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            font-size: 13px;
-            color: #4b5563;
-            line-height: 1.45;
-        }
-
-        .evidence-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-            margin-top: 7px;
-            flex: 0 0 auto;
-        }
-
-        .evidence-empty {
-            color: #6b7280;
-            font-size: 13px;
-            padding: 10px 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-            border: 1px solid #eef0f2;
-        }
-
-        .evidence-value {
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .component-grid-linkage {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-top: 13px;
-        }
-
-        .component-box {
-            background: #f8fafc;
-            border: 1px solid #eef0f2;
-            border-radius: 8px;
-            padding: 9px;
-        }
-
-        .component-name {
-            display: block;
-            font-size: 10px;
-            color: #6b7280;
-            margin-bottom: 4px;
-        }
-
-        .component-score {
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .contribution-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-            font-size: 12px;
-        }
-
-        .contribution-table th,
-        .contribution-table td {
-            padding: 8px 9px;
-            border-bottom: 1px solid #eef0f2;
-            text-align: left;
-        }
-
-        .contribution-table th {
-            color: #6b7280;
-            font-weight: 600;
-            font-size: 11px;
-        }
-
-        .contribution-table td:last-child,
-        .contribution-table th:last-child {
-            text-align: right;
-        }
-
-        .score-bar-wrap {
-            margin-top: 16px;
-        }
-
-        .score-bar-track {
-            height: 7px;
-            background: #eef2f7;
-            border-radius: 99px;
-            overflow: hidden;
-        }
-
-        .score-bar-fill {
-            height: 100%;
-            border-radius: 99px;
-            background: #2563eb;
-        }
-
-        .interpretation {
-            margin-top: 15px;
-            padding: 12px 14px;
+            padding: 16px;
             background: #f8fafc;
             border: 1px solid #e5e7eb;
-            border-radius: 9px;
-            color: #4b5563;
-            font-size: 12px;
-            line-height: 1.55;
-        }
-
-        .result-actions {
+            border-radius: 10px;
             display: flex;
-            gap: 9px;
-            flex-wrap: wrap;
-            margin-top: 16px;
-        }
-
-        .empty-linkage {
-            text-align: center;
-            padding: 45px 20px;
-        }
-
-        .empty-linkage .empty-icon {
-            font-size: 28px;
-            color: #9ca3af;
-            margin-bottom: 10px;
-        }
-
-        .legend {
-            display: flex;
+            justify-content: space-between;
+            align-items: center;
             gap: 15px;
             flex-wrap: wrap;
-            margin-top: 14px;
-            font-size: 11px;
+        }
+
+        .linkage-next-text h4 {
+            margin: 0 0 4px;
+            font-size: 14px;
+        }
+
+        .linkage-next-text p {
+            margin: 0;
+            font-size: 12px;
             color: #6b7280;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .legend-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #94a3b8;
         }
 
         @media (max-width: 900px) {
             .incident-grid-linkage {
                 grid-template-columns: repeat(2, 1fr);
             }
-
-            .component-grid-linkage {
-                grid-template-columns: repeat(3, 1fr);
-            }
         }
 
         @media (max-width: 600px) {
             .incident-grid-linkage {
                 grid-template-columns: 1fr;
-            }
-
-            .component-grid-linkage {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .result-main {
-                flex-direction: column;
-            }
-
-            .result-score-box {
-                text-align: left;
             }
         }
     </style>
@@ -345,37 +105,53 @@
        PAGE SHELL
     ========================================================= */
 
-    const c = shell("investigator", "Potential Linkages");
+    const c = shell(
+        "investigator",
+        "Potential Linkages"
+    );
+
 
     c.innerHTML = pageHead(
         "Case Linkage",
         "Analyze an incident and identify potentially related historical cases.",
-        `<a class="btn btn-secondary" href="cases.html">← Case Repository</a>`
+        `<a class="btn btn-secondary" href="cases.html">
+            ← Case Repository
+        </a>`
     );
 
 
     /* =========================================================
-       INPUT SECTION
+       COMPLAINT INPUT
     ========================================================= */
 
     c.innerHTML += `
+
         <div class="card">
 
             <div class="section-head">
+
                 <div>
-                    <h3>Analyze New Complaint</h3>
+
+                    <h3>
+                        Analyze New Complaint
+                    </h3>
+
                     <p class="card-sub">
-                        Enter a cybercrime complaint to structure the incident
-                        and compare it against historical cases.
+                        Enter a cybercrime complaint to structure
+                        the incident and compare it against historical cases.
                     </p>
+
                 </div>
+
             </div>
+
 
             <textarea
                 id="complaintText"
                 class="linkage-input"
                 placeholder="Paste or enter the complaint text here…"
             ></textarea>
+
 
             <div class="analysis-actions">
 
@@ -387,6 +163,7 @@
                     Find Related Cases
                 </button>
 
+
                 <button
                     class="btn btn-secondary"
                     onclick="clearPage()"
@@ -396,18 +173,43 @@
 
             </div>
 
-            <div id="loading" class="status-message" style="display:none;">
+
+            <div
+                id="loading"
+                class="status-message"
+                style="display:none;"
+            >
+
                 <div class="alert alert-info">
-                    <strong>Analyzing complaint…</strong>
+
+                    <strong>
+                        Analyzing complaint…
+                    </strong>
+
+                    <br>
+
                     Structuring the incident and searching historical cases.
+
                 </div>
+
             </div>
 
-            <div id="error" class="status-message" style="display:none;"></div>
 
-            <div id="success" class="status-message" style="display:none;"></div>
+            <div
+                id="error"
+                class="status-message"
+                style="display:none;"
+            ></div>
+
+
+            <div
+                id="success"
+                class="status-message"
+                style="display:none;"
+            ></div>
 
         </div>
+
     `;
 
 
@@ -416,6 +218,7 @@
     ========================================================= */
 
     c.innerHTML += `
+
         <div
             id="incident-section"
             class="card"
@@ -425,13 +228,18 @@
             <div class="section-head">
 
                 <div>
-                    <h3>Structured Incident</h3>
+
+                    <h3>
+                        Structured Incident
+                    </h3>
 
                     <p class="card-sub">
-                        Information extracted from the complaint by the
-                        LinkageX NLP pipeline.
+                        Information extracted from the complaint
+                        by the LinkageX NLP pipeline.
                     </p>
+
                 </div>
+
 
                 <span class="tag">
                     NLP Structured
@@ -439,68 +247,44 @@
 
             </div>
 
+
             <div
                 id="incident-grid"
                 class="incident-grid-linkage"
             ></div>
 
-        </div>
-    `;
 
+            <div
+                id="linkage-next"
+                class="linkage-next"
+                style="display:none;"
+            >
 
-    /* =========================================================
-       RESULTS SECTION
-    ========================================================= */
+                <div class="linkage-next-text">
 
-    c.innerHTML += `
-        <div
-            id="results-section"
-            class="card"
-            style="display:none;"
-        >
+                    <h4>
+                        Potentially Related Cases Found
+                    </h4>
 
-            <div class="results-header">
+                    <p id="linkage-count">
+                        Review the historical cases surfaced
+                        by the correlation engine.
+                    </p>
 
-                <div>
-                    <h3>Potentially Related Cases</h3>
-
-                    <p
-                        id="result-summary"
-                        class="card-sub"
-                    ></p>
                 </div>
 
-                <span class="tag">
-                    Similarity-ranked
-                </span>
 
-            </div>
+                <a
+                    class="btn btn-primary"
+                    href="related-cases.html"
+                >
+                    View Related Cases →
+                </a>
 
-            <div class="legend">
-
-                <div class="legend-item">
-                    <span class="legend-dot"></span>
-                    Pattern-level evidence
-                </div>
-
-                <div class="legend-item">
-                    <span class="legend-dot"></span>
-                    Distinctive identifiers are shown separately
-                </div>
-
-            </div>
-
-            <div id="results-container"></div>
-
-            <div class="alert alert-warn" style="margin-top:18px;">
-                <strong>Investigator assistance only:</strong>
-                Similarity indicates a potentially shared pattern between
-                reported incidents. It does not establish that incidents
-                were committed by the same person or group and should not
-                be treated as proof of attribution.
             </div>
 
         </div>
+
     `;
 
 
@@ -508,37 +292,62 @@
        CONFIGURATION
     ========================================================= */
 
-    const API_BASE = "http://127.0.0.1:5000";
+    const API_BASE =
+        "http://127.0.0.1:5000";
+
 
     const complaintText =
-        document.getElementById("complaintText");
+        document.getElementById(
+            "complaintText"
+        );
+
 
     const linkageBtn =
-        document.getElementById("linkageBtn");
+        document.getElementById(
+            "linkageBtn"
+        );
+
 
     const loading =
-        document.getElementById("loading");
+        document.getElementById(
+            "loading"
+        );
+
 
     const errorBox =
-        document.getElementById("error");
+        document.getElementById(
+            "error"
+        );
+
 
     const successBox =
-        document.getElementById("success");
+        document.getElementById(
+            "success"
+        );
+
 
     const incidentSection =
-        document.getElementById("incident-section");
+        document.getElementById(
+            "incident-section"
+        );
+
 
     const incidentGrid =
-        document.getElementById("incident-grid");
+        document.getElementById(
+            "incident-grid"
+        );
 
-    const resultsSection =
-        document.getElementById("results-section");
 
-    const resultsContainer =
-        document.getElementById("results-container");
+    const linkageNext =
+        document.getElementById(
+            "linkage-next"
+        );
 
-    const resultSummary =
-        document.getElementById("result-summary");
+
+    const linkageCount =
+        document.getElementById(
+            "linkage-count"
+        );
 
 
     /* =========================================================
@@ -547,7 +356,9 @@
 
     async function runLinkage() {
 
-        const text = complaintText.value.trim();
+        const text =
+            complaintText.value.trim();
+
 
         if (!text) {
 
@@ -558,13 +369,29 @@
             return;
         }
 
+
         hideMessages();
 
-        loading.style.display = "block";
-        linkageBtn.disabled = true;
+        // Do not let a failed/new search leave old matches visible.
+        sessionStorage.removeItem("linkageX_results");
+        sessionStorage.removeItem("linkageX_incident");
+        sessionStorage.removeItem("linkageX_original_complaint");
 
-        incidentSection.style.display = "none";
-        resultsSection.style.display = "none";
+        loading.style.display =
+            "block";
+
+
+        linkageBtn.disabled =
+            true;
+
+
+        incidentSection.style.display =
+            "none";
+
+
+        linkageNext.style.display =
+            "none";
+
 
         try {
 
@@ -572,23 +399,27 @@
                STEP 1 — NLP ANALYSIS
             ------------------------------------------------- */
 
-            const analyzeResponse = await fetch(
-                `${API_BASE}/api/analyze`,
-                {
-                    method: "POST",
+            const analyzeResponse =
+                await fetch(
+                    `${API_BASE}/api/analyze`,
+                    {
+                        method: "POST",
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
 
-                    body: JSON.stringify({
-                        complaint_text: text
-                    })
-                }
-            );
+                        body: JSON.stringify({
+                            complaint_text: text
+                        })
+                    }
+                );
+
 
             const analyzeData =
                 await analyzeResponse.json();
+
 
             if (!analyzeResponse.ok) {
 
@@ -596,7 +427,9 @@
                     analyzeData.message ||
                     "Complaint analysis failed."
                 );
+
             }
+
 
             const incident =
                 analyzeData.data.incident;
@@ -606,30 +439,40 @@
                STEP 2 — DISPLAY STRUCTURED INCIDENT
             ------------------------------------------------- */
 
-            displayIncident(incident);
+            displayIncident(
+                incident
+            );
 
 
             /* -------------------------------------------------
                STEP 3 — LINKAGE SEARCH
             ------------------------------------------------- */
 
-            const linkageResponse = await fetch(
-                `${API_BASE}/api/linkage`,
-                {
-                    method: "POST",
+            const linkageResponse =
+                await fetch(
+                    `${API_BASE}/api/linkage`,
+                    {
+                        method: "POST",
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
 
-                    body: JSON.stringify({
-                        incident: incident
-                    })
-                }
-            );
+                        body: JSON.stringify({
+                            incident: {
+                                ...incident,
+                                complaint_text: incident.complaint_text || text
+                            },
+                            complaint_text: text
+                        })
+                    }
+                );
+
 
             const linkageData =
                 await linkageResponse.json();
+
 
             if (!linkageResponse.ok) {
 
@@ -637,42 +480,56 @@
                     linkageData.message ||
                     "Case linkage failed."
                 );
+
             }
 
 
-            /* -------------------------------------------------
-               STEP 4 — DISPLAY RESULTS
-            ------------------------------------------------- */
-
-            displayResults(
-                linkageData.results || []
-            );
+            const results =
+                linkageData.results || [];
 
 
             /* -------------------------------------------------
-               SAVE CURRENT SESSION
+               STEP 4 — SAVE RESULTS
             ------------------------------------------------- */
 
             sessionStorage.setItem(
                 "linkageX_incident",
-                JSON.stringify(incident)
+                JSON.stringify({ ...incident, complaint_text: text })
+            );
+
+            sessionStorage.setItem(
+                "linkageX_original_complaint",
+                text
             );
 
             sessionStorage.setItem(
                 "linkageX_results",
-                JSON.stringify(
-                    linkageData.results || []
-                )
+                JSON.stringify(results)
             );
+
+
+            /* -------------------------------------------------
+               STEP 5 — SHOW NEXT ACTION
+            ------------------------------------------------- */
+
+            linkageNext.style.display =
+                "flex";
+
+
+            linkageCount.textContent =
+                results.length
+                    ? `${results.length} historical case(s) met the minimum similarity threshold.`
+                    : "No historical case met the minimum similarity threshold. The incident can be retained for future comparison.";
 
 
             showSuccess(
-                `Analysis complete. ${
-                    linkageData.match_count || 0
-                } historical case(s) met the minimum similarity threshold.`
+                results.length
+                    ? "Analysis complete. Related cases are ready for review."
+                    : "Analysis complete. No significant relationship was identified."
             );
 
         }
+
 
         catch (error) {
 
@@ -681,6 +538,7 @@
                 error
             );
 
+
             showError(
                 error.message ||
                 "Unable to connect to LinkageX backend."
@@ -688,12 +546,18 @@
 
         }
 
+
         finally {
 
-            loading.style.display = "none";
-            linkageBtn.disabled = false;
+            loading.style.display =
+                "none";
+
+
+            linkageBtn.disabled =
+                false;
 
         }
+
     }
 
 
@@ -701,9 +565,13 @@
        DISPLAY STRUCTURED INCIDENT
     ========================================================= */
 
-    function displayIncident(incident) {
+    function displayIncident(
+        incident
+    ) {
 
-        incidentSection.style.display = "block";
+        incidentSection.style.display =
+            "block";
+
 
         const fields = [
 
@@ -719,60 +587,82 @@
 
             [
                 "Modus Operandi",
-                formatValue(incident.modus_operandi)
+                formatValue(
+                    incident.modus_operandi
+                )
             ],
 
             [
                 "Deception",
-                formatValue(incident.deception)
+                formatValue(
+                    incident.deception
+                )
             ],
 
             [
                 "Victim Action",
-                formatValue(incident.victim_action)
+                formatValue(
+                    incident.victim_action
+                )
             ],
 
             [
                 "Attacker Action",
-                formatValue(incident.attacker_action)
+                formatValue(
+                    incident.attacker_action
+                )
             ],
 
             [
                 "Outcome",
-                formatValue(incident.outcome)
+                formatValue(
+                    incident.outcome
+                )
             ],
 
             [
                 "Channels",
-                formatValue(incident.channels)
+                formatValue(
+                    incident.channels
+                )
             ],
 
             [
                 "Payment Method",
-                formatValue(incident.payment_method)
+                formatValue(
+                    incident.payment_method
+                )
             ],
 
             [
                 "Amount",
-                formatAmount(incident.amounts)
+                formatAmount(
+                    incident.amounts
+                )
             ],
 
             [
                 "Organizations",
-                formatValue(incident.organizations)
+                formatValue(
+                    incident.organizations
+                )
             ],
 
             [
                 "Locations",
-                formatValue(incident.locations)
+                formatValue(
+                    incident.locations
+                )
             ]
 
         ];
+
 
         incidentGrid.innerHTML =
             fields
                 .map(
                     ([label, value]) => `
+
                         <div class="incident-item">
 
                             <div class="field-label">
@@ -781,724 +671,17 @@
 
                             <div class="field-value">
                                 ${escapeHtml(
-                                    value || "Not identified"
+                                    value ||
+                                    "Not identified"
                                 )}
                             </div>
 
                         </div>
+
                     `
                 )
                 .join("");
-    }
 
-
-    /* =========================================================
-       DISPLAY RESULTS
-    ========================================================= */
-
-    function displayResults(results) {
-
-        resultsSection.style.display = "block";
-
-        resultSummary.textContent =
-            results.length
-                ? `${results.length} historical case(s) met the minimum similarity threshold.`
-                : "No historical case met the minimum similarity threshold.";
-
-        if (!results.length) {
-
-            resultsContainer.innerHTML = `
-
-                <div class="empty-linkage">
-
-                    <div class="empty-icon">⌁</div>
-
-                    <h3>
-                        No significant relationship identified
-                    </h3>
-
-                    <p
-                        class="card-sub"
-                        style="margin-top:7px;"
-                    >
-                        No historical case reached the minimum similarity
-                        threshold. The incident can be retained as a
-                        standalone case for future comparison.
-                    </p>
-
-                </div>
-
-            `;
-
-            return;
-        }
-
-        resultsContainer.innerHTML =
-            results
-                .map(
-                    (result, index) =>
-                        createResultCard(
-                            result,
-                            index
-                        )
-                )
-                .join("");
-    }
-
-
-    /* =========================================================
-       RESULT CARD
-    ========================================================= */
-
-    function createResultCard(result, index) {
-
-        const score =
-            Number(result.score || 0);
-
-        const percentage =
-            (score * 100).toFixed(2);
-
-        const evidence =
-            result.evidence || {};
-
-        const breakdown =
-            result.contribution_breakdown || {};
-
-        const components =
-            result.component_scores || {};
-
-
-        const distinctive =
-            evidence.distinctive || [];
-
-        const moderate =
-            evidence.moderate || [];
-
-        const common =
-            evidence.common || [];
-
-
-        const explanation =
-            buildWhySurfaced(
-                result,
-                evidence,
-                distinctive,
-                moderate,
-                common
-            );
-
-
-        return `
-
-            <div class="result-card-linkage">
-
-                <div class="result-main">
-
-                    <div>
-
-                        <div class="result-rank">
-                            Result #${index + 1}
-                        </div>
-
-                        <div class="result-case">
-                            ${escapeHtml(
-                                result.case_id || "Unknown Case"
-                            )}
-                        </div>
-
-                        <span class="relationship-badge">
-                            ${escapeHtml(
-                                result.relationship ||
-                                "Potential relationship"
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div class="result-score-box">
-
-                        <div class="result-score">
-                            ${percentage}%
-                        </div>
-
-                        <div class="result-score-label">
-                            Similarity score
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="score-bar-wrap">
-
-                    <div class="score-bar-track">
-                        <div
-                            class="score-bar-fill"
-                            style="width:${Math.min(
-                                score * 100,
-                                100
-                            )}%"
-                        ></div>
-                    </div>
-
-                </div>
-
-
-                <!-- WHY SURFACED -->
-
-                <div class="evidence-section">
-
-                    <div class="evidence-title">
-                        Why this case was surfaced
-                    </div>
-
-                    <div class="evidence-empty">
-                        ${escapeHtml(explanation)}
-                    </div>
-
-                </div>
-
-
-                <!-- DISTINCTIVE -->
-
-                <div class="evidence-section">
-
-                    <div class="evidence-title">
-                        Distinctive evidence
-                    </div>
-
-                    ${
-                        distinctive.length
-                            ? renderEvidenceList(
-                                distinctive,
-                                "distinctive"
-                            )
-                            : `
-                                <div class="evidence-empty">
-                                    No distinctive identifier was shared.
-                                    The relationship is based primarily on
-                                    broader incident-pattern similarity.
-                                </div>
-                            `
-                    }
-
-                </div>
-
-
-                <!-- MODERATE -->
-
-                <div class="evidence-section">
-
-                    <div class="evidence-title">
-                        Pattern-level evidence
-                    </div>
-
-                    ${
-                        moderate.length
-                            ? renderEvidenceList(
-                                moderate,
-                                "moderate"
-                            )
-                            : common.length
-                                ? renderEvidenceList(
-                                    common,
-                                    "common"
-                                )
-                                : `
-                                    <div class="evidence-empty">
-                                        No additional structured overlap
-                                        was identified.
-                                    </div>
-                                `
-                    }
-
-                </div>
-
-
-                <!-- INTERPRETATION -->
-
-                <div class="interpretation">
-
-                    <strong>Interpretation:</strong>
-
-                    ${
-                        evidence.has_distinctive_evidence
-                            ? "The result includes at least one more distinctive shared signal. Review the underlying case evidence before drawing investigative conclusions."
-                            : "The result does not contain a distinctive shared identifier. Similarity should therefore be interpreted as a pattern-level investigative lead rather than evidence of common attribution."
-                    }
-
-                </div>
-
-
-                <!-- DETAILS -->
-
-                <details
-                    class="components"
-                    style="margin-top:16px;"
-                >
-
-                    <summary>
-                        View evidence details
-                    </summary>
-
-
-                    <div style="margin-top:15px;">
-
-                        <div class="callout-title">
-                            Similarity components
-                        </div>
-
-
-                        <div class="component-grid-linkage">
-
-                            ${component(
-                                "Semantic",
-                                components.semantic
-                            )}
-
-                            ${component(
-                                "Crime",
-                                components.crime
-                            )}
-
-                            ${component(
-                                "MO",
-                                components.modus_operandi
-                            )}
-
-                            ${component(
-                                "Deception",
-                                components.deception
-                            )}
-
-                            ${component(
-                                "Victim",
-                                components.victim_action
-                            )}
-
-                            ${component(
-                                "Attacker",
-                                components.attacker_action
-                            )}
-
-                            ${component(
-                                "Outcome",
-                                components.outcome
-                            )}
-
-                            ${component(
-                                "Channel",
-                                components.channel
-                            )}
-
-                            ${component(
-                                "Payment",
-                                components.payment
-                            )}
-
-                            ${component(
-                                "Organization",
-                                components.organization
-                            )}
-
-                            ${component(
-                                "Phone",
-                                components.phone
-                            )}
-
-                            ${component(
-                                "Email",
-                                components.email
-                            )}
-
-                            ${component(
-                                "UPI",
-                                components.upi
-                            )}
-
-                            ${component(
-                                "URL",
-                                components.url
-                            )}
-
-                            ${component(
-                                "Location",
-                                components.location
-                            )}
-
-                        </div>
-
-
-                        ${
-                            Object.keys(breakdown).length
-                                ? `
-                                    <div
-                                        class="callout-title"
-                                        style="margin-top:18px;"
-                                    >
-                                        Contribution to final score
-                                    </div>
-
-                                    ${renderContributionTable(
-                                        breakdown
-                                    )}
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-                </details>
-
-
-                <div class="result-actions">
-
-                    <a
-                        class="btn btn-secondary"
-                        href="case-details.html?case=${encodeURIComponent(
-                            result.case_id || ""
-                        )}"
-                    >
-                        View Case
-                    </a>
-
-                    <button
-                        class="btn btn-secondary"
-                        onclick="saveForCorrelation(
-                            '${escapeJs(
-                                result.case_id || ""
-                            )}'
-                        )"
-                    >
-                        Save for Future Correlation
-                    </button>
-
-                </div>
-
-            </div>
-
-        `;
-    }
-
-
-    /* =========================================================
-       WHY SURFACED
-    ========================================================= */
-
-    function buildWhySurfaced(
-        result,
-        evidence,
-        distinctive,
-        moderate,
-        common
-    ) {
-
-        const reasons = [];
-
-        if (
-            Number(
-                result.component_scores?.semantic || 0
-            ) > 0
-        ) {
-            reasons.push(
-                "the complaint has semantic similarity to this historical incident"
-            );
-        }
-
-        if (
-            Number(
-                result.component_scores?.crime || 0
-            ) > 0
-        ) {
-            reasons.push(
-                "the incidents share a crime classification"
-            );
-        }
-
-        if (distinctive.length) {
-
-            reasons.push(
-                "a distinctive structured signal is shared"
-            );
-
-        }
-        else if (moderate.length) {
-
-            reasons.push(
-                "structured incident patterns overlap"
-            );
-
-        }
-        else if (common.length) {
-
-            reasons.push(
-                "common incident patterns overlap"
-            );
-
-        }
-
-        if (!reasons.length) {
-
-            return (
-                result.relationship ||
-                "The case met the configured similarity threshold."
-            );
-        }
-
-        return (
-            "This case was surfaced because " +
-            joinReasons(reasons) +
-            "."
-        );
-    }
-
-
-    function joinReasons(reasons) {
-
-        if (reasons.length === 1) {
-            return reasons[0];
-        }
-
-        if (reasons.length === 2) {
-            return `${reasons[0]} and ${reasons[1]}`;
-        }
-
-        return (
-            reasons.slice(0, -1).join(", ") +
-            ", and " +
-            reasons[reasons.length - 1]
-        );
-    }
-
-
-    /* =========================================================
-       EVIDENCE LIST
-    ========================================================= */
-
-    function renderEvidenceList(
-        items,
-        type
-    ) {
-
-        return `
-            <div class="evidence-list">
-
-                ${items
-                    .map(item => {
-
-                        const field =
-                            item.field ||
-                            item.label ||
-                            "Signal";
-
-                        const value =
-                            item.value ||
-                            item.signal ||
-                            "";
-
-                        const specificity =
-                            item.specificity;
-
-                        return `
-
-                            <div class="evidence-row">
-
-                                <span class="evidence-dot"></span>
-
-                                <span>
-
-                                    <strong>
-                                        ${escapeHtml(
-                                            fieldLabel(field)
-                                        )}
-                                    </strong>
-
-                                    ${
-                                        value
-                                            ? `:
-                                                <span class="evidence-value">
-                                                    ${escapeHtml(
-                                                        formatValue(value)
-                                                    )}
-                                                </span>`
-                                            : ""
-                                    }
-
-                                    ${
-                                        specificity !== undefined
-                                            ? `
-                                                <span
-                                                    style="
-                                                        color:#9ca3af;
-                                                        font-size:11px;
-                                                    "
-                                                >
-                                                    · specificity
-                                                    ${Number(
-                                                        specificity
-                                                    ).toFixed(2)}
-                                                </span>
-                                            `
-                                            : ""
-                                    }
-
-                                </span>
-
-                            </div>
-
-                        `;
-
-                    })
-                    .join("")}
-
-            </div>
-        `;
-    }
-
-
-    /* =========================================================
-       CONTRIBUTION TABLE
-    ========================================================= */
-
-    function renderContributionTable(
-        breakdown
-    ) {
-
-        const entries =
-            Object.entries(breakdown)
-                .filter(
-                    ([, value]) =>
-                        Number(value) > 0
-                )
-                .sort(
-                    ([, a], [, b]) =>
-                        Number(b) - Number(a)
-                );
-
-        if (!entries.length) {
-
-            return `
-                <div class="evidence-empty">
-                    No non-zero component contributions were returned.
-                </div>
-            `;
-        }
-
-        return `
-
-            <div class="table-wrap">
-
-                <table class="contribution-table">
-
-                    <thead>
-
-                        <tr>
-                            <th>Signal</th>
-                            <th>Contribution</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        ${entries
-                            .map(
-                                ([key, value]) => `
-                                    <tr>
-
-                                        <td>
-                                            ${escapeHtml(
-                                                fieldLabel(key)
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            ${(
-                                                Number(value) * 100
-                                            ).toFixed(2)}%
-                                        </td>
-
-                                    </tr>
-                                `
-                            )
-                            .join("")}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-        `;
-    }
-
-
-    /* =========================================================
-       COMPONENT
-    ========================================================= */
-
-    function component(
-        name,
-        value
-    ) {
-
-        const numeric =
-            Number(value || 0);
-
-        return `
-
-            <div class="component-box">
-
-                <span class="component-name">
-                    ${escapeHtml(name)}
-                </span>
-
-                <span class="component-score">
-                    ${numeric.toFixed(3)}
-                </span>
-
-            </div>
-
-        `;
-    }
-
-
-    /* =========================================================
-       FIELD LABELS
-    ========================================================= */
-
-    function fieldLabel(field) {
-
-        const labels = {
-
-            semantic: "Semantic similarity",
-            crime: "Crime classification",
-            modus_operandi: "Modus operandi",
-            deception: "Deception pattern",
-            victim_action: "Victim action",
-            attacker_action: "Attacker action",
-            outcome: "Outcome",
-            channel: "Channel",
-            payment: "Payment method",
-            organization: "Organization",
-            phone: "Phone number",
-            email: "Email address",
-            upi: "UPI identifier",
-            url: "URL",
-            location: "Location"
-
-        };
-
-        return (
-            labels[field] ||
-            String(field)
-                .replace(/_/g, " ")
-                .replace(
-                    /\b\w/g,
-                    char => char.toUpperCase()
-                )
-        );
     }
 
 
@@ -1506,196 +689,179 @@
        FORMAT VALUES
     ========================================================= */
 
-    function formatValue(value) {
+    function formatValue(
+        value
+    ) {
 
         if (
             value === null ||
             value === undefined ||
             value === ""
         ) {
+
             return "";
+
         }
+
 
         if (Array.isArray(value)) {
 
-            if (!value.length) {
-                return "";
-            }
+            return value.length
+                ? value.join(", ")
+                : "";
 
-            return value.join(", ");
         }
 
+
         return String(value);
+
     }
 
 
-    function formatAmount(value) {
+    function formatAmount(
+        value
+    ) {
 
         if (
             value === null ||
             value === undefined ||
             value === ""
         ) {
+
             return "";
+
         }
+
 
         if (Array.isArray(value)) {
 
             if (!value.length) {
                 return "";
             }
+
 
             return value
                 .map(
                     amount =>
-                        `₹${Number(amount).toLocaleString(
+                        `₹${Number(
+                            amount
+                        ).toLocaleString(
                             "en-IN"
                         )}`
                 )
                 .join(", ");
+
         }
+
 
         const numeric =
             Number(value);
+
 
         if (!Number.isNaN(numeric)) {
 
             return `₹${numeric.toLocaleString(
                 "en-IN"
             )}`;
+
         }
+
 
         return String(value);
+
     }
 
 
     /* =========================================================
-       SAVE
+       HELPERS
     ========================================================= */
 
-    function saveForCorrelation(caseId) {
-
-        if (!caseId) {
-
-            toast(
-                "Case ID is not available."
-            );
-
-            return;
-        }
-
-        const existing =
-            JSON.parse(
-                sessionStorage.getItem(
-                    "linkageX_saved_cases"
-                ) || "[]"
-            );
-
-        if (!existing.includes(caseId)) {
-            existing.push(caseId);
-        }
-
-        sessionStorage.setItem(
-            "linkageX_saved_cases",
-            JSON.stringify(existing)
-        );
-
-        toast(
-            `${caseId} saved for future correlation.`
-        );
-    }
-
-
-    /* =========================================================
-       ESCAPE HELPERS
-    ========================================================= */
-
-    function escapeHtml(value) {
+    function escapeHtml(
+        value
+    ) {
 
         return String(
             value ?? ""
         )
+
             .replace(
                 /&/g,
                 "&amp;"
             )
+
             .replace(
                 /</g,
                 "&lt;"
             )
+
             .replace(
                 />/g,
                 "&gt;"
             )
+
             .replace(
                 /"/g,
                 "&quot;"
             )
+
             .replace(
                 /'/g,
                 "&#039;"
             );
+
     }
 
-
-    function escapeJs(value) {
-
-        return String(
-            value ?? ""
-        )
-            .replace(
-                /\\/g,
-                "\\\\"
-            )
-            .replace(
-                /'/g,
-                "\\'"
-            )
-            .replace(
-                /\n/g,
-                "\\n"
-            )
-            .replace(
-                /\r/g,
-                "\\r"
-            );
-    }
-
-
-    /* =========================================================
-       MESSAGES
-    ========================================================= */
 
     function hideMessages() {
 
-        errorBox.style.display = "none";
-        successBox.style.display = "none";
+        errorBox.style.display =
+            "none";
+
+        successBox.style.display =
+            "none";
+
     }
 
 
-    function showError(message) {
+    function showError(
+        message
+    ) {
 
         errorBox.innerHTML = `
+
             <div class="alert alert-danger">
                 ${escapeHtml(message)}
             </div>
+
         `;
 
-        errorBox.style.display = "block";
-        successBox.style.display = "none";
+        errorBox.style.display =
+            "block";
+
+        successBox.style.display =
+            "none";
+
     }
 
 
-    function showSuccess(message) {
+    function showSuccess(
+        message
+    ) {
 
         successBox.innerHTML = `
+
             <div class="alert alert-success">
                 ${escapeHtml(message)}
             </div>
+
         `;
 
-        successBox.style.display = "block";
-        errorBox.style.display = "none";
+        successBox.style.display =
+            "block";
+
+        errorBox.style.display =
+            "none";
+
     }
 
 
@@ -1705,15 +871,20 @@
 
     function clearPage() {
 
-        complaintText.value = "";
+        complaintText.value =
+            "";
 
-        incidentGrid.innerHTML = "";
-        resultsContainer.innerHTML = "";
+        incidentGrid.innerHTML =
+            "";
 
-        incidentSection.style.display = "none";
-        resultsSection.style.display = "none";
+        incidentSection.style.display =
+            "none";
+
+        linkageNext.style.display =
+            "none";
 
         hideMessages();
+
 
         sessionStorage.removeItem(
             "linkageX_incident"
@@ -1722,65 +893,12 @@
         sessionStorage.removeItem(
             "linkageX_results"
         );
+
+        sessionStorage.removeItem(
+            "linkageX_original_complaint"
+        );
+
     }
-
-
-    /* =========================================================
-       RESTORE PREVIOUS SESSION
-    ========================================================= */
-
-    window.addEventListener(
-        "DOMContentLoaded",
-        () => {
-
-            const savedIncident =
-                sessionStorage.getItem(
-                    "linkageX_incident"
-                );
-
-            const savedResults =
-                sessionStorage.getItem(
-                    "linkageX_results"
-                );
-
-            if (
-                savedIncident &&
-                savedResults
-            ) {
-
-                try {
-
-                    const incident =
-                        JSON.parse(
-                            savedIncident
-                        );
-
-                    const results =
-                        JSON.parse(
-                            savedResults
-                        );
-
-                    displayIncident(
-                        incident
-                    );
-
-                    displayResults(
-                        results
-                    );
-
-                }
-
-                catch (error) {
-
-                    console.error(
-                        "Unable to restore previous linkage results.",
-                        error
-                    );
-
-                }
-            }
-        }
-    );
 
 </script>
 

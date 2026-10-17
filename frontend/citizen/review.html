@@ -1,464 +1,218 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-
-  <meta charset="utf-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
-
-  <title>Review Complaint | LinkageX</title>
-
-  <link
-    rel="stylesheet"
-    href="../css/style.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="../css/components.css"
-  >
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Review Complaint</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
 </head>
-
-
 <body>
-
-
 <script src="../js/data.js"></script>
 <script src="../js/app.js"></script>
-
-
 <script>
-
-/* =========================================================
-   INITIALIZE LINKAGEX CITIZEN SHELL
-========================================================= */
-
-const c =
-  shell(
-    "citizen",
-    "Report"
-  );
-
-
-/* =========================================================
-   LOAD COMPLAINT ANALYSIS
-========================================================= */
-
-const stored =
-  sessionStorage.getItem(
-    "linkageX_analysis"
-  );
-
-
-/*
- * If the citizen reaches this page directly,
- * there is no complaint to review.
- */
-
-if (!stored) {
-
-  window.location.href =
-    "complaint.html";
-
-}
-
-
-/* =========================================================
-   PARSE ANALYSIS
-========================================================= */
-
+const c = shell("citizen", "Report");
+const stored = sessionStorage.getItem("linkageX_analysis");
+if (!stored) { location.href = "complaint.html"; }
 let result;
-
-try {
-
-  result =
-    JSON.parse(stored);
-
-}
-
-catch (error) {
-
-  console.error(
-    "Unable to parse LinkageX analysis:",
-    error
-  );
-
-  window.location.href =
-    "complaint.html";
-
-}
-
-
-/* =========================================================
-   EXTRACT DATA
-========================================================= */
-
-const data =
-  result.data || {};
-
-
-let incident =
-  {
-    ...(data.incident || {})
-  };
-
-
-const missingFields =
-  Array.isArray(
-    data.missing_fields
-  )
-    ? data.missing_fields
-    : [];
-
-
-/* =========================================================
-   SAFETY CHECK
-========================================================= */
-
-if (
-  !data.incident
-) {
-
-  window.location.href =
-    "complaint.html";
-
-}
-
-
-/* =========================================================
-   PAGE HEADER
-========================================================= */
-
-c.innerHTML =
-  pageHead(
-    "Review Your Complaint Information",
-    "Please check the extracted information carefully before submitting your incident."
-  );
-
-
-/* =========================================================
-   AUTOMATED EXTRACTION NOTICE
-========================================================= */
-
-c.innerHTML += `
-
-  <div
-    class="alert alert-warn"
-    style="margin-bottom:16px"
-  >
-
-    <strong>
-      Review required
-    </strong>
-
-    <br>
-
-    LinkageX automatically extracted the information below
-    from your complaint. Please verify that it is accurate
-    before submitting.
-
-  </div>
-
-`;
-
-
-/* =========================================================
-   MISSING INFORMATION NOTICE
-========================================================= */
-
-if (missingFields.length > 0) {
-
-  c.innerHTML += `
-
-    <div
-      class="alert alert-warn"
-      style="margin-bottom:16px"
-    >
-
-      Some information was not available in the original
-      complaint. Please use the Edit option below if you
-      need to provide or correct any information.
-
-    </div>
-
-  `;
-
-}
-
-
-/* =========================================================
-   STRUCTURED INCIDENT
-========================================================= */
-
-c.innerHTML +=
-  renderIncident(
-    incident,
-    true
-  );
-
-
-/* =========================================================
-   ORIGINAL COMPLAINT
-========================================================= */
-
-c.innerHTML += `
-
-  <div
-    class="card section"
-    style="margin-top:16px"
-  >
-
-    <div class="section-head">
-
-      <h3>
-        Original Complaint
-      </h3>
-
-      <span>
-        Submitted description
-      </span>
-
-    </div>
-
-
-    <div
-      class="field-value"
-      style="
-        white-space:pre-wrap;
-        line-height:1.7;
-      "
-    >
-
-      ${esc(
-        data.complaint_text ||
-        "No complaint text available."
-      )}
-
-    </div>
-
-  </div>
-
-`;
-
-
-/* =========================================================
-   VICTIM INFORMATION
-========================================================= */
-
-c.innerHTML += `
-
-  <div
-    class="card section"
-    style="margin-top:16px"
-  >
-
-    <div class="callout-title">
-      Victim information
-    </div>
-
-
-    <h3>
-      Is this complaint about you or someone else?
-    </h3>
-
-
-    <div class="grid grid-2">
-
-      <label
-        class="card"
-        style="margin:0; cursor:pointer"
-      >
-
-        <input
-          type="radio"
-          name="victim"
-          value="me"
-          checked
-        >
-
-        <strong>
-          Me
-        </strong>
-
-        <br>
-
-        <span class="note">
-          I am the person affected by this incident.
-        </span>
-
-      </label>
-
-
-      <label
-        class="card"
-        style="margin:0; cursor:pointer"
-      >
-
-        <input
-          type="radio"
-          name="victim"
-          value="someone_else"
-        >
-
-        <strong>
-          Someone else
-        </strong>
-
-        <br>
-
-        <span class="note">
-          I am submitting this complaint on behalf of another person.
-        </span>
-
-      </label>
-
-    </div>
-
-
-    <p
-      class="note"
-      style="margin-top:12px"
-    >
-
-      Your account profile information is separate from
-      the victim information in this complaint.
-
-    </p>
-
-  </div>
-
-`;
-
-
-/* =========================================================
-   FINAL CONFIRMATION NOTICE
-========================================================= */
-
-c.innerHTML += `
-
-  <div
-    class="alert"
-    style="margin-top:16px"
-  >
-
-    <strong>
-      Before you submit
-    </strong>
-
-    <br>
-
-    Please make sure the structured information above
-    accurately represents the incident. You can edit
-    individual fields if required.
-
-  </div>
-
-`;
-
-
-/* =========================================================
-   ACTION BUTTONS
-========================================================= */
-
-c.innerHTML += `
-
-  <div
-    class="actions"
-    style="margin-top:16px"
-  >
-
-    <a
-      class="btn btn-secondary"
-      href="missing-info.html"
-    >
-      ← Back
-    </a>
-
-
-    <button
-      class="btn btn-primary"
-      type="button"
-      id="confirmSubmit"
-    >
-      Confirm & Submit →
-    </button>
-
-  </div>
-
-`;
-
-
-/* =========================================================
-   CONFIRM & SUBMIT
-========================================================= */
-
-const confirmButton =
-  document.getElementById(
-    "confirmSubmit"
-  );
-
-
-confirmButton.addEventListener(
-  "click",
-  () => {
-
-
-    /* -----------------------------------------------
-       Get selected victim type
-    ----------------------------------------------- */
-
-    const selectedVictim =
-      document.querySelector(
-        'input[name="victim"]:checked'
-      );
-
-
-    const victimType =
-      selectedVictim
-        ? selectedVictim.value
-        : "me";
-
-
-    /* -----------------------------------------------
-       Save finalized case
-       Uses the helper from app.js.
-    ----------------------------------------------- */
-
-    const saved =
-      saveFinalizedCase(
-        victimType
-      );
-
-
-    if (!saved) {
-
-      toast(
-        "Unable to submit the complaint."
-      );
-
-      return;
-
-    }
-
-
-    /* -----------------------------------------------
-       Continue to confirmation page
-    ----------------------------------------------- */
-
-    window.location.href =
-      "success.html";
-
-  }
+try { result = JSON.parse(stored); } catch (error) { console.error("Unable to read complaint analysis:", error); location.href = "complaint.html"; }
+const data = result.data || {};
+let incident = { ...(data.incident || {}) };
+
+c.innerHTML = pageHead(
+  "Review Your Complaint Information",
+  "Please check the information below before submitting your incident."
 );
 
+c.innerHTML += `
+  <div class="alert alert-warn" style="margin-bottom:16px">
+    This information was automatically extracted from your complaint. Please correct anything that is inaccurate.
+  </div>
+`;
+
+const missingFields = Array.isArray(data.missing_fields) ? data.missing_fields : [];
+if (missingFields.length > 0) {
+  c.innerHTML += `
+    <div class="alert alert-warn" style="margin-bottom:16px">
+      Some information was not available in the original complaint. You can correct incident fields and add optional contact or transaction details below.
+    </div>
+  `;
+}
+
+c.innerHTML += renderIncident(incident, true);
+
+c.innerHTML += `
+  <div class="card section" style="margin-top:16px">
+    <div class="section-head">
+      <h3>Original Complaint</h3>
+      <span>Submitted description</span>
+    </div>
+    <div class="field-value" style="white-space:pre-wrap;line-height:1.7">
+      ${esc(data.complaint_text || "No complaint text available.")}
+    </div>
+  </div>
+`;
+
+c.innerHTML += `
+  <div class="card section" style="margin-top:16px">
+    <div class="callout-title">Victim information</div>
+    <h3>Is this complaint about you or someone else?</h3>
+    <div class="grid grid-2">
+      <label class="card" style="margin:0;cursor:pointer">
+        <input type="radio" name="victim" value="me" ${data.victim_type === "someone_else" ? "" : "checked"}>
+        <strong>Me</strong><br>
+        <span class="note">I am the person affected by this incident.</span>
+      </label>
+      <label class="card" style="margin:0;cursor:pointer">
+        <input type="radio" name="victim" value="someone_else" ${data.victim_type === "someone_else" ? "checked" : ""}>
+        <strong>Someone else</strong><br>
+        <span class="note">I am submitting this complaint on behalf of another person.</span>
+      </label>
+    </div>
+    <p class="note" style="margin-top:12px">
+      Your account profile information is separate from the victim information in this complaint.
+    </p>
+  </div>
+
+  <div class="card section" style="margin-top:16px">
+    <div class="section-head">
+      <h3>Additional Details</h3>
+      <span>All fields are optional</span>
+    </div>
+    <p class="note" style="margin-bottom:16px">
+      Add details that were not included in the original complaint. The victim's contact details are separate from the suspected caller's information extracted above.
+    </p>
+    <div class="grid grid-2">
+      <div style="margin-bottom:14px">
+        <label for="victimEmail">Victim's email address</label>
+        <input class="input" style="width:100%" type="email" id="victimEmail" autocomplete="email" placeholder="name@example.com">
+      </div>
+      <div style="margin-bottom:14px">
+        <label for="victimPhone">Victim's phone number</label>
+        <input class="input" style="width:100%" type="tel" id="victimPhone" autocomplete="tel" inputmode="tel" placeholder="Contact number">
+      </div>
+      <div style="margin-bottom:14px">
+        <label for="victimUpi">UPI ID / VPA (if relevant)</label>
+        <input class="input" style="width:100%" type="text" id="victimUpi" autocomplete="off" placeholder="example@bank">
+      </div>
+      <div style="margin-bottom:14px">
+        <label for="bankOrApp">Bank or payment app</label>
+        <input class="input" style="width:100%" type="text" id="bankOrApp" placeholder="Bank name or payment app">
+      </div>
+      <div style="margin-bottom:14px">
+        <label for="transactionReference">Transaction / UTR reference</label>
+        <input class="input" style="width:100%" type="text" id="transactionReference" autocomplete="off" placeholder="If available">
+      </div>
+      <div style="margin-bottom:14px">
+        <label for="bankComplaintReference">Bank complaint reference</label>
+        <input class="input" style="width:100%" type="text" id="bankComplaintReference" autocomplete="off" placeholder="If already reported to your bank">
+      </div>
+    </div>
+    <div style="margin-top:8px">
+      <label for="additionalIdentifiers">Other relevant identifiers or notes</label>
+      <textarea class="input" style="width:100%" id="additionalIdentifiers" rows="3" placeholder="Any other relevant details"></textarea>
+    </div>
+    <p class="note" style="margin-top:12px">
+      Never enter your OTP, UPI PIN, password, or full banking credentials. Leave any field blank if you do not know it or prefer not to provide it.
+    </p>
+  </div>
+`;
+
+c.innerHTML += `
+  <div class="actions" style="margin-top:16px">
+    <a class="btn btn-secondary" href="missing-info.html">← Back</a>
+    <button class="btn btn-primary" id="confirmSubmit" type="button">Confirm &amp; Submit →</button>
+  </div>
+`;
+
+const victimFieldMap = {
+  victimEmail: "email",
+  victimPhone: "phone",
+  victimUpi: "upi_id",
+  bankOrApp: "bank_or_app",
+  transactionReference: "transaction_reference",
+  bankComplaintReference: "bank_complaint_reference",
+  additionalIdentifiers: "additional_identifiers"
+};
+const initialVictimInformation = data.victim_information || {};
+Object.entries(victimFieldMap).forEach(([id, key]) => {
+  const input = document.getElementById(id);
+  if (input) input.value = initialVictimInformation[key] || "";
+});
+
+function readVictimInformation() {
+  const details = {};
+  Object.entries(victimFieldMap).forEach(([id, key]) => {
+    const input = document.getElementById(id);
+    details[key] = input ? input.value.trim() : "";
+  });
+  return details;
+}
+
+// Persist optional fields as the user types, so navigating back does not lose them.
+Object.keys(victimFieldMap).forEach(id => {
+  const input = document.getElementById(id);
+  if (input) input.addEventListener("input", () => {
+    try {
+      const latest = JSON.parse(sessionStorage.getItem("linkageX_analysis") || "{}");
+      latest.data = latest.data || {};
+      latest.data.victim_information = readVictimInformation();
+      sessionStorage.setItem("linkageX_analysis", JSON.stringify(latest));
+    } catch (error) {
+      console.warn("Unable to persist additional details:", error);
+    }
+  });
+});
+
+document.getElementById("confirmSubmit").addEventListener("click", () => {
+  const selectedVictim = document.querySelector('input[name="victim"]:checked');
+  const victimType = selectedVictim ? selectedVictim.value : "me";
+  const victimInformation = readVictimInformation();
+  const emailInput = document.getElementById("victimEmail");
+  if (victimInformation.email && emailInput && !emailInput.checkValidity()) {
+    emailInput.reportValidity();
+    return;
+  }
+  let latestResult;
+  try {
+    latestResult = JSON.parse(sessionStorage.getItem("linkageX_analysis"));
+  } catch (error) {
+    toast("Unable to finalize complaint.");
+    return;
+  }
+  const latestData = latestResult.data || {};
+  latestData.victim_type = victimType;
+  latestData.victim_information = victimInformation;
+  latestData.incident = { ...(latestData.incident || incident) };
+  latestData.missing_fields = [];
+  latestResult.data = latestData;
+  sessionStorage.setItem("linkageX_analysis", JSON.stringify(latestResult));
+
+  // Keep the existing app.js finalization flow intact.
+  const saved = saveFinalizedCase(victimType);
+  if (!saved) {
+    toast("Unable to submit the complaint.");
+    return;
+  }
+
+  // Attach the additional details to the finalized case as well.
+  try {
+    const finalizedCase = JSON.parse(sessionStorage.getItem("linkageX_final_case") || "{}");
+    finalizedCase.victim_type = victimType;
+    finalizedCase.victim_information = victimInformation;
+    finalizedCase.incident = { ...(latestData.incident || incident) };
+    finalizedCase.complaint_text = latestData.complaint_text || data.complaint_text || "";
+    finalizedCase.missing_fields = [];
+    finalizedCase.finalized_at = finalizedCase.finalized_at || new Date().toISOString();
+    sessionStorage.setItem("linkageX_final_case", JSON.stringify(finalizedCase));
+  } catch (error) {
+    console.error("Unable to attach additional details to finalized case:", error);
+    toast("Unable to attach the additional details. Please try again.");
+    return;
+  }
+
+  location.href = "success.html";
+});
 </script>
-
-
 </body>
-
 </html>

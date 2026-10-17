@@ -1,141 +1,26 @@
-from backend.services.linkage_service import find_related_cases
+from backend.services.nlp_service import analyze_complaint
+from pprint import pprint
 
 
-# ============================================================
-# TEST COMPLAINT
-# ============================================================
+test_complaint = """
+I received a call from 9988233057 on my number 9989966455.
+The caller claimed to be from FedEx Mumbai Andheri East and said
+a courier containing illegal items in my name had been intercepted.
+He then connected me to a person on Skype who claimed to be a
+Mumbai Crime Branch officer.
 
-test_incident = {
-    "complaint_text": (
-        "I received a WhatsApp message offering me a personal loan. "
-        "They asked me to pay Rs. 15000 as a processing fee and after "
-        "I paid, they stopped responding."
-    ),
+They showed me a forged FIR and told me that my bank accounts
+were under investigation. They asked me to transfer 90% of my
+bank balance.
 
-    "crime_category": "Financial Fraud",
+I transferred Rs. 12,49,633 through RTGS from my ICICI Bank
+account to Punjab National Bank account 3335002100021930,
+IFSC PUNB0436400.
 
-    "crime_subcategory": "Investment/Loan Scams",
-
-    "modus_operandi": [
-        "Fake Processing Fee",
-        "Fake Loan Offer"
-    ],
-
-    "deception": [
-        "Deceptive Offer"
-    ],
-
-    "victim_action": [
-        "Paid"
-    ],
-
-    "attacker_action": [
-        "Requested Payment"
-    ],
-
-    "outcome": [
-        "Scammer Stopped Responding"
-    ],
-
-    "channels": [
-        "WhatsApp"
-    ],
-
-    "amounts": [
-        15000.0
-    ],
-
-    "payment_method": [],
-
-    "phones": [],
-
-    "emails": [],
-
-    "upi_ids": [],
-
-    "urls": [],
-
-    "organizations": [],
-
-    "locations": []
-}
+After confirming the transfer, they disconnected the call.
+"""
 
 
-# ============================================================
-# RUN LINKAGE
-# ============================================================
+result = analyze_complaint(test_complaint)
 
-results = find_related_cases(
-    test_incident,
-    top_k=5
-)
-
-
-# ============================================================
-# DISPLAY RESULTS
-# ============================================================
-
-print()
-print("=" * 70)
-print("LINKAGEX — RELATED CASES")
-print("=" * 70)
-
-
-if not results:
-
-    print()
-    print("No meaningful related cases found.")
-    print()
-    print("Threshold used: 0.45")
-    print("=" * 70)
-
-else:
-
-    for i, result in enumerate(
-        results,
-        start=1
-    ):
-
-        print()
-        print(f"#{i}")
-
-        print(
-            f"Case ID       : "
-            f"{result['case_id']}"
-        )
-
-        print(
-            f"Score         : "
-            f"{result['score']}"
-        )
-
-        print(
-            f"Relationship  : "
-            f"{result['relationship']}"
-        )
-
-        print(
-            "Shared Signals:"
-        )
-
-        for signal in result[
-            "shared_signals"
-        ]:
-
-            print(
-                f"  - {signal}"
-            )
-
-        print(
-            "Component Scores:"
-        )
-
-        for key, value in result[
-            "component_scores"
-        ].items():
-
-            print(
-                f"  {key:18}: {value}"
-            )
-
-        print("-" * 70)
+pprint(result["incident"])

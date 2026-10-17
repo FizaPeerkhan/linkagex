@@ -22,6 +22,12 @@
         href="../css/components.css"
     >
 
+    <style>
+        .entity-context-item { margin: 0 0 10px; line-height: 1.45; overflow-wrap: anywhere; }
+        .entity-context-item:last-child { margin-bottom: 0; }
+        .context-detail { margin-top: 3px; color: #64748b; font-size: 0.88em; }
+        .context-detail span { font-weight: 600; }
+    </style>
 </head>
 
 
@@ -234,55 +240,71 @@ const missingFields = data.missing_fields || [];
                DISPLAY VALUE
             ================================================== */
 
-            function displayValue(value) {
+            function displayEntityItem(item) {
+                if (item === null || item === undefined) return "";
 
-                if (
-                    value === null ||
-                    value === undefined
-                ) {
-
-                    return "Not provided";
-
+                if (typeof item === "string" || typeof item === "number") {
+                    return String(item).trim();
                 }
 
+                if (Array.isArray(item)) {
+                    return item.map(displayEntityItem).filter(Boolean).join(", ");
+                }
 
-                if (
-                    Array.isArray(value)
-                ) {
+                if (typeof item === "object") {
+                    const preferredKeys = [
+                        "value", "text", "number", "phone", "phone_number",
+                        "email", "upi", "upi_id", "url", "domain", "address",
+                        "identifier", "raw", "matched_text", "entity"
+                    ];
 
-                    if (
-                        value.length === 0
-                    ) {
-
-                        return "Not provided";
-
+                    for (const key of preferredKeys) {
+                        const candidate = item[key];
+                        if (
+                            (typeof candidate === "string" ||
+                             typeof candidate === "number") &&
+                            String(candidate).trim() !== ""
+                        ) {
+                            return String(candidate).trim();
+                        }
                     }
 
-
-                    return value
-                        .map(
-                            item =>
-                                String(item)
+                    const primitives = Object.values(item)
+                        .filter(value =>
+                            (typeof value === "string" ||
+                             typeof value === "number") &&
+                            String(value).trim() !== ""
                         )
-                        .join(", ");
+                        .map(value => String(value).trim());
 
+                    return [...new Set(primitives)].join(" · ");
                 }
 
-
-                if (
-                    typeof value === "string" &&
-                    value.trim() === ""
-                ) {
-
-                    return "Not provided";
-
-                }
-
-
-                return String(value);
-
+                return "";
             }
 
+            function displayValue(value) {
+                if (value === null || value === undefined) {
+                    return "Not provided";
+                }
+
+                if (Array.isArray(value)) {
+                    const items = value.map(displayEntityItem).filter(Boolean);
+                    return items.length
+                        ? [...new Set(items)].join(", ")
+                        : "Not provided";
+                }
+
+                if (typeof value === "object") {
+                    return displayEntityItem(value) || "Not provided";
+                }
+
+                if (typeof value === "string" && value.trim() === "") {
+                    return "Not provided";
+                }
+
+                return String(value);
+            }
 
 
             /* =================================================
@@ -366,50 +388,46 @@ function statusFor(value, fieldName) {
                FORMAT AMOUNTS
             ================================================== */
 
-            function displayAmounts(
-                amounts
-            ) {
+            function escapeHTML(value) {
+                return String(value ?? "")
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            }
 
-                if (
-                    !Array.isArray(amounts) ||
-                    amounts.length === 0
-                ) {
+            function formatAmount(value) {
+                const number = Number(value);
+                return Number.isFinite(number)
+                    ? "₹" + number.toLocaleString("en-IN")
+                    : escapeHTML(value);
+            }
 
-                    return "Not provided";
-
+            function displayContextualDetails(details, fallback, kind) {
+                if (!Array.isArray(details) || details.length === 0) {
+                    return escapeHTML(displayValue(fallback));
                 }
 
+                return details.map(item => {
+                    const value = kind === "amount"
+                        ? formatAmount(item.value)
+                        : escapeHTML(displayEntityItem(item.value));
+                    const meaning = item.meaning
+                        ? `<strong>${escapeHTML(item.meaning)}</strong>`
+                        : "Context not established";
+                    const context = item.context
+                        ? `<div class="context-detail"><span>Complaint context:</span> ${escapeHTML(item.context)}</div>`
+                        : `<div class="context-detail">No matching sentence context was found.</div>`;
+                    return `<div class="entity-context-item"><div>${meaning}: ${value}</div>${context}</div>`;
+                }).join("");
+            }
 
-                return amounts
-                    .map(
-                        amount => {
-
-                            const number =
-                                Number(amount);
-
-
-                            if (
-                                Number.isNaN(number)
-                            ) {
-
-                                return String(
-                                    amount
-                                );
-
-                            }
-
-
-                            return (
-                                "₹" +
-                                number.toLocaleString(
-                                    "en-IN"
-                                )
-                            );
-
-                        }
-                    )
-                    .join(", ");
-
+            function displayAmounts(amounts) {
+                if (!Array.isArray(amounts) || amounts.length === 0) {
+                    return "Not provided";
+                }
+                return amounts.map(formatAmount).join(", ");
             }
 
 
@@ -523,7 +541,9 @@ function statusFor(value, fieldName) {
                 [
                     "Location",
 
-                    incident.locations,
+                    hasValue(incident.location_mentions)
+                        ? incident.location_mentions
+                        : incident.locations,
 
                     "locations"
 
@@ -531,13 +551,7 @@ function statusFor(value, fieldName) {
 
             ];
 
-console.log("TEST STATUS:", {
-    payment: statusFor(incident.payment_method, "payment_method"),
-    organization: statusFor(incident.organizations, "organizations"),
-    location: statusFor(incident.locations, "locations")
-});
-
-            /* =================================================
+/* =================================================
                RENDER TABLE
             ================================================== */
 
@@ -604,14 +618,18 @@ console.log("TEST STATUS:", {
                                                 const value =
 
                                                     key === "amounts"
-
-                                                        ? displayAmounts(
-                                                            rawValue
+                                                        ? displayContextualDetails(
+                                                            incident.amount_details,
+                                                            rawValue,
+                                                            "amount"
                                                         )
-
-                                                        : displayValue(
-                                                            rawValue
-                                                        );
+                                                        : key === "locations"
+                                                            ? displayContextualDetails(
+                                                                incident.location_details,
+                                                                hasValue(incident.location_mentions) ? incident.location_mentions : rawValue,
+                                                                "location"
+                                                            )
+                                                            : displayValue(rawValue);
 
 
                                                 return `
@@ -691,9 +709,7 @@ console.log("TEST STATUS:", {
 
                             field(
                                 "Phone Numbers",
-                                displayValue(
-                                    incident.phones
-                                ),
+                                "__LINKAGEX_CONTEXT_PHONES__",
                                 "phones",
                                 false
                             )
@@ -705,9 +721,7 @@ console.log("TEST STATUS:", {
 
                             field(
                                 "Email Addresses",
-                                displayValue(
-                                    incident.emails
-                                ),
+                                "__LINKAGEX_CONTEXT_EMAILS__",
                                 "emails",
                                 false
                             )
@@ -719,9 +733,7 @@ console.log("TEST STATUS:", {
 
                             field(
                                 "UPI IDs",
-                                displayValue(
-                                    incident.upi_ids
-                                ),
+                                "__LINKAGEX_CONTEXT_UPI__",
                                 "upi_ids",
                                 false
                             )
@@ -733,9 +745,7 @@ console.log("TEST STATUS:", {
 
                             field(
                                 "URLs",
-                                displayValue(
-                                    incident.urls
-                                ),
+                                "__LINKAGEX_CONTEXT_URLS__",
                                 "urls",
                                 false
                             )
@@ -781,6 +791,85 @@ console.log("TEST STATUS:", {
                 </div>
 
             `;
+
+            /* =================================================
+               RENDER CONTEXTUAL INDICATORS SAFELY
+
+               The shared field() helper escapes values as text.
+               Keep it for the original layout, then replace only
+               our unique text placeholders with DOM-rendered
+               contextual details. Existing CSS/layout is unchanged.
+            ================================================== */
+
+            function replaceContextPlaceholder(marker, details, fallback, kind) {
+                const walker = document.createTreeWalker(
+                    c,
+                    NodeFilter.SHOW_TEXT
+                );
+
+                const textNodes = [];
+                while (walker.nextNode()) {
+                    if (walker.currentNode.nodeValue.includes(marker)) {
+                        textNodes.push(walker.currentNode);
+                    }
+                }
+
+                for (const textNode of textNodes) {
+                    const sourceText = textNode.nodeValue;
+                    const markerIndex = sourceText.indexOf(marker);
+                    if (markerIndex < 0) continue;
+
+                    const before = sourceText.slice(0, markerIndex);
+                    const after = sourceText.slice(markerIndex + marker.length);
+                    const fragment = document.createDocumentFragment();
+
+                    if (before) {
+                        fragment.appendChild(document.createTextNode(before));
+                    }
+
+                    const template = document.createElement("template");
+                    template.innerHTML = displayContextualDetails(
+                        details,
+                        fallback,
+                        kind
+                    );
+                    fragment.appendChild(template.content);
+
+                    if (after) {
+                        fragment.appendChild(document.createTextNode(after));
+                    }
+
+                    textNode.replaceWith(fragment);
+                }
+            }
+
+            replaceContextPlaceholder(
+                "__LINKAGEX_CONTEXT_PHONES__",
+                incident.phone_details,
+                incident.phones,
+                "phone"
+            );
+
+            replaceContextPlaceholder(
+                "__LINKAGEX_CONTEXT_EMAILS__",
+                incident.email_details,
+                incident.emails,
+                "email"
+            );
+
+            replaceContextPlaceholder(
+                "__LINKAGEX_CONTEXT_UPI__",
+                incident.upi_details,
+                incident.upi_ids,
+                "upi"
+            );
+
+            replaceContextPlaceholder(
+                "__LINKAGEX_CONTEXT_URLS__",
+                incident.url_details,
+                incident.urls,
+                "url"
+            );
 
         }
 

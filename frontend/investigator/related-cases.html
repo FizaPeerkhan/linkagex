@@ -1,0 +1,1295 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Potentially Related Cases | LinkageX</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <style>
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+
+        .results-summary {
+            font-size: 13px;
+            color: var(--muted, #6b7280);
+            margin-top: 5px;
+        }
+
+
+        .query-card {
+            margin-top: 18px;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+
+        .query-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: #6b7280;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+
+        .query-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #374151;
+        }
+
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+
+        .result-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            background: #fff;
+        }
+
+
+        .result-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+
+        .result-rank {
+            color: #6b7280;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+
+        .result-case {
+            font-size: 17px;
+            font-weight: 750;
+        }
+
+
+        .relationship {
+            display: inline-flex;
+            margin-top: 8px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+
+        .score-box {
+            min-width: 105px;
+            text-align: right;
+        }
+
+
+        .score {
+            font-size: 25px;
+            font-weight: 750;
+            line-height: 1;
+        }
+
+
+        .score-label {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+
+        .score-track {
+            height: 7px;
+            background: #eef2f7;
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+
+        .score-fill {
+            height: 100%;
+            background: #2563eb;
+            border-radius: 99px;
+        }
+
+
+        .section {
+            margin-top: 18px;
+        }
+
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+
+        .evidence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+
+        .evidence-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            font-size: 13px;
+            color: #4b5563;
+            line-height: 1.45;
+        }
+
+
+        .evidence-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            margin-top: 7px;
+            flex: 0 0 auto;
+        }
+
+
+        .evidence-value {
+            font-weight: 600;
+            color: #374151;
+        }
+
+
+        .empty-evidence {
+            padding: 11px 13px;
+            background: #f9fafb;
+            border: 1px solid #eef0f2;
+            border-radius: 8px;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+
+        .interpretation {
+            margin-top: 16px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            color: #4b5563;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+
+        .result-actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            margin-top: 17px;
+        }
+
+
+        .empty-results {
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+
+        .empty-icon {
+            font-size: 30px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+
+        .case-meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin-top:15px; }
+        .meta-item { padding:10px; background:#f8fafc; border:1px solid #edf0f4; border-radius:8px; min-width:0; }
+        .meta-label { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; margin-bottom:4px; }
+        .meta-value { font-size:12px; font-weight:650; line-height:1.4; overflow-wrap:anywhere; color:#1f2937; }
+        .case-preview { font-size:12px; line-height:1.55; color:#4b5563; margin-top:12px; padding:12px; background:#fafafa; border-radius:8px; }
+
+        @media (max-width: 600px) {
+
+            .result-top {
+                flex-direction: column;
+            }
+
+            .score-box {
+                text-align: left;
+            }
+
+        }
+        @media (max-width: 900px) { .case-meta { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width: 600px) { .case-meta { grid-template-columns:1fr; } }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+
+
+<script>
+
+    /* =========================================================
+       PAGE SHELL
+    ========================================================= */
+
+    const c = shell(
+        "investigator",
+        "Potential Linkages"
+    );
+
+
+    c.innerHTML = pageHead(
+        "Potentially Related Cases",
+        "Historical cases surfaced by the LinkageX correlation engine.",
+        `
+            <a
+                class="btn btn-secondary"
+                href="linkage.html"
+            >
+                ← Case Linkage
+            </a>
+        `
+    );
+
+
+    /* =========================================================
+       MAIN CARD
+    ========================================================= */
+
+    c.innerHTML += `
+
+        <div class="card">
+
+            <div class="results-header">
+
+                <div>
+
+                    <h3>
+                        Potentially Related Cases
+                    </h3>
+
+                    <p
+                        id="summary"
+                        class="results-summary"
+                    ></p>
+
+                </div>
+
+
+                <span class="tag">
+                    Similarity-ranked
+                </span>
+
+            </div>
+
+
+            <!-- CURRENT INCIDENT -->
+
+            <div
+                id="query-card"
+                class="query-card"
+                style="display:none;"
+            >
+
+                <div class="query-label">
+                    Analyzed Incident
+                </div>
+
+                <div
+                    id="query-text"
+                    class="query-text"
+                ></div>
+
+            </div>
+
+
+            <!-- RESULTS -->
+
+            <div
+                id="results-list"
+                class="results-list"
+            ></div>
+
+
+            <!-- DISCLAIMER -->
+
+            <div
+                class="alert alert-warn"
+                style="margin-top:18px;"
+            >
+
+                <strong>
+                    Investigator assistance only:
+                </strong>
+
+                Similarity indicates a potentially shared pattern
+                between reported incidents. It does not establish
+                that incidents were committed by the same person or
+                group and should not be treated as proof of attribution.
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    /* =========================================================
+       LOAD SAVED RESULTS
+    ========================================================= */
+
+    const results =
+        JSON.parse(
+            sessionStorage.getItem(
+                "linkageX_results"
+            ) || "[]"
+        );
+
+
+    const incident =
+        JSON.parse(
+            sessionStorage.getItem(
+                "linkageX_incident"
+            ) || "null"
+        );
+
+
+    const resultsList =
+        document.getElementById(
+            "results-list"
+        );
+
+
+    const summary =
+        document.getElementById(
+            "summary"
+        );
+
+
+    /* =========================================================
+       DISPLAY INCIDENT SUMMARY
+    ========================================================= */
+
+    if (incident) {
+
+        document.getElementById(
+            "query-card"
+        ).style.display = "block";
+
+
+        const queryParts = [
+
+            incident.crime_category,
+
+            incident.crime_subcategory,
+
+            formatValue(
+                incident.modus_operandi
+            ),
+
+            formatValue(
+                incident.channels
+            ),
+
+            formatValue(
+                incident.payment_method
+            )
+
+        ].filter(Boolean);
+
+
+        document.getElementById(
+            "query-text"
+        ).textContent =
+            queryParts.join(" • ") ||
+            "Structured incident available";
+
+    }
+
+
+    /* =========================================================
+       SUMMARY
+    ========================================================= */
+
+    summary.textContent =
+        results.length
+            ? `${results.length} historical case(s) met the minimum similarity threshold.`
+            : "No historical case met the minimum similarity threshold.";
+
+
+    /* =========================================================
+       NO RESULTS
+    ========================================================= */
+
+    if (!results.length) {
+
+        resultsList.innerHTML = `
+
+            <div class="empty-results">
+
+                <div class="empty-icon">
+                    ⌁
+                </div>
+
+                <h3>
+                    No significant relationship identified
+                </h3>
+
+                <p
+                    class="card-sub"
+                    style="margin-top:7px;"
+                >
+                    No historical case reached the minimum
+                    similarity threshold. The incident can be
+                    retained as a standalone case for future comparison.
+                </p>
+
+                <div style="margin-top:18px;">
+
+                    <a
+                        class="btn btn-secondary"
+                        href="linkage.html"
+                    >
+                        Analyze Another Complaint
+                    </a>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =========================================================
+       DISPLAY RESULTS
+    ========================================================= */
+
+    else {
+
+        resultsList.innerHTML =
+            results
+                .map(
+                    (result, index) =>
+                        createResultCard(
+                            result,
+                            index
+                        )
+                )
+                .join("");
+
+    }
+
+
+    /* =========================================================
+       RESULT CARD
+    ========================================================= */
+
+    function createResultCard(
+        result,
+        index
+    ) {
+
+        const score =
+            Number(
+                result.score || 0
+            );
+
+
+        const percentage =
+            (
+                score * 100
+            ).toFixed(2);
+
+
+        const evidence =
+            result.evidence || {};
+
+
+        const distinctive =
+            evidence.distinctive || [];
+
+
+        const moderate =
+            evidence.moderate || [];
+
+
+        const common =
+            evidence.common || [];
+
+        const caseSummary = result.case_summary || {};
+
+        const explanation =
+            buildWhySurfaced(
+                result,
+                distinctive,
+                moderate,
+                common
+            );
+
+
+        return `
+
+            <div class="result-card">
+
+
+                <!-- HEADER -->
+
+                <div class="result-top">
+
+                    <div>
+
+                        <div class="result-rank">
+                            Result #${index + 1}
+                        </div>
+
+
+                        <div class="result-case">
+
+                            ${escapeHtml(
+                                result.case_id ||
+                                "Unknown Case"
+                            )}
+
+                        </div>
+
+
+                        <span class="relationship">
+
+                            ${escapeHtml(
+                                result.relationship ||
+                                "Potential relationship"
+                            )}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="score-box">
+
+                        <div class="score">
+                            ${percentage}%
+                        </div>
+
+                        <div class="score-label">
+                            Similarity score
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SCORE -->
+
+                <div class="score-track">
+
+                    <div
+                        class="score-fill"
+                        style="
+                            width:${Math.min(
+                                score * 100,
+                                100
+                            )}%;
+                        "
+                    ></div>
+
+                </div>
+
+
+                <!-- HISTORICAL CASE SUMMARY (from LINKAGEX_MASTER_CASES_V2.csv) -->
+                ${renderCaseSummary(caseSummary)}
+
+                <!-- WHY SURFACED -->
+
+                <div class="section">
+
+                    <div class="section-title">
+                        Why this case was surfaced
+                    </div>
+
+
+                    <div class="empty-evidence">
+
+                        ${escapeHtml(
+                            explanation
+                        )}
+
+                    </div>
+
+                </div>
+
+
+                <!-- DISTINCTIVE EVIDENCE -->
+
+                <div class="section">
+
+                    <div class="section-title">
+                        Distinctive evidence
+                    </div>
+
+
+                    ${
+                        distinctive.length
+
+                        ? renderEvidence(
+                            distinctive
+                        )
+
+                        : `
+
+                            <div class="empty-evidence">
+
+                                No distinctive identifier was shared.
+                                The relationship is based primarily on
+                                broader incident-pattern similarity.
+
+                            </div>
+
+                        `
+                    }
+
+                </div>
+
+
+                <!-- PATTERN EVIDENCE -->
+
+                <div class="section">
+
+                    <div class="section-title">
+                        Pattern-level evidence
+                    </div>
+
+
+                    ${
+                        moderate.length
+
+                        ? renderEvidence(
+                            moderate
+                        )
+
+                        : common.length
+
+                            ? renderEvidence(
+                                common
+                            )
+
+                            : `
+
+                                <div class="empty-evidence">
+
+                                    No additional structured overlap
+                                    was identified.
+
+                                </div>
+
+                            `
+                    }
+
+                </div>
+
+
+                <!-- INTERPRETATION -->
+
+                <div class="interpretation">
+
+                    <strong>
+                        Interpretation:
+                    </strong>
+
+                    ${
+                        evidence.has_distinctive_evidence
+
+                        ? `The result includes at least one more
+                           distinctive shared signal. Review the
+                           underlying case evidence before drawing
+                           investigative conclusions.`
+
+                        : `The result does not contain a distinctive
+                           shared identifier. Similarity should therefore
+                           be interpreted as a pattern-level investigative
+                           lead rather than evidence of common attribution.`
+                    }
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="result-actions">
+
+                    <a
+                        class="btn btn-secondary"
+                        href="case-details.html?case=${encodeURIComponent(
+                            result.case_id || ""
+                        )}"
+                    >
+                        View Case
+                    </a>
+
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="saveForCorrelation(
+                            '${escapeJs(
+                                result.case_id || ""
+                            )}'
+                        )"
+                    >
+                        Save for Future Correlation
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =========================================================
+       HISTORICAL CASE SUMMARY
+    ========================================================= */
+
+    function renderCaseSummary(summary) {
+        if (!summary || typeof summary !== "object") return "";
+
+        const lossFlag = String(summary.loss_occurred ?? "").toLowerCase();
+        let lossValue = "Not recorded";
+        if (lossFlag === "true") {
+            const amount = summary.amount_lost == null || summary.amount_lost === ""
+                ? "Amount unavailable"
+                : `${summary.currency || ""} ${formatAmount(summary.amount_lost)}`.trim();
+            lossValue = amount;
+        } else if (lossFlag === "false") {
+            lossValue = "No financial loss recorded";
+        } else if (summary.amount_lost != null && summary.amount_lost !== "") {
+            lossValue = `${summary.currency || ""} ${formatAmount(summary.amount_lost)}`.trim();
+        }
+
+        const fields = [
+            ["Crime type", [summary.crime_category, summary.crime_subcategory].filter(Boolean).join(" • ")],
+            ["Attack pattern", summary.attack_pattern || summary.attack_variant],
+            ["Incident date", summary.incident_date],
+            ["Location", summary.location],
+            ["Outcome", summary.outcome],
+            ["Loss recorded", lossValue],
+            ["Channel / payment", [summary.channel, summary.payment_method].filter(Boolean).join(" • ")],
+            ["Cluster / campaign", [summary.incident_cluster_id, summary.campaign_id].filter(Boolean).join(" / ")],
+            ["Evidence types", summary.evidence_types]
+        ].filter(([_, value]) => value !== null && value !== undefined && value !== "");
+
+        const metadata = fields.map(([label, value]) => `
+            <div class="meta-item">
+                <div class="meta-label">${escapeHtml(label)}</div>
+                <div class="meta-value">${escapeHtml(formatValue(value) || "Not available")}</div>
+            </div>
+        `).join("");
+
+        const preview = summary.complaint_preview
+            ? `<div class="case-preview"><strong>Historical complaint preview:</strong> ${escapeHtml(summary.complaint_preview)}</div>`
+            : "";
+
+        return `${metadata ? `<div class="case-meta">${metadata}</div>` : ""}${preview}`;
+    }
+
+    function formatAmount(value) {
+        if (value === null || value === undefined || value === "") return "Not recorded";
+        const number = Number(value);
+        return Number.isFinite(number) ? number.toLocaleString("en-IN") : String(value);
+    }
+
+
+    /* =========================================================
+       WHY SURFACED
+    ========================================================= */
+
+    function buildWhySurfaced(
+        result,
+        distinctive,
+        moderate,
+        common
+    ) {
+
+        const reasons = [];
+
+
+        if (
+            Number(
+                result.component_scores?.semantic ||
+                0
+            ) > 0
+        ) {
+
+            reasons.push(
+                "the complaint has semantic similarity to this historical incident"
+            );
+
+        }
+
+
+        if (
+            Number(
+                result.component_scores?.crime ||
+                0
+            ) > 0
+        ) {
+
+            reasons.push(
+                "the incidents share a crime classification"
+            );
+
+        }
+
+
+        if (distinctive.length) {
+
+            reasons.push(
+                "a distinctive structured signal is shared"
+            );
+
+        }
+
+
+        else if (moderate.length) {
+
+            reasons.push(
+                "structured incident patterns overlap"
+            );
+
+        }
+
+
+        else if (common.length) {
+
+            reasons.push(
+                "common incident patterns overlap"
+            );
+
+        }
+
+
+        if (!reasons.length) {
+
+            return (
+                result.relationship ||
+                "The case met the configured similarity threshold."
+            );
+
+        }
+
+
+        return (
+            "This case was surfaced because " +
+            joinReasons(reasons) +
+            "."
+        );
+
+    }
+
+
+    function joinReasons(
+        reasons
+    ) {
+
+        if (reasons.length === 1) {
+
+            return reasons[0];
+
+        }
+
+
+        if (reasons.length === 2) {
+
+            return (
+                `${reasons[0]} and ${reasons[1]}`
+            );
+
+        }
+
+
+        return (
+            reasons
+                .slice(0, -1)
+                .join(", ") +
+            ", and " +
+            reasons[
+                reasons.length - 1
+            ]
+        );
+
+    }
+
+
+    /* =========================================================
+       EVIDENCE
+    ========================================================= */
+
+    function renderEvidence(
+        items
+    ) {
+
+        return `
+
+            <div class="evidence-list">
+
+                ${
+                    items
+                        .map(
+                            item => {
+
+                                const field =
+                                    item.field ||
+                                    item.label ||
+                                    "Signal";
+
+
+                                const value =
+                                    item.value ||
+                                    item.signal ||
+                                    "";
+
+
+                                return `
+
+                                    <div class="evidence-row">
+
+                                        <span
+                                            class="evidence-dot"
+                                        ></span>
+
+
+                                        <span>
+
+                                            <strong>
+
+                                                ${escapeHtml(
+                                                    fieldLabel(
+                                                        field
+                                                    )
+                                                )}
+
+                                            </strong>
+
+
+                                            ${
+                                                value
+
+                                                ? `:
+
+                                                    <span
+                                                        class="evidence-value"
+                                                    >
+                                                        ${escapeHtml(
+                                                            formatValue(
+                                                                value
+                                                            )
+                                                        )}
+                                                    </span>
+
+                                                  `
+
+                                                : ""
+                                            }
+
+                                        </span>
+
+                                    </div>
+
+                                `;
+
+                            }
+                        )
+                        .join("")
+                }
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =========================================================
+       FIELD LABELS
+    ========================================================= */
+
+    function fieldLabel(
+        field
+    ) {
+
+        const labels = {
+
+            semantic:
+                "Semantic similarity",
+
+            crime:
+                "Crime classification",
+
+            modus_operandi:
+                "Modus operandi",
+
+            deception:
+                "Deception pattern",
+
+            victim_action:
+                "Victim action",
+
+            attacker_action:
+                "Attacker action",
+
+            outcome:
+                "Outcome",
+
+            channel:
+                "Channel",
+
+            payment:
+                "Payment method",
+
+            organization:
+                "Organization",
+
+            phone:
+                "Phone number",
+
+            email:
+                "Email address",
+
+            upi:
+                "UPI identifier",
+
+            url:
+                "URL",
+
+            location:
+                "Location"
+
+        };
+
+
+        return (
+            labels[field] ||
+
+            String(field)
+                .replace(
+                    /_/g,
+                    " "
+                )
+                .replace(
+                    /\b\w/g,
+                    char =>
+                        char.toUpperCase()
+                )
+        );
+
+    }
+
+
+    /* =========================================================
+       SAVE FOR CORRELATION
+    ========================================================= */
+
+    function saveForCorrelation(
+        caseId
+    ) {
+
+        if (!caseId) {
+
+            toast(
+                "Case ID is not available."
+            );
+
+            return;
+
+        }
+
+
+        const existing =
+            JSON.parse(
+                sessionStorage.getItem(
+                    "linkageX_saved_cases"
+                ) || "[]"
+            );
+
+
+        if (
+            !existing.includes(
+                caseId
+            )
+        ) {
+
+            existing.push(
+                caseId
+            );
+
+        }
+
+
+        sessionStorage.setItem(
+            "linkageX_saved_cases",
+            JSON.stringify(
+                existing
+            )
+        );
+
+
+        toast(
+            `${caseId} saved for future correlation.`
+        );
+
+    }
+
+
+    /* =========================================================
+       ESCAPE HELPERS
+    ========================================================= */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    function escapeJs(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+
+            .replace(
+                /\\/g,
+                "\\\\"
+            )
+
+            .replace(
+                /'/g,
+                "\\'"
+            )
+
+            .replace(
+                /\n/g,
+                "\\n"
+            )
+
+            .replace(
+                /\r/g,
+                "\\r"
+            );
+
+    }
+
+
+    /* =========================================================
+       FORMAT VALUE
+    ========================================================= */
+
+    function formatValue(
+        value
+    ) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+
+            return "";
+
+        }
+
+
+        if (
+            Array.isArray(value)
+        ) {
+
+            return value.length
+                ? value.join(", ")
+                : "";
+
+        }
+
+
+        return String(value);
+
+    }
+
+</script>
+
+</body>
+</html>

@@ -162,6 +162,35 @@ console.log(
         missingFields
     );
 
+    /*
+     * Supplement backend missing_fields with important incident
+     * details that may not have been explicitly marked missing.
+     * A location mentioned as part of a caller's claimed affiliation
+     * is not necessarily the victim's incident location.
+     */
+    // Only a dedicated victim/incident-location field counts here.
+    // Generic extracted mentions may refer to a caller's claimed
+    // organization or another place mentioned in the complaint.
+    const hasIncidentLocation = [
+        incident.incident_location,
+        incident.victim_location
+    ].some(value =>
+        typeof value === "string" && value.trim() !== "" &&
+        value.trim().toLowerCase() !== "unknown"
+    );
+
+    if (!hasIncidentLocation && !missingFields.includes("incident_location")) {
+        missingFields.push("incident_location");
+    }
+
+    const hasIncidentDate =
+        incident.incident_date &&
+        String(incident.incident_date).trim() !== "";
+
+    if (!hasIncidentDate && !missingFields.includes("incident_date")) {
+        missingFields.push("incident_date");
+    }
+
 
     /* =========================================================
        NO MISSING INFORMATION
@@ -421,29 +450,41 @@ console.log(
                 `
             },
             incident_date: {
-  title: "When did this incident happen?",
-  description: "Please provide the date when the incident occurred.",
-  html: `
-    <input
-      type="date"
-      id="answer"
-      class="input"
-    >
+                title: "When did this incident happen?",
+                description: "Enter the date if you know it. You can choose “I don't know” if you're unsure.",
+                html: `
+                    <input
+                        type="date"
+                        id="incident_date"
+                        class="input"
+                        style="width:100%"
+                    >
 
-    <label
-      style="
-        display:block;
-        margin-top:12px;
-      "
-    >
-      <input
-        type="checkbox"
-        id="dateUnknown"
-      >
-      I don't know
-    </label>
-  `
-},
+                    <label style="display:block;margin-top:12px">
+                        <input type="checkbox" id="dateUnknown">
+                        I don't know
+                    </label>
+                `
+            },
+
+            incident_location: {
+                title: "Where were you when the incident happened?",
+                description: "Enter the city, area, or place where you were affected. A location mentioned in a caller's claimed identity does not count as your incident location.",
+                html: `
+                    <input
+                        type="text"
+                        id="incident_location"
+                        class="input"
+                        placeholder="Enter city, area, or place"
+                        style="width:100%"
+                    >
+
+                    <label style="display:block;margin-top:12px">
+                        <input type="checkbox" id="locationUnknown">
+                        I don't know / prefer not to provide it
+                    </label>
+                `
+            },
 
 
             amounts: {
@@ -681,33 +722,35 @@ console.log(
             ================================================== */
 
             function getAnswer(field) {
+                if (
+                    field === "incident_date" &&
+                    document.getElementById("dateUnknown")?.checked
+                ) {
+                    return "Unknown";
+                }
 
-                const radios =
-                    document.querySelectorAll(
-                        `input[name="${field}"]:checked`
-                    );
+                if (
+                    field === "incident_location" &&
+                    document.getElementById("locationUnknown")?.checked
+                ) {
+                    return "Unknown";
+                }
 
+                const radios = document.querySelectorAll(
+                    `input[name="${field}"]:checked`
+                );
 
                 if (radios.length > 0) {
-
                     return radios[0].value;
-
                 }
 
-
-                const input =
-                    document.getElementById(field);
-
+                const input = document.getElementById(field);
 
                 if (input) {
-
                     return input.value.trim();
-
                 }
 
-
                 return "";
-
             }
 
 
@@ -760,6 +803,20 @@ console.log(
                     incident[field] = [
                         Number(answer)
                     ];
+
+                } else if (field === "incident_location") {
+
+                    incident.incident_location = answer;
+
+                    // Keep the existing locations field compatible with
+                    // downstream pages while retaining the dedicated value.
+                    incident.locations = answer === "Unknown"
+                        ? []
+                        : [answer];
+
+                } else if (field === "incident_date") {
+
+                    incident.incident_date = answer;
 
                 } else {
 

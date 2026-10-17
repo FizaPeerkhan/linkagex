@@ -3,21 +3,48 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Case Details</title>
+  <title>Historical Case Details | LinkageX</title>
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .case-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .detail-item{padding:12px;border:1px solid var(--border,#e5e7eb);border-radius:9px;background:var(--surface,#fff);min-width:0}
+    .detail-label{font-size:10px;text-transform:uppercase;letter-spacing:.045em;color:var(--muted,#6b7280);margin-bottom:5px;font-weight:700}
+    .detail-value{font-size:13px;line-height:1.5;overflow-wrap:anywhere;color:var(--text,#1f2937)}
+    .complaint-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.65;color:var(--text,#1f2937)}
+    .case-actions{display:flex;gap:9px;flex-wrap:wrap}
+    .detail-section{margin-top:18px}
+    @media(max-width:800px){.case-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:520px){.case-detail-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+<script>
+const API_BASE = "http://127.0.0.1:5000";
+const caseId = new URLSearchParams(location.search).get("case") || "";
+const c = shell("investigator", "Cases");
+c.innerHTML = `<div id="case-loading" class="card"><p>Loading historical case ${esc(caseId || "") || "…"}…</p></div><div id="case-content"></div>`;
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
-
-  <script>
-    const c=shell("investigator","Cases");
-    const id=new URLSearchParams(location.search).get("case")||"CC001";
-    c.innerHTML=pageHead("Case "+id,"Structured incident details and investigative-support signals.",`<div class="actions"><a class="btn btn-secondary" href="cases.html">← Back to Cases</a><a class="btn btn-primary" href="linkage.html?case=${id}">View Potential Linkages →</a></div>`);
-
-    c.innerHTML+=`<div class="tags" style="margin-bottom:15px"><span class="tag">Financial Fraud</span><span class="tag">Loan Scam</span>${badge("New")}</div>${renderIncident(CS.incident)}<div class="grid grid-2 section"><div class="card"><div class="section-head"><h3>Extracted Indicators</h3><span>Comparable signals</span></div><div class="tags">${CS.incident.indicators.map(x=>`<span class="tag">${x}</span>`).join("")}</div></div><div class="card"><div class="section-head"><h3>Source</h3></div><p class="card-sub"><strong>Citizen-submitted complaint</strong></p><button class="btn btn-secondary" onclick="toast('Original report viewer is simulated.')">View Original Report</button></div></div>`;
-  </script>
-
+function value(v){if(v===null||v===undefined||String(v).trim()===""||String(v).toLowerCase()==="nan")return "Not recorded";return String(v)}
+function item(label,v){return `<div class="detail-item"><div class="detail-label">${esc(label)}</div><div class="detail-value">${esc(value(v))}</div></div>`}
+function renderCase(d){
+  document.getElementById("case-loading").style.display="none";
+  const amount=(d.amount_lost!==null&&d.amount_lost!==undefined&&String(d.amount_lost)!==""&&Number.isFinite(Number(d.amount_lost)))?`${esc(d.currency||"INR")} ${Number(d.amount_lost).toLocaleString("en-IN")}`:"Not recorded";
+  const identifiers=[['Phone',d.phone],['Email',d.email],['UPI ID',d.upi],['URL',d.url],['Domain',d.domain],['Transaction ID',d.transaction_id],['Bank account',d.bank_account],['IFSC code',d.ifsc_code],['Crypto wallet',d.crypto_wallet],['IP address',d.ip_address],['Social account',d.social_account],['Organization',d.organization],['Person reference',d.person_reference]];
+  const signals=[['Crime category',d.crime_category],['Crime subcategory',d.crime_subcategory],['Attack variant',d.attack_variant],['Attack pattern',d.attack_pattern],['Incident date',d.incident_date],['Incident time',d.incident_time],['Complaint date',d.complaint_date],['Location',d.location],['Jurisdiction',d.jurisdiction],['Communication channel',d.channel],['Platform / service',d.platform_or_service],['Payment method',d.payment_method],['Amount lost',amount],['Loss occurred',d.loss_occurred],['Victim action',d.victim_action],['Attacker action',d.attacker_action],['Deception method',d.deception_method],['Outcome',d.outcome],['Event type',d.event_type],['Language',d.language],['Source type',d.source_type]];
+  document.getElementById("case-content").innerHTML=`<div class="page-head"><div><div class="eyebrow-dark">CASE INTELLIGENCE</div><h1>${esc(d.case_id||caseId)}</h1><p>Historical case from LINKAGEX_MASTER_CASES_V2.csv. Similarity results are investigative leads, not attribution findings.</p></div><div class="case-actions"><a class="btn btn-secondary" href="related-cases.html">← Related Cases</a><a class="btn btn-primary" href="linkage.html">New Linkage Search</a></div></div><div class="card"><div class="section-head"><h3>Incident Summary</h3><span class="tag">${esc(value(d.nlp_status))}</span></div><div class="case-detail-grid">${signals.map(([k,v])=>item(k,v)).join("")}</div></div><div class="card detail-section"><div class="section-head"><h3>Original Complaint</h3></div><div class="complaint-text">${esc(value(d.complaint_text))}</div></div><div class="card detail-section"><div class="section-head"><h3>Identifiers and Entities</h3><span>Compare only where source data supports it</span></div><div class="case-detail-grid">${identifiers.map(([k,v])=>item(k,v)).join("")}</div></div><div class="card detail-section"><div class="section-head"><h3>Repository Annotations</h3></div><div class="case-detail-grid">${[['Incident cluster ID',d.incident_cluster_id],['Campaign ID',d.campaign_id],['Attacker entity ID',d.attacker_entity_id],['Evidence types',d.evidence_types],['Annotation source',d.annotation_source],['Annotation confidence',d.annotation_confidence]].map(([k,v])=>item(k,v)).join("")}</div><p class="card-sub" style="margin-top:12px">Repository annotations describe the historical record. They are not automatically evidence that a newly submitted complaint belongs to the same cluster or campaign.</p></div>`;
+}
+async function loadCase(){
+  if(!caseId){document.getElementById("case-loading").innerHTML='<div class="alert alert-warn">No case ID was provided. Return to Related Cases and select a historical case.</div>';return;}
+  try{
+    const response=await fetch(`${API_BASE}/api/cases/${encodeURIComponent(caseId)}`);
+    const data=await response.json();
+    if(!response.ok||data.status!=="success")throw new Error(data.message||"Case could not be loaded.");
+    renderCase(data.case);
+  }catch(error){document.getElementById("case-loading").innerHTML=`<div class="alert alert-warn"><strong>Could not load ${esc(caseId)}.</strong><p>${esc(error.message||"Make sure the Flask backend is running and the master dataset path is correct.")}</p><p>Start the backend, then refresh this page.</p></div>`;}
+}
+loadCase();
+</script>
 </body>
 </html>

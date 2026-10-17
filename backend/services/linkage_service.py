@@ -1,7 +1,7 @@
 import ast
 import os
 import math
-import numpy as np
+import re
 import pandas as pd
 
 from sentence_transformers import SentenceTransformer
@@ -12,10 +12,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 # CONFIGURATION
 # ============================================================
 
-STRUCTURED_DATA_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    "data",
-    "cybercrime_structured_1083.csv"
+STRUCTURED_DATA_PATH = os.environ.get(
+    "LINKAGEX_DATASET_PATH",
+    os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "data",
+        "LINKAGEX_MASTER_CASES_V2.csv"
+    )
 )
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
@@ -35,19 +38,11 @@ TEXT_FIELDS = [
 ]
 
 LIST_FIELDS = [
-    "modus_operandi",
-    "deception",
-    "victim_action",
-    "attacker_action",
-    "outcome",
-    "channels",
-    "phones",
-    "emails",
-    "upi_ids",
-    "urls",
-    "organizations",
-    "locations",
-    "payment_method"
+    "modus_operandi", "deception", "victim_action", "attacker_action", "outcome",
+    "channels", "phones", "emails", "upi_ids", "urls", "organizations", "locations",
+    "payment_method", "attack_variant", "attack_pattern", "platform_or_service",
+    "transaction_ids", "bank_accounts", "ifsc_codes", "social_accounts", "ip_addresses",
+    "crypto_wallets", "person_references"
 ]
 
 
@@ -63,21 +58,33 @@ LIST_FIELDS = [
 # ============================================================
 
 BASE_WEIGHTS = {
-    "semantic": 0.30,
-    "crime": 0.08,
-    "modus_operandi": 0.12,
-    "deception": 0.05,
-    "victim_action": 0.03,
-    "attacker_action": 0.03,
+    # Semantic and crime scores are fixed portions of the final score.
+    "semantic": 0.35,
+    "crime": 0.15,
+    # These are relative weights within the structured-evidence component.
+    "modus_operandi": 0.15,
+    "deception": 0.08,
+    "victim_action": 0.05,
+    "attacker_action": 0.05,
     "outcome": 0.03,
-    "channel": 0.03,
+    "channel": 0.05,
     "payment": 0.05,
-    "organization": 0.05,
-    "phone": 0.08,
-    "email": 0.06,
-    "upi": 0.10,
-    "url": 0.08,
-    "location": 0.01
+    "organization": 0.07,
+    "phone": 0.10,
+    "email": 0.08,
+    "upi": 0.12,
+    "url": 0.10,
+    "location": 0.02,
+    "attack_variant": 0.08,
+    "attack_pattern": 0.10,
+    "platform": 0.03,
+    "transaction_id": 0.12,
+    "bank_account": 0.10,
+    "ifsc": 0.07,
+    "social_account": 0.08,
+    "ip_address": 0.10,
+    "crypto_wallet": 0.12,
+    "person_reference": 0.08,
 }
 
 
@@ -96,7 +103,43 @@ WEAK_SIMILARITY_THRESHOLD = 0.25
 
 print("Loading LinkageX historical cases...")
 
-df = pd.read_csv(STRUCTURED_DATA_PATH)
+df = pd.read_csv(STRUCTURED_DATA_PATH, low_memory=False)
+
+# Adapt LINKAGEX_MASTER_CASES_V2.csv to the canonical field names
+# used by the existing scoring/evidence pipeline. Keep source columns.
+COLUMN_ALIASES = {
+    "complaint_id": "case_id",  # legacy compatibility; case_id remains the displayed ID
+    "deception": "deception_method",
+    "channels": "channel",
+    "phones": "phone",
+    "emails": "email",
+    "upi_ids": "upi",
+    "organizations": "organization",
+    "transaction_ids": "transaction_id",
+    "bank_accounts": "bank_account",
+    "ifsc_codes": "ifsc_code",
+    "social_accounts": "social_account",
+    "ip_addresses": "ip_address",
+    "crypto_wallets": "crypto_wallet",
+    "person_references": "person_reference",
+}
+
+for canonical, source in COLUMN_ALIASES.items():
+    if canonical not in df.columns and source in df.columns:
+        df[canonical] = df[source]
+
+# Preserve both full URLs and their domains as searchable indicators.
+if "urls" not in df.columns:
+    url_values = df["url"] if "url" in df.columns else pd.Series("", index=df.index)
+    domain_values = df["domain"] if "domain" in df.columns else pd.Series("", index=df.index)
+    df["urls"] = (url_values.fillna("").astype(str) + ";" + domain_values.fillna("").astype(str)).str.strip(";")
+
+# The master schema distinguishes incident location from locations mentioned
+# in the complaint. Retain both as location indicators for linkage.
+if "locations" not in df.columns:
+    mentioned = df["locations_mentioned"] if "locations_mentioned" in df.columns else pd.Series("", index=df.index)
+    incident_location = df["location"] if "location" in df.columns else pd.Series("", index=df.index)
+    df["locations"] = (mentioned.fillna("").astype(str) + ";" + incident_location.fillna("").astype(str)).str.strip(";")
 
 print(f"Historical cases loaded: {len(df)}")
 
@@ -120,15 +163,8 @@ def parse_list(value):
     if value is None:
         return set()
 
-    if isinstance(value, float) and np.isnan(value):
+    if pd.isna(value) if not isinstance(value, (list, tuple, set)) else False:
         return set()
-
-    if isinstance(value, np.ndarray):
-        return {
-            str(x).strip().lower()
-            for x in value.tolist()
-            if str(x).strip()
-        }
 
     if isinstance(value, (list, tuple, set)):
         return {
@@ -151,32 +187,44 @@ def parse_list(value):
         parsed = ast.literal_eval(text)
 
         if isinstance(parsed, (list, tuple, set)):
-            return {
-                str(x).strip().lower()
-                for x in parsed
-                if str(x).strip()
-            }
-
-        if parsed is None:
+            values = [str(x).strip().lower() for x in parsed if str(x).strip()]
+        elif parsed is None:
             return set()
-
-        return {str(parsed).strip().lower()}
+        else:
+            values = [str(parsed).strip().lower()]
 
     except Exception:
-        return {text.lower()}
+        # Master CSV stores multi-value fields as semicolon-separated text.
+        values = [part.strip().lower() for part in text.split(";") if part.strip()]
+
+    # Also split semicolon-delimited strings parsed as quoted literals.
+    flattened = []
+    for value in values:
+        flattened.extend(part.strip().lower() for part in value.split(";") if part.strip())
+    return set(flattened)
 
 
 # ============================================================
 # NORMALIZE HISTORICAL DATA
 # ============================================================
 
+def normalize_channel_values(values):
+    aliases = {
+        "phone call": "phone",
+        "telephone call": "phone",
+        "voice call": "phone",
+        "text message": "sms",
+        "text messages": "sms",
+        "short message service": "sms",
+    }
+    return {aliases.get(value.strip().lower(), value.strip().lower()) for value in values if str(value).strip()}
+
+
 for field in LIST_FIELDS:
-
     if field in df.columns:
-
-        df[field + "_set"] = df[field].apply(
-            parse_list
-        )
+        df[field + "_set"] = df[field].apply(parse_list)
+        if field == "channels":
+            df[field + "_set"] = df[field + "_set"].apply(normalize_channel_values)
 
 
 def normalize_text(value):
@@ -184,7 +232,7 @@ def normalize_text(value):
     if value is None:
         return ""
 
-    if isinstance(value, float) and np.isnan(value):
+    if pd.isna(value):
         return ""
 
     return " ".join(
@@ -203,20 +251,26 @@ df["complaint_text_normalized"] = (
 # ============================================================
 
 def create_linkage_text(row):
-
+    """Build a semantic representation from complaint and normalized fields."""
     parts = [
-        str(row.get("complaint_text", "")),
-        str(row.get("modus_operandi", "")),
-        str(row.get("deception", "")),
-        str(row.get("victim_action", "")),
-        str(row.get("attacker_action", "")),
-        str(row.get("outcome", ""))
+        row.get("complaint_text", ""),
+        row.get("crime_category", ""),
+        row.get("crime_subcategory", ""),
+        row.get("attack_variant", ""),
+        row.get("attack_pattern", ""),
+        row.get("modus_operandi", ""),
+        row.get("deception", row.get("deception_method", "")),
+        row.get("victim_action", ""),
+        row.get("attacker_action", ""),
+        row.get("outcome", ""),
+        row.get("channels", row.get("channel", "")),
+        row.get("platform_or_service", ""),
+        row.get("payment_method", ""),
     ]
-
     return " ".join(
-        p
-        for p in parts
-        if p and p.lower() != "nan"
+        str(part).strip()
+        for part in parts
+        if part is not None and str(part).strip() and str(part).lower() != "nan"
     )
 
 
@@ -249,10 +303,6 @@ historical_embeddings = embedding_model.encode(
     df["linkage_text"].tolist(),
     normalize_embeddings=True,
     show_progress_bar=True
-)
-
-historical_embeddings = np.asarray(
-    historical_embeddings
 )
 
 print(
@@ -526,45 +576,30 @@ def crime_similarity(
 # ============================================================
 
 FIELD_LABELS = {
-
-    "modus_operandi":
-        "Modus operandi",
-
-    "deception":
-        "Deception pattern",
-
-    "victim_action":
-        "Victim action",
-
-    "attacker_action":
-        "Attacker action",
-
-    "outcome":
-        "Outcome",
-
-    "channel":
-        "Communication channel",
-
-    "payment":
-        "Payment method",
-
-    "organization":
-        "Organization/entity",
-
-    "phone":
-        "Phone number",
-
-    "email":
-        "Email address",
-
-    "upi":
-        "UPI ID",
-
-    "url":
-        "URL/domain",
-
-    "location":
-        "Location"
+    "crime": "Crime classification",
+    "modus_operandi": "Modus operandi",
+    "deception": "Deception pattern",
+    "victim_action": "Victim action",
+    "attacker_action": "Attacker action",
+    "outcome": "Outcome",
+    "channel": "Communication channel",
+    "payment": "Payment method",
+    "organization": "Organization/entity",
+    "phone": "Phone number",
+    "email": "Email address",
+    "upi": "UPI ID",
+    "url": "URL/domain",
+    "location": "Location",
+    "attack_variant": "Attack variant",
+    "attack_pattern": "Attack pattern",
+    "platform": "Platform/service",
+    "transaction_id": "Transaction ID",
+    "bank_account": "Bank account",
+    "ifsc": "IFSC code",
+    "social_account": "Social account",
+    "ip_address": "IP address",
+    "crypto_wallet": "Cryptocurrency wallet",
+    "person_reference": "Person reference",
 }
 
 
@@ -572,219 +607,111 @@ FIELD_LABELS = {
 # LINKAGE SCORE
 # ============================================================
 
-def calculate_linkage_score(
-    query,
-    case,
-    semantic_score
-):
+def calculate_linkage_score(query, case, semantic_score):
+    """Return a weighted ranking score and transparent component evidence.
 
-    component_scores = {}
-
+    Semantic similarity is capped at 35% of the final score. Structured
+    fields contribute only when present in the query, but a present query
+    field with no match contributes zero rather than disappearing from the
+    denominator. This prevents semantic-only cases from receiving inflated
+    70-80% scores simply because no structured indicators matched.
+    """
+    component_scores = {
+        "semantic": max(0.0, min(1.0, float(semantic_score))),
+        "crime": crime_similarity(query, case),
+    }
     evidence_details = {}
 
-    # --------------------------------------------------------
-    # Semantic
-    # --------------------------------------------------------
-
-    component_scores["semantic"] = (
-        max(
-            0.0,
-            min(
-                1.0,
-                float(semantic_score)
-            )
-        )
-    )
-
-    # --------------------------------------------------------
-    # Crime
-    # --------------------------------------------------------
-
-    component_scores["crime"] = (
-        crime_similarity(
-            query,
-            case
-        )
-    )
-
-    # --------------------------------------------------------
-    # Structured fields
-    # --------------------------------------------------------
-
     field_mapping = {
-
-        "modus_operandi":
-            "modus_operandi",
-
-        "deception":
-            "deception",
-
-        "victim_action":
-            "victim_action",
-
-        "attacker_action":
-            "attacker_action",
-
-        "outcome":
-            "outcome",
-
-        "channel":
-            "channels",
-
-        "payment":
-            "payment_method",
-
-        "organization":
-            "organizations",
-
-        "phone":
-            "phones",
-
-        "email":
-            "emails",
-
-        "upi":
-            "upi_ids",
-
-        "url":
-            "urls",
-
-        "location":
-            "locations"
+        "modus_operandi": "modus_operandi",
+        "deception": "deception",
+        "victim_action": "victim_action",
+        "attacker_action": "attacker_action",
+        "outcome": "outcome",
+        "channel": "channels",
+        "payment": "payment_method",
+        "organization": "organizations",
+        "phone": "phones",
+        "email": "emails",
+        "upi": "upi_ids",
+        "url": "urls",
+        "location": "locations",
+        "attack_variant": "attack_variant",
+        "attack_pattern": "attack_pattern",
+        "platform": "platform_or_service",
+        "transaction_id": "transaction_ids",
+        "bank_account": "bank_accounts",
+        "ifsc": "ifsc_codes",
+        "social_account": "social_accounts",
+        "ip_address": "ip_addresses",
+        "crypto_wallet": "crypto_wallets",
+        "person_reference": "person_references",
     }
 
+    # Categorical crime overlap is useful pattern evidence, but not a unique identifier.
+    crime_evidence = []
+    q_sub = normalize_text(query.get("crime_subcategory", ""))
+    c_sub = normalize_text(case.get("crime_subcategory", ""))
+    q_cat = normalize_text(query.get("crime_category", ""))
+    c_cat = normalize_text(case.get("crime_category", ""))
+    if q_sub and c_sub and q_sub == c_sub:
+        crime_evidence.append({"value": str(case.get("crime_subcategory")), "specificity": 0.25, "level": "Common"})
+    elif q_cat and c_cat and q_cat == c_cat:
+        crime_evidence.append({"value": str(case.get("crime_category")), "specificity": 0.15, "level": "Common"})
+    evidence_details["crime"] = {
+        "raw_similarity": component_scores["crime"],
+        "specificity_adjusted": component_scores["crime"],
+        "shared_values": [item["value"] for item in crime_evidence],
+        "evidence": crime_evidence,
+    }
+
+    structured_available_weight = 0.0
+    structured_weighted_score = 0.0
+
     for score_name, field in field_mapping.items():
-
-        query_set = query.get(
-            field + "_set",
-            set()
-        )
-
-        case_set = case.get(
-            field + "_set",
-            set()
-        )
-
-        raw_score = jaccard_similarity(
-            query_set,
-            case_set
-        )
-
-        adjusted_score, shared, evidence = (
-            specificity_adjusted_similarity(
-                field,
-                query_set,
-                case_set
-            )
-        )
-
-        component_scores[
-            score_name
-        ] = round(
-            raw_score,
-            4
-        )
-
-        evidence_details[
-            score_name
-        ] = {
-            "raw_similarity":
-                round(
-                    raw_score,
-                    4
-                ),
-
-            "specificity_adjusted":
-                round(
-                    adjusted_score,
-                    4
-                ),
-
-            "shared_values":
-                shared,
-
-            "evidence":
-                evidence
+        query_set = query.get(field + "_set", set())
+        case_set = case.get(field + "_set", set())
+        raw_score = jaccard_similarity(query_set, case_set)
+        adjusted_score, shared, evidence = specificity_adjusted_similarity(field, query_set, case_set)
+        component_scores[score_name] = round(raw_score, 4)
+        evidence_details[score_name] = {
+            "raw_similarity": round(raw_score, 4),
+            "specificity_adjusted": round(adjusted_score, 4),
+            "shared_values": shared,
+            "evidence": evidence,
         }
+        if query_set:
+            weight = BASE_WEIGHTS[score_name]
+            structured_available_weight += weight
+            structured_weighted_score += weight * adjusted_score
 
-    # --------------------------------------------------------
-    # Calculate final score
-    # --------------------------------------------------------
-
-    weighted_score = 0.0
-    active_weight = 0.0
-
-    # Semantic always participates.
-    weighted_score += (
-        BASE_WEIGHTS["semantic"] *
-        component_scores["semantic"]
+    structured_score = (
+        structured_weighted_score / structured_available_weight
+        if structured_available_weight > 0 else 0.0
     )
-
-    active_weight += (
-        BASE_WEIGHTS["semantic"]
+    final_score = (
+        0.35 * component_scores["semantic"]
+        + 0.15 * component_scores["crime"]
+        + 0.50 * structured_score
     )
+    final_score = max(0.0, min(1.0, final_score))
 
-    # Crime participates when information exists.
-    if component_scores["crime"] > 0:
+    # Contributions sum to the final score and are useful for auditing ranking.
+    contribution_breakdown = {
+        "semantic": round(0.35 * component_scores["semantic"], 4),
+        "crime": round(0.15 * component_scores["crime"], 4),
+    }
+    if structured_available_weight > 0:
+        for score_name in field_mapping:
+            field = field_mapping[score_name]
+            if query.get(field + "_set", set()):
+                contribution_breakdown[score_name] = round(
+                    0.50 * BASE_WEIGHTS[score_name] / structured_available_weight
+                    * evidence_details[score_name]["specificity_adjusted"], 4
+                )
 
-        weighted_score += (
-            BASE_WEIGHTS["crime"] *
-            component_scores["crime"]
-        )
+    return final_score, component_scores, evidence_details, contribution_breakdown
 
-        active_weight += (
-            BASE_WEIGHTS["crime"]
-        )
-
-    # Structured fields use
-    # specificity-adjusted similarity.
-    for score_name in field_mapping:
-
-        adjusted = evidence_details[
-            score_name
-        ]["specificity_adjusted"]
-
-        raw = component_scores[
-            score_name
-        ]
-
-        if raw <= 0:
-            continue
-
-        weight = BASE_WEIGHTS[
-            score_name
-        ]
-
-        weighted_score += (
-            weight * adjusted
-        )
-
-        active_weight += weight
-
-    # --------------------------------------------------------
-    # Normalize over available evidence
-    # --------------------------------------------------------
-    #
-    # This prevents missing optional identifiers from
-    # automatically pushing every case toward zero.
-    # --------------------------------------------------------
-
-    if active_weight > 0:
-
-        final_score = (
-            weighted_score /
-            active_weight
-        )
-
-    else:
-
-        final_score = 0.0
-
-    return (
-        final_score,
-        component_scores,
-        evidence_details
-    )
 
 
 # ============================================================
@@ -1021,229 +948,197 @@ def build_evidence_summary(
 # MAIN LINKAGE FUNCTION
 # ============================================================
 
-def find_related_cases(
-    incident,
-    top_k=5
-):
+def _first_present(mapping, *keys):
+    for key in keys:
+        value = mapping.get(key)
+        if value is not None and value != "" and value != []:
+            return value
+    return None
 
-    # --------------------------------------------------------
-    # Prepare query linkage text
-    # --------------------------------------------------------
 
-    query_text = create_linkage_text(
-        incident
-    )
+def _query_value(value, field):
+    """Normalize one query field into a list without breaking comma-bearing locations."""
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple, set)):
+        items = list(value)
+    else:
+        items = [value]
+    output = []
+    for item in items:
+        text = str(item).strip()
+        if not text or text.lower() in {"nan", "none", "null", "[]"}:
+            continue
+        # Channel lists from the NLP service may be comma-separated, while the
+        # master CSV uses semicolons. Do not split locations/organizations on commas.
+        if field == "channels":
+            output.extend(part.strip() for part in re.split(r"[;,]", text) if part.strip())
+        else:
+            output.extend(part.strip() for part in text.split(";") if part.strip())
+    return output
 
-    # --------------------------------------------------------
-    # Query embedding
-    # --------------------------------------------------------
 
-    query_embedding = embedding_model.encode(
-        [query_text],
-        normalize_embeddings=True
-    )
+def find_related_cases(incident, top_k=5):
+    """Rank historical master cases with evidence-backed, calibrated scores."""
+    if not isinstance(incident, dict):
+        raise ValueError("Incident must be a dictionary")
 
-    # --------------------------------------------------------
-    # Semantic similarity
-    # --------------------------------------------------------
+    query = dict(incident)
+    aliases = {
+        "deception": ("deception_method",),
+        "channels": ("channel",),
+        "phones": ("phone_numbers", "phone"),
+        "emails": ("email_addresses", "email"),
+        "upi_ids": ("upi_id", "upi"),
+        "urls": ("url", "domains", "domain"),
+        "organizations": ("organization",),
+        "locations": ("locations_mentioned", "location"),
+        "transaction_ids": ("transaction_id", "transaction_ids"),
+        "bank_accounts": ("bank_account",),
+        "ifsc_codes": ("ifsc_code",),
+        "social_accounts": ("social_account",),
+        "ip_addresses": ("ip_address",),
+        "crypto_wallets": ("crypto_wallet",),
+        "person_references": ("person_reference",),
+        "platform_or_service": ("platform", "service"),
+    }
+    for canonical, alternatives in aliases.items():
+        current = query.get(canonical)
+        if current is None or current == "" or current == []:
+            candidate = _first_present(query, *alternatives)
+            if candidate is not None:
+                query[canonical] = candidate
 
-    semantic_scores = cosine_similarity(
-        query_embedding,
-        historical_embeddings
-    )[0]
-
-    results = []
-
-    # --------------------------------------------------------
-    # Prepare query once
-    # --------------------------------------------------------
-
-    query = dict(
-        incident
-    )
+    # Expand URL values to domains too, so the same host can be linked even
+    # when two reports contain different paths on that host.
+    raw_urls = _query_value(query.get("urls", []), "urls")
+    try:
+        from urllib.parse import urlparse
+        for raw_url in list(raw_urls):
+            candidate = raw_url if "://" in raw_url else "https://" + raw_url
+            host = urlparse(candidate).netloc.lower().split(":")[0]
+            if host and host not in raw_urls:
+                raw_urls.append(host)
+    except Exception:
+        pass
+    query["urls"] = raw_urls
 
     for field in LIST_FIELDS:
+        parsed_values = parse_list(_query_value(query.get(field, []), field))
+        query[field + "_set"] = normalize_channel_values(parsed_values) if field == "channels" else parsed_values
 
-        query[field + "_set"] = parse_list(
-            query.get(
-                field,
-                []
-            )
-        )
+    query_text = create_linkage_text(query)
+    if not query_text.strip():
+        query_text = str(query.get("complaint_text", "") or "")
+    if query_text.strip():
+        query_embedding = embedding_model.encode([query_text], normalize_embeddings=True)
+        semantic_scores = cosine_similarity(query_embedding, historical_embeddings)[0]
+    else:
+        semantic_scores = [0.0] * len(df)
 
-    # --------------------------------------------------------
-    # Compare against historical repository
-    # --------------------------------------------------------
+    query_case_id = str(_first_present(query, "case_id", "complaint_id") or "").strip()
+    results = []
 
     for index, row in df.iterrows():
-
         case = row.to_dict()
+        case_id = str(case.get("case_id") or case.get("complaint_id") or f"CASE_{index}")
+        if query_case_id and case_id == query_case_id:
+            continue
 
-        score, component_scores, evidence_details = (
-            calculate_linkage_score(
-                query,
-                case,
-                float(
-                    semantic_scores[index]
-                )
-            )
+        score, component_scores, evidence_details, contribution_breakdown = calculate_linkage_score(
+            query, case, float(semantic_scores[index])
         )
+        relationship = classify_relationship(score)
+        explanations = generate_explanation(component_scores, evidence_details)
+        evidence_summary = build_evidence_summary(evidence_details)
+        has_distinctive_evidence = bool(evidence_summary["distinctive"])
 
-        relationship = (
-            classify_relationship(
-                score
-            )
-        )
+        def clean_value(value):
+            if value is None or (isinstance(value, float) and math.isnan(value)):
+                return None
+            return value.item() if hasattr(value, "item") else value
 
-        explanations = (
-            generate_explanation(
-                component_scores,
-                evidence_details
-            )
-        )
-
-        evidence_summary = (
-            build_evidence_summary(
-                evidence_details
-            )
-        )
-
-        # ----------------------------------------------------
-        # Weighted contribution breakdown
-        # ----------------------------------------------------
-
-        contribution_breakdown = {}
-
-        contribution_breakdown[
-            "semantic"
-        ] = round(
-            BASE_WEIGHTS["semantic"]
-            *
-            component_scores["semantic"],
-            4
-        )
-
-        if component_scores[
-            "crime"
-        ] > 0:
-
-            contribution_breakdown[
-                "crime"
-            ] = round(
-                BASE_WEIGHTS["crime"]
-                *
-                component_scores["crime"],
-                4
-            )
-
-        for field in evidence_details:
-
-            raw = component_scores[
-                field
-            ]
-
-            if raw <= 0:
-                continue
-
-            adjusted = evidence_details[
-                field
-            ]["specificity_adjusted"]
-
-            contribution_breakdown[
-                field
-            ] = round(
-                BASE_WEIGHTS[field]
-                *
-                adjusted,
-                4
-            )
-
-        # ----------------------------------------------------
-        # Distinctive evidence flag
-        # ----------------------------------------------------
-
-        has_distinctive_evidence = (
-            len(
-                evidence_summary[
-                    "distinctive"
-                ]
-            ) > 0
-        )
-
-        # ----------------------------------------------------
-        # Result
-        # ----------------------------------------------------
-
+        complaint = clean_value(case.get("complaint_text"))
         results.append({
-
-            "case_id": case.get(
-                "complaint_id",
-                f"CASE_{index}"
-            ),
-
-            "score": round(
-                float(score),
-                4
-            ),
-
-            "relationship":
-                relationship,
-
-            "shared_signals":
-                explanations,
-
-            "component_scores": {
-                key: round(
-                    float(value),
-                    4
-                )
-                for key, value
-                in component_scores.items()
-            },
-
-            "contribution_breakdown":
-                contribution_breakdown,
-
+            "case_id": case_id,
+            "score": round(float(score), 4),
+            "relationship": relationship,
+            "shared_signals": explanations,
+            "component_scores": {key: round(float(value), 4) for key, value in component_scores.items()},
+            "contribution_breakdown": contribution_breakdown,
             "evidence": {
-
-                "has_distinctive_evidence":
-                    has_distinctive_evidence,
-
-                "distinctive":
-                    evidence_summary[
-                        "distinctive"
-                    ],
-
-                "moderate":
-                    evidence_summary[
-                        "moderate"
-                    ],
-
-                "common":
-                    evidence_summary[
-                        "common"
-                    ]
-            }
+                "has_distinctive_evidence": has_distinctive_evidence,
+                "distinctive": evidence_summary["distinctive"],
+                "moderate": evidence_summary["moderate"],
+                "common": evidence_summary["common"],
+            },
+            "case_summary": {
+                "crime_category": clean_value(case.get("crime_category")),
+                "crime_subcategory": clean_value(case.get("crime_subcategory")),
+                "attack_variant": clean_value(case.get("attack_variant")),
+                "attack_pattern": clean_value(case.get("attack_pattern")),
+                "incident_date": clean_value(case.get("incident_date")),
+                "location": clean_value(case.get("location")),
+                "outcome": clean_value(case.get("outcome")),
+                "loss_occurred": clean_value(case.get("loss_occurred")),
+                "amount_lost": clean_value(case.get("amount_lost")),
+                "currency": clean_value(case.get("currency")),
+                "channel": clean_value(case.get("channel")),
+                "payment_method": clean_value(case.get("payment_method")),
+                "incident_cluster_id": clean_value(case.get("incident_cluster_id")),
+                "campaign_id": clean_value(case.get("campaign_id")),
+                "attacker_entity_id": clean_value(case.get("attacker_entity_id")),
+                "evidence_types": clean_value(case.get("evidence_types")),
+                "complaint_preview": (str(complaint)[:280] + ("…" if complaint and len(str(complaint)) > 280 else "")) if complaint else None,
+            },
         })
 
-    # --------------------------------------------------------
-    # Rank
-    # --------------------------------------------------------
-
+    # Prefer higher scores, then more distinctive and structured evidence.
     results.sort(
-        key=lambda x: x["score"],
-        reverse=True
+        key=lambda result: (
+            result["score"],
+            len(result["evidence"]["distinctive"]),
+            len(result["evidence"]["moderate"]),
+            len(result["evidence"]["common"]),
+        ),
+        reverse=True,
     )
+    requested_k = max(1, int(top_k))
 
-    # --------------------------------------------------------
-    # Only return meaningful relationships
-    # --------------------------------------------------------
-
+    # Primary results require the stronger shared-pattern threshold.
     meaningful_results = [
-        result
-        for result in results
-        if result["score"]
-        >= SHARED_PATTERN_THRESHOLD
+        result for result in results
+        if result["score"] >= SHARED_PATTERN_THRESHOLD
     ]
+    if meaningful_results:
+        return meaningful_results[:requested_k]
 
-    return meaningful_results[:top_k]
+    # If none reaches the primary threshold, retain candidates suitable for
+    # cautious investigator review instead of returning an empty list.
+    # classify_relationship() labels these as "Weak similarity" (0.25-0.45).
+    # This is a review fallback, not a claim that cases are connected.
+    review_candidates = [
+        result for result in results
+        if result["score"] >= WEAK_SIMILARITY_THRESHOLD
+    ]
+    return review_candidates[:requested_k]
+
+
+def get_case_by_id(case_id):
+    """Return one master-dataset case by its actual case_id, or None."""
+    if "case_id" not in df.columns:
+        return None
+    matches = df[df["case_id"].astype(str).str.strip() == str(case_id).strip()]
+    if matches.empty:
+        return None
+    row = matches.iloc[0].to_dict()
+    result = {}
+    for key, value in row.items():
+        if value is None or (isinstance(value, float) and math.isnan(value)):
+            result[key] = None
+        elif hasattr(value, "item"):
+            result[key] = value.item()
+        else:
+            result[key] = value
+    # Keep API payloads focused; internal normalized set columns are not public fields.
+    return {key: value for key, value in result.items() if not key.endswith("_set") and key != "complaint_text_normalized" and key != "linkage_text"}
