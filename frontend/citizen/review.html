@@ -335,18 +335,11 @@ c.innerHTML = dashboardPageHead(
 
 c.innerHTML += `
   <div class="alert alert-warn" style="margin-bottom:16px">
-    This information was automatically extracted from your complaint. Please correct anything that is inaccurate.
+    Review the details extracted from your complaint below. Correct any errors and add optional contact or transaction details if available. You can leave unknown details blank.
   </div>
 `;
 
 const missingFields = Array.isArray(data.missing_fields) ? data.missing_fields : [];
-if (missingFields.length > 0) {
-  c.innerHTML += `
-    <div class="alert alert-warn" style="margin-bottom:16px">
-      Some information was not available in the original complaint. You can correct incident fields and add optional contact or transaction details below.
-    </div>
-  `;
-}
 
 c.innerHTML += renderIncident(incident, true);
 

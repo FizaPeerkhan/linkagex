@@ -1,347 +1,413 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>Case Linkage | LinkageX</title>
 
     <link rel="stylesheet" href="../css/style.css">
 
     <style>
-/* =====================================================
-   LINKAGEX — CASE LINKAGE UI
-   Shared sidebar and header come from app.js
-===================================================== */
+        #content {
+            min-width: 0;
+            color: #e9f1f8;
+        }
 
-#content {
-    min-width: 0;
-    color: #e9f1f8;
-}
+        #content .page-head {
+            margin-bottom: 28px;
+        }
 
-#content .page-head {
-    margin-bottom: 28px;
-}
+        #content .page-head h1 {
+            color: #e9f1f8;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(25px, 2.4vw, 34px);
+        }
 
-#content .page-head h1 {
-    color: #e9f1f8;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(25px, 2.4vw, 34px);
-    line-height: 1.2;
-}
+        #content .page-head p,
+        #content .card-sub {
+            color: #8fa0b6;
+            line-height: 1.7;
+        }
 
-#content .page-head p {
-    color: #8fa0b6;
-    line-height: 1.7;
-    max-width: 760px;
-}
+        #content > .card {
+            position: relative;
+            min-width: 0;
+            margin: 0 0 22px;
+            padding: 25px;
+            border: 1px solid rgba(148,197,224,.20);
+            border-radius: 0;
+            background: linear-gradient(145deg, #0d1420, #080d16);
+            color: #e9f1f8;
+            box-shadow: 0 16px 45px rgba(0,0,0,.16);
+        }
 
-/* Main cards */
+        #content > .card::before,
+        #content > .card::after {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            pointer-events: none;
+        }
 
-#content > .card {
-    position: relative;
-    min-width: 0;
-    margin: 0 0 22px;
-    padding: 25px;
-    border: 1px solid rgba(148,197,224,.20);
-    border-radius: 0;
-    background: linear-gradient(145deg, #0d1420, #080d16);
-    color: #e9f1f8;
-    box-shadow: 0 16px 45px rgba(0,0,0,.16);
-}
+        #content > .card::before {
+            top: -1px;
+            left: -1px;
+            border-top: 2px solid #54d9ff;
+            border-left: 2px solid #54d9ff;
+        }
 
-#content > .card::before,
-#content > .card::after {
-    content: "";
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    pointer-events: none;
-}
+        #content > .card::after {
+            bottom: -1px;
+            right: -1px;
+            border-bottom: 2px solid #54d9ff;
+            border-right: 2px solid #54d9ff;
+        }
 
-#content > .card::before {
-    top: -1px;
-    left: -1px;
-    border-top: 2px solid #54d9ff;
-    border-left: 2px solid #54d9ff;
-}
+        #content .section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
 
-#content > .card::after {
-    bottom: -1px;
-    right: -1px;
-    border-bottom: 2px solid #54d9ff;
-    border-right: 2px solid #54d9ff;
-}
+        #content .section-head h3 {
+            margin: 0 0 7px;
+            color: #e9f1f8;
+            font: 600 19px 'Space Grotesk', sans-serif;
+        }
 
-/* Section headings */
+        #content .card-sub {
+            margin: 0;
+            font-size: 13px;
+        }
 
-#content .section-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-}
+        #content .linkage-input {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            min-height: 210px;
+            padding: 15px 16px;
+            resize: vertical;
+            border: 1px solid rgba(148,197,224,.28);
+            border-radius: 0;
+            outline: none;
+            background: #060910;
+            color: #e9f1f8;
+            font: 400 14px/1.75 'IBM Plex Sans', sans-serif;
+            box-sizing: border-box;
+        }
 
-#content .section-head h3 {
-    margin: 0 0 7px;
-    color: #e9f1f8;
-    font: 600 19px 'Space Grotesk', sans-serif;
-}
+        #content .linkage-input::placeholder {
+            color: #5b6a80;
+        }
 
-#content .card-sub {
-    color: #8fa0b6;
-    font-size: 13px;
-    line-height: 1.7;
-}
+        #content .linkage-input:focus {
+            border-color: #54d9ff;
+            box-shadow: 0 0 0 3px rgba(84,217,255,.09);
+        }
 
-/* Complaint textarea */
+        #content .analysis-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+        }
 
-#content .linkage-input {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    min-height: 210px;
-    margin: 0;
-    padding: 15px 16px;
-    resize: vertical;
-    border: 1px solid rgba(148,197,224,.28);
-    border-radius: 0;
-    outline: none;
-    background: #060910;
-    color: #e9f1f8;
-    font: 400 14px/1.75 'IBM Plex Sans', sans-serif;
-    box-shadow: none;
-    transition: border-color .2s, box-shadow .2s;
-}
+        #content .analysis-actions .btn,
+        #content .review-toggle,
+        #content #linkage-next .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 18px;
+            border-radius: 0;
+            font: 500 13px 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+        }
 
-#content .linkage-input::placeholder {
-    color: #5b6a80;
-    opacity: 1;
-}
+        #content .btn-primary,
+        #content .review-toggle {
+            border: 0;
+            background: #54d9ff;
+            color: #05070d;
+            font-weight: 600;
+        }
 
-#content .linkage-input:focus {
-    border-color: #54d9ff;
-    box-shadow: 0 0 0 3px rgba(84,217,255,.09);
-}
+        #content .btn-primary:hover,
+        #content .review-toggle:hover {
+            filter: brightness(1.12);
+        }
 
-/* Actions */
+        #content .btn-secondary {
+            border: 1px solid rgba(148,197,224,.28);
+            background: transparent;
+            color: #e9f1f8;
+        }
 
-#content .analysis-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 16px;
-}
+        #content .btn-secondary:hover {
+            border-color: #54d9ff;
+            background: rgba(84,217,255,.08);
+        }
 
-#content .analysis-actions .btn {
-    min-height: 42px;
-    padding: 10px 18px;
-    border-radius: 0;
-    font: 500 13px 'IBM Plex Sans', sans-serif;
-}
+        #content button:disabled {
+            opacity: .55;
+            cursor: wait;
+        }
 
-#content .analysis-actions .btn-primary,
-#content #linkage-next .btn-primary {
-    border: 0;
-    background: #54d9ff;
-    color: #05070d;
-    font-weight: 600;
-    clip-path: polygon(
-        9px 0,
-        100% 0,
-        100% calc(100% - 9px),
-        calc(100% - 9px) 100%,
-        0 100%,
-        0 9px
-    );
-}
+        #content .status-message {
+            margin-top: 16px;
+        }
 
-#content .analysis-actions .btn-primary:hover,
-#content #linkage-next .btn-primary:hover {
-    filter: brightness(1.12);
-    transform: translateY(-1px);
-}
+        #content .status-message .alert {
+            padding: 15px 17px;
+            border: 1px solid rgba(148,197,224,.20);
+            border-left: 3px solid #54d9ff;
+            background: rgba(84,217,255,.055);
+            color: #8fa0b6;
+            font-size: 13px;
+            line-height: 1.7;
+        }
 
-#content .analysis-actions .btn-secondary,
-#content .page-head .btn-secondary {
-    border: 1px solid rgba(148,197,224,.28);
-    border-radius: 0;
-    background: transparent;
-    color: #e9f1f8;
-}
+        #content .status-message .alert strong {
+            color: #e9f1f8;
+        }
 
-#content .analysis-actions .btn-secondary:hover,
-#content .page-head .btn-secondary:hover {
-    border-color: #54d9ff;
-    background: rgba(84,217,255,.10);
-    color: #e9f1f8;
-}
+        #content .status-message .alert-danger {
+            border-left-color: #ff7a7a;
+            background: rgba(255,122,122,.055);
+        }
 
-#content .analysis-actions .btn:disabled {
-    opacity: .55;
-    cursor: wait;
-}
+        #content .status-message .alert-success {
+            border-left-color: #5ee69b;
+            background: rgba(94,230,155,.055);
+        }
 
-/* Loading, error and success messages */
+        #content .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border: 1px solid rgba(84,217,255,.30);
+            background: rgba(84,217,255,.08);
+            color: #54d9ff;
+            font: 500 10px 'IBM Plex Mono', monospace;
+            letter-spacing: .04em;
+        }
 
-#content .status-message {
-    margin-top: 16px;
-}
+        /* Toggle and hidden details */
 
-#content .status-message .alert {
-    padding: 15px 17px;
-    border: 1px solid rgba(148,197,224,.20);
-    border-left: 3px solid #54d9ff;
-    border-radius: 0;
-    background: rgba(84,217,255,.055);
-    color: #8fa0b6;
-    font-size: 13px;
-    line-height: 1.7;
-}
+        #content .review-toggle {
+            gap: 10px;
+            margin: 0;
+        }
 
-#content .status-message .alert strong {
-    color: #e9f1f8;
-}
+        #content #incident-details-content[hidden] {
+            display: none !important;
+        }
 
-#content .status-message .alert-danger {
-    border-left-color: #ff7a7a;
-    background: rgba(255,122,122,.055);
-}
+        #content #incident-details-content {
+            margin-top: 22px;
+        }
 
-#content .status-message .alert-success {
-    border-left-color: #5ee69b;
-    background: rgba(94,230,155,.055);
-}
+        /* Citizen-review-style table */
 
-/* Structured incident grid */
+        #content .review-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid rgba(148,197,224,.18);
+        }
 
-#content .incident-grid-linkage {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    margin-top: 18px;
-}
+        #content .review-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e9f1f8;
+            font-size: 13px;
+        }
 
-#content .incident-item {
-    min-width: 0;
-    padding: 14px;
-    border: 1px solid rgba(148,197,224,.15);
-    border-radius: 0;
-    background: rgba(5,7,13,.36);
-    overflow-wrap: anywhere;
-}
+        #content .review-table th {
+            padding: 12px 14px;
+            text-align: left;
+            background: rgba(84,217,255,.055);
+            color: #8fa0b6;
+            font: 500 10px 'IBM Plex Mono', monospace;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(148,197,224,.2);
+        }
 
-#content .incident-item .field-label {
-    margin-bottom: 7px;
-    color: #5b6a80;
-    font: 500 10px 'IBM Plex Mono', monospace;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-}
+        #content .review-table td {
+            padding: 14px;
+            border-bottom: 1px solid rgba(148,197,224,.12);
+            vertical-align: top;
+            overflow-wrap: anywhere;
+        }
 
-#content .incident-item .field-value {
-    color: #e9f1f8;
-    font: 400 13px/1.6 'IBM Plex Sans', sans-serif;
-    overflow-wrap: anywhere;
-    word-break: normal;
-}
+        #content .review-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
 
-/* NLP Structured tag */
+        #content .review-table td:first-child {
+            min-width: 145px;
+            font-weight: 600;
+        }
 
-#content .tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 5px 10px;
-    border: 1px solid rgba(84,217,255,.30);
-    border-radius: 0;
-    background: rgba(84,217,255,.08);
-    color: #54d9ff;
-    font: 500 10px 'IBM Plex Mono', monospace;
-    letter-spacing: .04em;
-}
+        #content .review-table td:nth-child(2) {
+            min-width: 220px;
+        }
 
-/* Potentially related cases panel */
+        #content .review-status {
+            display: inline-flex;
+            padding: 4px 9px;
+            border: 1px solid rgba(148,197,224,.22);
+            border-radius: 999px;
+            background: rgba(148,197,224,.06);
+            color: #8fa0b6;
+            font-size: 11px;
+            white-space: nowrap;
+        }
 
-#content .linkage-next {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    padding: 18px;
-    border: 1px solid rgba(84,217,255,.22);
-    border-left: 3px solid #54d9ff;
-    border-radius: 0;
-    background: rgba(84,217,255,.045);
-}
+        #content .review-status.extracted {
+            color: #5ee69b;
+            border-color: rgba(94,230,155,.3);
+            background: rgba(94,230,155,.07);
+        }
 
-#content .linkage-next-text {
-    min-width: 0;
-    flex: 1 1 250px;
-}
+        #content .review-status.confirm {
+            color: #ffb454;
+            border-color: rgba(255,180,84,.3);
+            background: rgba(255,180,84,.07);
+        }
 
-#content .linkage-next-text h4 {
-    margin: 0 0 5px;
-    color: #e9f1f8;
-    font: 600 15px 'Space Grotesk', sans-serif;
-}
+        #content .review-context-item {
+            margin-bottom: 10px;
+        }
 
-#content .linkage-next-text p {
-    margin: 0;
-    color: #8fa0b6;
-    font-size: 12px;
-    line-height: 1.65;
-}
+        #content .review-context-item:last-child {
+            margin-bottom: 0;
+        }
 
-#content #linkage-next .btn-primary {
-    min-height: 42px;
-    padding: 10px 18px;
-    white-space: nowrap;
-    text-decoration: none;
-}
+        #content .review-context {
+            margin-top: 5px;
+            color: #8fa0b6;
+            font-size: 12px;
+            line-height: 1.65;
+        }
 
-/* Responsive */
+        #content .review-context-label {
+            color: #5b6a80;
+        }
 
-@media (max-width: 900px) {
-    #content .incident-grid-linkage {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
+        #content .review-not-provided {
+            color: #5b6a80;
+            font-style: italic;
+        }
 
-@media (max-width: 600px) {
-    #content > .card {
-        padding: 18px;
-    }
+        #content .review-divider {
+            height: 1px;
+            margin: 24px 0;
+            background: rgba(148,197,224,.16);
+        }
 
-    #content .incident-grid-linkage {
-        grid-template-columns: minmax(0, 1fr);
-    }
+        #content .review-indicator-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
 
-    #content .analysis-actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
+        #content .review-indicator {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid rgba(148,197,224,.15);
+            background: rgba(5,7,13,.36);
+            overflow-wrap: anywhere;
+        }
 
-    #content .analysis-actions .btn {
-        width: 100%;
-    }
+        #content .review-indicator h4 {
+            margin: 0 0 12px;
+            color: #8fa0b6;
+            font-size: 12px;
+            font-weight: 600;
+        }
 
-    #content .linkage-next {
-        align-items: stretch;
-        flex-direction: column;
-    }
+        #content .review-indicator-value {
+            color: #e9f1f8;
+            font-size: 13px;
+            line-height: 1.65;
+        }
 
-    #content #linkage-next .btn-primary {
-        justify-content: center;
-        width: 100%;
-        white-space: normal;
-    }
-}
-</style>
+        /* Case matching panel */
+
+        #content .linkage-next {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 24px;
+            padding: 18px;
+            border: 1px solid rgba(84,217,255,.22);
+            border-left: 3px solid #54d9ff;
+            background: rgba(84,217,255,.045);
+        }
+
+        #content .linkage-next-text {
+            min-width: 0;
+            flex: 1 1 250px;
+        }
+
+        #content .linkage-next-text h4 {
+            margin: 0 0 5px;
+            color: #e9f1f8;
+            font: 600 15px 'Space Grotesk', sans-serif;
+        }
+
+        #content .linkage-next-text p {
+            margin: 0;
+            color: #8fa0b6;
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        @media (max-width: 700px) {
+            #content > .card {
+                padding: 18px;
+            }
+
+            #content .review-indicator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #content .analysis-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #content .analysis-actions .btn {
+                width: 100%;
+            }
+
+            #content .linkage-next {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            #content #linkage-next .btn-primary {
+                width: 100%;
+            }
+
+            #content .review-table th,
+            #content .review-table td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -350,806 +416,836 @@
 <script src="../js/app.js"></script>
 
 <script>
+"use strict";
 
-    /* =========================================================
-       PAGE SHELL
-    ========================================================= */
+/* =========================================================
+   PAGE SHELL
+========================================================= */
 
-    const c = shell(
-        "investigator",
-        "Potential Linkages"
-    );
+const c = shell("investigator", "Potential Linkages");
 
-
-    c.innerHTML = pageHead(
-        "Case Linkage",
-        "Analyze an incident and identify potentially related historical cases.",
-        `<a class="btn btn-secondary" href="cases.html">
-            ← Case Repository
-        </a>`
-    );
+c.innerHTML = pageHead(
+    "Case Linkage",
+    "Analyze a complaint and identify potentially related historical cases in one workflow.",
+    `<a class="btn btn-secondary" href="cases.html">← Case Repository</a>`
+);
 
 
-    /* =========================================================
-       COMPLAINT INPUT
-    ========================================================= */
+/* =========================================================
+   COMPLAINT INPUT
+========================================================= */
 
-    c.innerHTML += `
-
-        <div class="card">
-
-            <div class="section-head">
-
-                <div>
-
-                    <h3>
-                        Analyze New Complaint
-                    </h3>
-
-                    <p class="card-sub">
-                        Enter a cybercrime complaint to structure
-                        the incident and compare it against historical cases.
-                    </p>
-
-                </div>
-
+c.innerHTML += `
+    <div class="card">
+        <div class="section-head">
+            <div>
+                <h3>Analyze Complaint</h3>
+                <p class="card-sub">
+                    Paste the complaint once. LinkageX will extract incident
+                    information and search historical cases automatically.
+                </p>
             </div>
-
-
-            <textarea
-                id="complaintText"
-                class="linkage-input"
-                placeholder="Paste or enter the complaint text here…"
-            ></textarea>
-
-
-            <div class="analysis-actions">
-
-                <button
-                    id="linkageBtn"
-                    class="btn btn-primary"
-                    onclick="runLinkage()"
-                >
-                    Find Related Cases
-                </button>
-
-
-                <button
-                    class="btn btn-secondary"
-                    onclick="clearPage()"
-                >
-                    Clear
-                </button>
-
-            </div>
-
-
-            <div
-                id="loading"
-                class="status-message"
-                style="display:none;"
-            >
-
-                <div class="alert alert-info">
-
-                    <strong>
-                        Analyzing complaint…
-                    </strong>
-
-                    <br>
-
-                    Structuring the incident and searching historical cases.
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="error"
-                class="status-message"
-                style="display:none;"
-            ></div>
-
-
-            <div
-                id="success"
-                class="status-message"
-                style="display:none;"
-            ></div>
-
         </div>
 
-    `;
+        <textarea
+            id="complaintText"
+            class="linkage-input"
+            placeholder="Paste or enter the cybercrime complaint here..."
+            aria-label="Cybercrime complaint"
+        ></textarea>
+
+        <div class="analysis-actions">
+            <button
+                id="linkageBtn"
+                class="btn btn-primary"
+                type="button"
+                onclick="runLinkage()"
+            >
+                Analyze Complaint &amp; Find Matches
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                type="button"
+                onclick="clearPage()"
+            >
+                Clear
+            </button>
+        </div>
+
+        <div id="loading" class="status-message" style="display:none;">
+            <div class="alert">
+                <strong>Analyzing complaint...</strong><br>
+                Extracting incident details and searching historical cases.
+                Please wait.
+            </div>
+        </div>
+
+        <div id="error" class="status-message" style="display:none;"></div>
+        <div id="success" class="status-message" style="display:none;"></div>
+    </div>
+`;
 
 
-    /* =========================================================
-       STRUCTURED INCIDENT
-    ========================================================= */
+/* =========================================================
+   RESULTS
+   Hidden until BOTH NLP and case matching succeed.
+========================================================= */
 
-    c.innerHTML += `
+c.innerHTML += `
+    <div id="incident-section" class="card" style="display:none;">
 
-        <div
-            id="incident-section"
-            class="card"
-            style="display:none;"
+        <div class="section-head">
+            <div>
+                <h3>Extracted Incident Details</h3>
+                <p class="card-sub">
+                    Review the information extracted from the submitted complaint.
+                    Missing details are not guessed.
+                </p>
+            </div>
+
+            <span class="tag">NLP STRUCTURED</span>
+        </div>
+
+        <button
+            id="toggleIncidentBtn"
+            class="review-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="incident-details-content"
+            onclick="toggleIncidentDetails()"
         >
+            View Extracted Incident Details ↓
+        </button>
 
-            <div class="section-head">
-
-                <div>
-
-                    <h3>
-                        Structured Incident
-                    </h3>
-
-                    <p class="card-sub">
-                        Information extracted from the complaint
-                        by the LinkageX NLP pipeline.
-                    </p>
-
-                </div>
-
-
-                <span class="tag">
-                    NLP Structured
-                </span>
-
-            </div>
-
-
-            <div
-                id="incident-grid"
-                class="incident-grid-linkage"
-            ></div>
-
-
-            <div
-                id="linkage-next"
-                class="linkage-next"
-                style="display:none;"
-            >
-
-                <div class="linkage-next-text">
-
-                    <h4>
-                        Potentially Related Cases Found
-                    </h4>
-
-                    <p id="linkage-count">
-                        Review the historical cases surfaced
-                        by the correlation engine.
-                    </p>
-
-                </div>
-
-
-                <a
-                    class="btn btn-primary"
-                    href="related-cases.html"
-                >
-                    View Related Cases →
-                </a>
-
-            </div>
-
+        <div id="incident-details-content" hidden>
+            <div id="incident-grid"></div>
         </div>
 
-    `;
+        <div id="linkage-next" class="linkage-next" style="display:none;">
+            <div class="linkage-next-text">
+                <h4>Case Matching Complete</h4>
+                <p id="linkage-count"></p>
+                <p style="margin-top:8px;">
+                    Similarity indicates a possible pattern, not proof
+                    that the cases share an offender.
+                </p>
+            </div>
+
+            <a class="btn btn-primary" href="related-cases.html">
+                View Related Cases →
+            </a>
+        </div>
+    </div>
+`;
 
 
-    /* =========================================================
-       CONFIGURATION
-    ========================================================= */
+/* =========================================================
+   CONFIGURATION
+========================================================= */
 
-    const API_BASE =
-        "http://127.0.0.1:5000";
+const API_BASE = "http://127.0.0.1:5000";
 
-
-    const complaintText =
-        document.getElementById(
-            "complaintText"
-        );
-
-
-    const linkageBtn =
-        document.getElementById(
-            "linkageBtn"
-        );
-
-
-    const loading =
-        document.getElementById(
-            "loading"
-        );
+const complaintText = document.getElementById("complaintText");
+const linkageBtn = document.getElementById("linkageBtn");
+const loading = document.getElementById("loading");
+const errorBox = document.getElementById("error");
+const successBox = document.getElementById("success");
+const incidentSection = document.getElementById("incident-section");
+const incidentGrid = document.getElementById("incident-grid");
+const linkageNext = document.getElementById("linkage-next");
+const linkageCount = document.getElementById("linkage-count");
+const incidentDetailsContent = document.getElementById("incident-details-content");
+const toggleIncidentBtn = document.getElementById("toggleIncidentBtn");
 
 
-    const errorBox =
-        document.getElementById(
-            "error"
-        );
+/* =========================================================
+   SECURITY / DISPLAY HELPERS
+========================================================= */
 
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
-    const successBox =
-        document.getElementById(
-            "success"
-        );
+function displayEntityItem(item) {
+    if (item === null || item === undefined) return "";
 
+    if (typeof item === "string" || typeof item === "number") {
+        return String(item).trim();
+    }
 
-    const incidentSection =
-        document.getElementById(
-            "incident-section"
-        );
+    if (Array.isArray(item)) {
+        return item.map(displayEntityItem).filter(Boolean).join(", ");
+    }
 
+    if (typeof item === "object") {
+        const preferredKeys = [
+            "value", "text", "number", "phone", "phone_number",
+            "email", "upi", "upi_id", "url", "domain", "address",
+            "identifier", "raw", "matched_text", "entity"
+        ];
 
-    const incidentGrid =
-        document.getElementById(
-            "incident-grid"
-        );
+        for (const key of preferredKeys) {
+            const candidate = item[key];
 
-
-    const linkageNext =
-        document.getElementById(
-            "linkage-next"
-        );
-
-
-    const linkageCount =
-        document.getElementById(
-            "linkage-count"
-        );
-
-
-    /* =========================================================
-       RUN LINKAGE
-    ========================================================= */
-
-    async function runLinkage() {
-
-        const text =
-            complaintText.value.trim();
-
-
-        if (!text) {
-
-            showError(
-                "Please enter a complaint before searching."
-            );
-
-            return;
+            if (
+                (typeof candidate === "string" ||
+                 typeof candidate === "number") &&
+                String(candidate).trim() !== ""
+            ) {
+                return String(candidate).trim();
+            }
         }
 
+        return Object.values(item)
+            .filter(value =>
+                (typeof value === "string" ||
+                 typeof value === "number") &&
+                String(value).trim() !== ""
+            )
+            .map(String)
+            .join(" · ");
+    }
 
-        hideMessages();
+    return "";
+}
 
-        // Do not let a failed/new search leave old matches visible.
+function displayValue(value) {
+    if (value === null || value === undefined) return "";
+
+    if (Array.isArray(value)) {
+        return [...new Set(
+            value.map(displayEntityItem).filter(Boolean)
+        )].join(", ");
+    }
+
+    if (typeof value === "object") {
+        return displayEntityItem(value);
+    }
+
+    return String(value).trim();
+}
+
+function hasValue(value) {
+    if (value === null || value === undefined) return false;
+
+    if (Array.isArray(value)) {
+        return value.some(hasValue);
+    }
+
+    if (typeof value === "object") {
+        return Boolean(displayEntityItem(value));
+    }
+
+    return String(value).trim() !== "";
+}
+
+function formatAmount(value) {
+    if (value === null || value === undefined || value === "") return "";
+
+    if (Array.isArray(value)) {
+        return value.map(formatAmount).filter(Boolean).join(", ");
+    }
+
+    const raw = displayEntityItem(value);
+    if (!raw) return "";
+
+    const numeric = Number(raw);
+
+    if (Number.isFinite(numeric)) {
+        return "₹" + numeric.toLocaleString("en-IN");
+    }
+
+    return raw;
+}
+
+
+/* =========================================================
+   EXTRACTION STATUS
+========================================================= */
+
+function statusFor(value, fieldName, missingFields) {
+    const aliases = {
+        deception: ["deception", "deception_method"],
+        channels: ["channels", "channel"],
+        crime_subcategory: ["crime_subcategory", "crime_type"],
+        locations: ["locations", "location", "incident_location"],
+        amounts: ["amounts", "amount"]
+    };
+
+    const names = aliases[fieldName] || [fieldName];
+
+    if (names.some(name => missingFields.includes(name))) {
+        return `
+            <span class="review-status confirm">
+                Needs confirmation
+            </span>
+        `;
+    }
+
+    if (hasValue(value)) {
+        return `
+            <span class="review-status extracted">
+                Extracted
+            </span>
+        `;
+    }
+
+    return `
+        <span class="review-status">
+            Not detected
+        </span>
+    `;
+}
+
+
+/* =========================================================
+   CONTEXTUAL DETAILS
+========================================================= */
+
+function contextualDetails(details, fallback, kind) {
+    if (!Array.isArray(details) || details.length === 0) {
+        const text = kind === "amount"
+            ? formatAmount(fallback)
+            : displayValue(fallback);
+
+        return text
+            ? escapeHtml(text)
+            : '<span class="review-not-provided">Not provided</span>';
+    }
+
+    return details.map(item => {
+        const rawValue = item && item.value;
+
+        const value = kind === "amount"
+            ? formatAmount(rawValue)
+            : displayEntityItem(rawValue);
+
+        const meaning = item && item.meaning
+            ? escapeHtml(item.meaning)
+            : "Context not established";
+
+        const context = item && item.context
+            ? `
+                <div class="review-context">
+                    <span class="review-context-label">Complaint context:</span>
+                    ${escapeHtml(item.context)}
+                </div>
+            `
+            : `
+                <div class="review-context">
+                    No matching sentence context was found.
+                </div>
+            `;
+
+        return `
+            <div class="review-context-item">
+                <div>
+                    <strong>${meaning}:</strong>
+                    ${escapeHtml(value || "Not provided")}
+                </div>
+                ${context}
+            </div>
+        `;
+    }).join("");
+}
+
+
+/* =========================================================
+   INDICATOR CARDS
+========================================================= */
+
+function indicatorCard(label, details, fallback, kind) {
+    return `
+        <div class="review-indicator">
+            <h4>${escapeHtml(label)}</h4>
+            <div class="review-indicator-value">
+                ${contextualDetails(details, fallback, kind)}
+            </div>
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   RENDER STRUCTURED INCIDENT
+   Called only after both API requests succeed.
+========================================================= */
+
+function displayIncident(incident, missingFields = []) {
+    if (!incident || typeof incident !== "object") {
+        throw new Error("The NLP service returned no structured incident.");
+    }
+
+    const fields = [
+        {
+            label: "Crime Category",
+            key: "crime_category",
+            value: incident.crime_category
+        },
+        {
+            label: "Crime Type",
+            key: "crime_subcategory",
+            value: incident.crime_subcategory
+        },
+        {
+            label: "Channel",
+            key: "channels",
+            value: incident.channels ?? incident.channel
+        },
+        {
+            label: "Deception Method",
+            key: "deception",
+            value: incident.deception ?? incident.deception_method
+        },
+        {
+            label: "Victim Action",
+            key: "victim_action",
+            value: incident.victim_action
+        },
+        {
+            label: "Attacker Action",
+            key: "attacker_action",
+            value: incident.attacker_action
+        },
+        {
+            label: "Outcome",
+            key: "outcome",
+            value: incident.outcome
+        },
+        {
+            label: "Payment Method",
+            key: "payment_method",
+            value: incident.payment_method
+        },
+        {
+            label: "Amount",
+            key: "amounts",
+            value: incident.amounts,
+            details: incident.amount_details,
+            kind: "amount"
+        },
+        {
+            label: "Organizations",
+            key: "organizations",
+            value: incident.organizations
+        },
+        {
+            label: "Location",
+            key: "locations",
+            value: hasValue(incident.location_mentions)
+                ? incident.location_mentions
+                : incident.locations,
+            details: incident.location_details,
+            kind: "location"
+        }
+    ];
+
+    const rows = fields.map(field => {
+        let valueHtml;
+
+        if (field.key === "amounts") {
+            valueHtml = contextualDetails(
+                field.details,
+                field.value,
+                "amount"
+            );
+        } else if (field.key === "locations") {
+            valueHtml = contextualDetails(
+                field.details,
+                field.value,
+                "location"
+            );
+        } else {
+            const value = displayValue(field.value);
+
+            valueHtml = value
+                ? escapeHtml(value)
+                : '<span class="review-not-provided">Not provided</span>';
+        }
+
+        return `
+            <tr>
+                <td>${escapeHtml(field.label)}</td>
+                <td>${valueHtml}</td>
+                <td>${statusFor(field.value, field.key, missingFields)}</td>
+            </tr>
+        `;
+    }).join("");
+
+    const indicators = [
+        {
+            label: "Phone Numbers",
+            details: incident.phone_details,
+            fallback: incident.phones ?? incident.phone_numbers,
+            kind: "phone"
+        },
+        {
+            label: "Email Addresses",
+            details: incident.email_details,
+            fallback: incident.emails ?? incident.email_addresses,
+            kind: "email"
+        },
+        {
+            label: "UPI IDs",
+            details: incident.upi_details,
+            fallback: incident.upi_ids,
+            kind: "upi"
+        },
+        {
+            label: "URLs",
+            details: incident.url_details,
+            fallback: incident.urls,
+            kind: "url"
+        }
+    ];
+
+    incidentGrid.innerHTML = `
+        <div>
+            <div class="section-head">
+                <div>
+                    <h3>Extracted Incident Information</h3>
+                    <p class="card-sub">
+                        NLP-generated representation of the complaint.
+                        Review the extracted information and its status.
+                    </p>
+                </div>
+            </div>
+
+            <div class="review-table-wrap">
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Extracted Information</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+
+            <div class="review-divider"></div>
+
+            <div class="section-head">
+                <div>
+                    <h3>Extracted Indicators</h3>
+                    <p class="card-sub">
+                        Additional identifiers detected in the complaint.
+                    </p>
+                </div>
+            </div>
+
+            <div class="review-indicator-grid">
+                ${indicators.map(item =>
+                    indicatorCard(
+                        item.label,
+                        item.details,
+                        item.fallback,
+                        item.kind
+                    )
+                ).join("")}
+            </div>
+
+            <p class="card-sub" style="margin-top:16px;">
+                “Not detected” means the information was not extracted.
+                It does not mean the information does not exist.
+                Contextual mentions are not automatically verified facts.
+            </p>
+        </div>
+    `;
+
+    // Keep details collapsed every time a new result is rendered.
+    incidentDetailsContent.hidden = true;
+    toggleIncidentBtn.textContent = "View Extracted Incident Details ↓";
+    toggleIncidentBtn.setAttribute("aria-expanded", "false");
+}
+
+
+/* =========================================================
+   SHOW / HIDE STRUCTURED DETAILS
+========================================================= */
+
+function toggleIncidentDetails() {
+    const willOpen = incidentDetailsContent.hidden;
+
+    incidentDetailsContent.hidden = !willOpen;
+
+    toggleIncidentBtn.textContent = willOpen
+        ? "Hide Extracted Incident Details ↑"
+        : "View Extracted Incident Details ↓";
+
+    toggleIncidentBtn.setAttribute(
+        "aria-expanded",
+        String(willOpen)
+    );
+}
+
+
+/* =========================================================
+   API RESPONSE HELPERS
+========================================================= */
+
+async function readResponse(response, defaultMessage) {
+    let data;
+
+    try {
+        data = await response.json();
+    } catch (error) {
+        throw new Error(
+            response.ok
+                ? "The backend returned an invalid JSON response."
+                : defaultMessage
+        );
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            data.message ||
+            data.error ||
+            defaultMessage
+        );
+    }
+
+    return data;
+}
+
+
+/* =========================================================
+   RUN NLP ANALYSIS + CASE MATCHING
+========================================================= */
+
+async function runLinkage() {
+    const text = complaintText.value.trim();
+
+    if (!text) {
+        showError("Please enter a complaint before analyzing it.");
+        return;
+    }
+
+    hideMessages();
+
+    // Clear stale data so failed requests cannot leave old results visible.
+    sessionStorage.removeItem("linkageX_results");
+    sessionStorage.removeItem("linkageX_incident");
+    sessionStorage.removeItem("linkageX_original_complaint");
+
+    incidentSection.style.display = "none";
+    incidentGrid.innerHTML = "";
+    linkageNext.style.display = "none";
+
+    incidentDetailsContent.hidden = true;
+    toggleIncidentBtn.textContent = "View Extracted Incident Details ↓";
+    toggleIncidentBtn.setAttribute("aria-expanded", "false");
+
+    loading.style.display = "block";
+    linkageBtn.disabled = true;
+
+    try {
+        /*
+         * STEP 1: NLP ANALYSIS
+         */
+        const analyzeResponse = await fetch(
+            `${API_BASE}/api/analyze`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    complaint_text: text
+                })
+            }
+        );
+
+        const analyzeData = await readResponse(
+            analyzeResponse,
+            "Complaint analysis failed."
+        );
+
+        const analysisData = analyzeData.data || {};
+        const incident = analysisData.incident;
+
+        if (!incident || typeof incident !== "object") {
+            throw new Error(
+                "The analysis response did not contain structured incident data."
+            );
+        }
+
+        const missingFields = Array.isArray(analysisData.missing_fields)
+            ? analysisData.missing_fields
+            : [];
+
+        /*
+         * STEP 2: CASE MATCHING
+         * Do not reveal the incident yet.
+         */
+        const linkageResponse = await fetch(
+            `${API_BASE}/api/linkage`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    incident: {
+                        ...incident,
+                        missing_fields: missingFields,
+                        complaint_text: incident.complaint_text || text
+                    },
+                    complaint_text: text
+                })
+            }
+        );
+
+        const linkageData = await readResponse(
+            linkageResponse,
+            "Case matching failed."
+        );
+
+        if (!Array.isArray(linkageData.results)) {
+            throw new Error(
+                "The case-matching response did not contain a valid results list."
+            );
+        }
+
+        const results = linkageData.results;
+
+        /*
+         * STEP 3: SAVE SUCCESSFUL RESULTS
+         */
+        const savedIncident = {
+            ...incident,
+            missing_fields: missingFields,
+            complaint_text: incident.complaint_text || text
+        };
+
+        sessionStorage.setItem(
+            "linkageX_incident",
+            JSON.stringify(savedIncident)
+        );
+
+        sessionStorage.setItem(
+            "linkageX_original_complaint",
+            text
+        );
+
+        sessionStorage.setItem(
+            "linkageX_results",
+            JSON.stringify(results)
+        );
+
+        /*
+         * STEP 4: RENDER AFTER BOTH REQUESTS SUCCEED
+         * Structured information is still collapsed.
+         */
+        displayIncident(savedIncident, missingFields);
+
+        linkageCount.textContent = results.length
+            ? `${results.length} historical case(s) are ready for review.`
+            : "No historical case met the matching criteria. The incident can still be retained for future comparison.";
+
+        linkageNext.style.display = "flex";
+        incidentSection.style.display = "block";
+
+        showSuccess(
+            results.length
+                ? "Analysis and case matching are complete."
+                : "Analysis and case matching are complete. No matching cases were identified."
+        );
+
+    } catch (error) {
+        console.error("Linkage workflow error:", error);
+
+        // Hide all structured content when either step fails.
+        incidentSection.style.display = "none";
+        incidentGrid.innerHTML = "";
+        linkageNext.style.display = "none";
+
+        incidentDetailsContent.hidden = true;
+        toggleIncidentBtn.textContent = "View Extracted Incident Details ↓";
+        toggleIncidentBtn.setAttribute("aria-expanded", "false");
+
         sessionStorage.removeItem("linkageX_results");
         sessionStorage.removeItem("linkageX_incident");
         sessionStorage.removeItem("linkageX_original_complaint");
 
-        loading.style.display =
-            "block";
-
-
-        linkageBtn.disabled =
-            true;
-
-
-        incidentSection.style.display =
-            "none";
-
-
-        linkageNext.style.display =
-            "none";
-
-
-        try {
-
-            /* -------------------------------------------------
-               STEP 1 — NLP ANALYSIS
-            ------------------------------------------------- */
-
-            const analyzeResponse =
-                await fetch(
-                    `${API_BASE}/api/analyze`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            complaint_text: text
-                        })
-                    }
-                );
-
-
-            const analyzeData =
-                await analyzeResponse.json();
-
-
-            if (!analyzeResponse.ok) {
-
-                throw new Error(
-                    analyzeData.message ||
-                    "Complaint analysis failed."
-                );
-
-            }
-
-
-            const incident =
-                analyzeData.data.incident;
-
-
-            /* -------------------------------------------------
-               STEP 2 — DISPLAY STRUCTURED INCIDENT
-            ------------------------------------------------- */
-
-            displayIncident(
-                incident
-            );
-
-
-            /* -------------------------------------------------
-               STEP 3 — LINKAGE SEARCH
-            ------------------------------------------------- */
-
-            const linkageResponse =
-                await fetch(
-                    `${API_BASE}/api/linkage`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            incident: {
-                                ...incident,
-                                complaint_text: incident.complaint_text || text
-                            },
-                            complaint_text: text
-                        })
-                    }
-                );
-
-
-            const linkageData =
-                await linkageResponse.json();
-
-
-            if (!linkageResponse.ok) {
-
-                throw new Error(
-                    linkageData.message ||
-                    "Case linkage failed."
-                );
-
-            }
-
-
-            const results =
-                linkageData.results || [];
-
-
-            /* -------------------------------------------------
-               STEP 4 — SAVE RESULTS
-            ------------------------------------------------- */
-
-            sessionStorage.setItem(
-                "linkageX_incident",
-                JSON.stringify({ ...incident, complaint_text: text })
-            );
-
-            sessionStorage.setItem(
-                "linkageX_original_complaint",
-                text
-            );
-
-            sessionStorage.setItem(
-                "linkageX_results",
-                JSON.stringify(results)
-            );
-
-
-            /* -------------------------------------------------
-               STEP 5 — SHOW NEXT ACTION
-            ------------------------------------------------- */
-
-            linkageNext.style.display =
-                "flex";
-
-
-            linkageCount.textContent =
-                results.length
-                    ? `${results.length} historical case(s) met the minimum similarity threshold.`
-                    : "No historical case met the minimum similarity threshold. The incident can be retained for future comparison.";
-
-
-            showSuccess(
-                results.length
-                    ? "Analysis complete. Related cases are ready for review."
-                    : "Analysis complete. No significant relationship was identified."
-            );
-
-        }
-
-
-        catch (error) {
-
-            console.error(
-                "Linkage error:",
-                error
-            );
-
-
-            showError(
-                error.message ||
-                "Unable to connect to LinkageX backend."
-            );
-
-        }
-
-
-        finally {
-
-            loading.style.display =
-                "none";
-
-
-            linkageBtn.disabled =
-                false;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       DISPLAY STRUCTURED INCIDENT
-    ========================================================= */
-
-    function displayIncident(
-        incident
-    ) {
-
-        incidentSection.style.display =
-            "block";
-
-
-        const fields = [
-
-            [
-                "Crime Category",
-                incident.crime_category
-            ],
-
-            [
-                "Crime Subcategory",
-                incident.crime_subcategory
-            ],
-
-            [
-                "Modus Operandi",
-                formatValue(
-                    incident.modus_operandi
-                )
-            ],
-
-            [
-                "Deception",
-                formatValue(
-                    incident.deception
-                )
-            ],
-
-            [
-                "Victim Action",
-                formatValue(
-                    incident.victim_action
-                )
-            ],
-
-            [
-                "Attacker Action",
-                formatValue(
-                    incident.attacker_action
-                )
-            ],
-
-            [
-                "Outcome",
-                formatValue(
-                    incident.outcome
-                )
-            ],
-
-            [
-                "Channels",
-                formatValue(
-                    incident.channels
-                )
-            ],
-
-            [
-                "Payment Method",
-                formatValue(
-                    incident.payment_method
-                )
-            ],
-
-            [
-                "Amount",
-                formatAmount(
-                    incident.amounts
-                )
-            ],
-
-            [
-                "Organizations",
-                formatValue(
-                    incident.organizations
-                )
-            ],
-
-            [
-                "Locations",
-                formatValue(
-                    incident.locations
-                )
-            ]
-
-        ];
-
-
-        incidentGrid.innerHTML =
-            fields
-                .map(
-                    ([label, value]) => `
-
-                        <div class="incident-item">
-
-                            <div class="field-label">
-                                ${escapeHtml(label)}
-                            </div>
-
-                            <div class="field-value">
-                                ${escapeHtml(
-                                    value ||
-                                    "Not identified"
-                                )}
-                            </div>
-
-                        </div>
-
-                    `
-                )
-                .join("");
-
-    }
-
-
-    /* =========================================================
-       FORMAT VALUES
-    ========================================================= */
-
-    function formatValue(
-        value
-    ) {
-
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-
-            return "";
-
-        }
-
-
-        if (Array.isArray(value)) {
-
-            return value.length
-                ? value.join(", ")
-                : "";
-
-        }
-
-
-        return String(value);
-
-    }
-
-
-    function formatAmount(
-        value
-    ) {
-
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-
-            return "";
-
-        }
-
-
-        if (Array.isArray(value)) {
-
-            if (!value.length) {
-                return "";
-            }
-
-
-            return value
-                .map(
-                    amount =>
-                        `₹${Number(
-                            amount
-                        ).toLocaleString(
-                            "en-IN"
-                        )}`
-                )
-                .join(", ");
-
-        }
-
-
-        const numeric =
-            Number(value);
-
-
-        if (!Number.isNaN(numeric)) {
-
-            return `₹${numeric.toLocaleString(
-                "en-IN"
-            )}`;
-
-        }
-
-
-        return String(value);
-
-    }
-
-
-    /* =========================================================
-       HELPERS
-    ========================================================= */
-
-    function escapeHtml(
-        value
-    ) {
-
-        return String(
-            value ?? ""
-        )
-
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-
-            .replace(
-                /</g,
-                "&lt;"
-            )
-
-            .replace(
-                />/g,
-                "&gt;"
-            )
-
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
-
-
-    function hideMessages() {
-
-        errorBox.style.display =
-            "none";
-
-        successBox.style.display =
-            "none";
-
-    }
-
-
-    function showError(
-        message
-    ) {
-
-        errorBox.innerHTML = `
-
-            <div class="alert alert-danger">
-                ${escapeHtml(message)}
-            </div>
-
-        `;
-
-        errorBox.style.display =
-            "block";
-
-        successBox.style.display =
-            "none";
-
-    }
-
-
-    function showSuccess(
-        message
-    ) {
-
-        successBox.innerHTML = `
-
-            <div class="alert alert-success">
-                ${escapeHtml(message)}
-            </div>
-
-        `;
-
-        successBox.style.display =
-            "block";
-
-        errorBox.style.display =
-            "none";
-
-    }
-
-
-    /* =========================================================
-       CLEAR
-    ========================================================= */
-
-    function clearPage() {
-
-        complaintText.value =
-            "";
-
-        incidentGrid.innerHTML =
-            "";
-
-        incidentSection.style.display =
-            "none";
-
-        linkageNext.style.display =
-            "none";
-
-        hideMessages();
-
-
-        sessionStorage.removeItem(
-            "linkageX_incident"
+        showError(
+            error.message ||
+            "Unable to complete the analysis. Check that the LinkageX backend is running."
         );
 
-        sessionStorage.removeItem(
-            "linkageX_results"
-        );
-
-        sessionStorage.removeItem(
-            "linkageX_original_complaint"
-        );
-
+    } finally {
+        loading.style.display = "none";
+        linkageBtn.disabled = false;
     }
+}
 
+
+/* =========================================================
+   STATUS MESSAGES
+========================================================= */
+
+function hideMessages() {
+    errorBox.style.display = "none";
+    successBox.style.display = "none";
+    errorBox.innerHTML = "";
+    successBox.innerHTML = "";
+}
+
+function showError(message) {
+    errorBox.innerHTML = `
+        <div class="alert alert-danger">
+            <strong>Unable to complete workflow.</strong><br>
+            ${escapeHtml(message)}
+        </div>
+    `;
+
+    errorBox.style.display = "block";
+    successBox.style.display = "none";
+}
+
+function showSuccess(message) {
+    successBox.innerHTML = `
+        <div class="alert alert-success">
+            <strong>${escapeHtml(message)}</strong>
+        </div>
+    `;
+
+    successBox.style.display = "block";
+    errorBox.style.display = "none";
+}
+
+
+/* =========================================================
+   CLEAR PAGE
+========================================================= */
+
+function clearPage() {
+    complaintText.value = "";
+    incidentGrid.innerHTML = "";
+
+    incidentSection.style.display = "none";
+    linkageNext.style.display = "none";
+
+    incidentDetailsContent.hidden = true;
+    toggleIncidentBtn.textContent = "View Extracted Incident Details ↓";
+    toggleIncidentBtn.setAttribute("aria-expanded", "false");
+
+    loading.style.display = "none";
+    hideMessages();
+
+    linkageBtn.disabled = false;
+
+    sessionStorage.removeItem("linkageX_incident");
+    sessionStorage.removeItem("linkageX_results");
+    sessionStorage.removeItem("linkageX_original_complaint");
+}
 </script>
 
 </body>

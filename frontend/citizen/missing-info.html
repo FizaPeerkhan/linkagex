@@ -274,58 +274,10 @@ if (!analysisJSON) {
 
   const definitions = {
     payment_method: {
-      title: "How did you make the payment?",
-      description: "Select the method you used to send the money.",
+      title: "Which payment method was involved?",
+      description: "Select the payment method only if it is not already clear from your complaint.",
       type: "radio",
       options: ["UPI", "Bank Transfer", "Credit/Debit Card", "Mobile Wallet", "Cash", "Other"]
-    },
-    crime_category: {
-      title: "What type of cybercrime occurred?",
-      description: "Select the category that best describes your incident.",
-      type: "select",
-      options: ["Financial Fraud", "Hacking & Unauthorized Access", "E-Commerce & Job Fraud", "Ransomware & Malware", "Social Media Crimes", "Online Harassment & Threats", "Others"]
-    },
-    crime_subcategory: {
-      title: "What type of cybercrime best describes your complaint?",
-      description: "Select or enter the option that best matches your incident.",
-      type: "text",
-      placeholder: "Enter the type of cybercrime"
-    },
-    modus_operandi: {
-      title: "How did the person carry out the scam or attack?",
-      description: "Briefly describe the method used.",
-      type: "textarea",
-      placeholder: "For example: fake loan offer, phishing link, impersonation..."
-    },
-    deception: {
-      title: "How were you deceived?",
-      description: "Describe how the person convinced or misled you.",
-      type: "textarea",
-      placeholder: "For example: fake offer, impersonation, false promise..."
-    },
-    victim_action: {
-      title: "What action did you take?",
-      description: "Select the action you took after interacting with the person.",
-      type: "select",
-      options: ["Paid", "Clicked a Link", "Shared Information", "Downloaded a File", "Logged In", "Contacted the Person", "Other"]
-    },
-    attacker_action: {
-      title: "What did the person do?",
-      description: "Describe the suspected attacker's action.",
-      type: "textarea",
-      placeholder: "For example: requested payment, sent a phishing link..."
-    },
-    outcome: {
-      title: "What happened after the incident?",
-      description: "Select the outcome that best describes what happened.",
-      type: "select",
-      options: ["Money Lost", "Account Compromised", "Data Stolen", "Scammer Stopped Responding", "Threat Continued", "Other"]
-    },
-    channels: {
-      title: "How did the person contact you?",
-      description: "Select the communication channel used.",
-      type: "radio",
-      options: ["WhatsApp", "Phone Call", "SMS", "Email", "Website", "Social Media", "Other"]
     },
     incident_date: {
       title: "When did this incident happen?",
@@ -340,15 +292,23 @@ if (!analysisJSON) {
     },
     amounts: {
       title: "How much money was involved?",
-      description: "Enter the amount involved in the incident in INR.",
+      description: "Enter the amount involved in the incident in INR, if it has not already been extracted.",
       type: "number",
       placeholder: "Enter amount in INR"
     }
   };
 
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[char]));
+  }
+
   function renderInput(field, definition) {
     const value = incident[field];
     const existing = Array.isArray(value) ? value[0] : value;
+    const safeExisting = escapeHtml(existing ?? "");
+    const safePlaceholder = escapeHtml(definition.placeholder || "");
 
     if (definition.type === "radio") {
       return `<div class="option-grid">${definition.options.map(option => `
@@ -366,35 +326,50 @@ if (!analysisJSON) {
     }
 
     if (definition.type === "textarea") {
-      return `<div class="question-field"><textarea id="answerInput" placeholder="${definition.placeholder || ""}">${existing || ""}</textarea></div>`;
+      return `<div class="question-field"><textarea id="answerInput" placeholder="${safePlaceholder}">${safeExisting}</textarea></div>`;
     }
 
     if (definition.type === "date") {
       const dateValue = typeof existing === "string" && /^\d{4}-\d{2}-\d{2}$/.test(existing) ? existing : "";
       return `<div class="question-field">
-        <input id="answerInput" type="date" value="${dateValue}">
+        <input id="answerInput" type="date" value="${escapeHtml(dateValue)}">
         <label class="checkbox-line"><input type="checkbox" id="unknownInput"> I don't know</label>
         <p class="question-helper">Use the date when the incident actually occurred, if known.</p>
       </div>`;
     }
 
     if (definition.type === "number") {
-      return `<div class="question-field"><input id="answerInput" type="number" min="0" placeholder="${definition.placeholder || ""}" value="${existing ?? ""}"></div>`;
+      return `<div class="question-field"><input id="answerInput" type="number" min="0" placeholder="${safePlaceholder}" value="${safeExisting}"></div>`;
     }
 
     const unknownLocation = field === "incident_location" && existing === "Unknown";
     return `<div class="question-field">
-      <input id="answerInput" type="text" placeholder="${definition.placeholder || ""}" value="${unknownLocation ? "" : existing || ""}">
+      <input id="answerInput" type="text" placeholder="${safePlaceholder}" value="${unknownLocation ? "" : safeExisting}">
       ${field === "incident_location" ? `<label class="checkbox-line"><input type="checkbox" id="unknownInput" ${unknownLocation ? "checked" : ""}> I don't know / prefer not to provide it</label>` : ""}
     </div>`;
   }
 
+  // Semantic/classification fields belong to NLP extraction, not the
+  // citizen questionnaire. Do not ask the citizen to restate complaint text.
+  const semanticFields = new Set([
+    "crime_category",
+    "crime_subcategory",
+    "modus_operandi",
+    "deception",
+    "victim_action",
+    "attacker_action",
+    "outcome",
+    "channels"
+  ]);
+
+  missingFields = missingFields.filter(field => !semanticFields.has(field));
+
   const questions = missingFields
-    .map(field => ({field, definition: definitions[field]}))
+    .map(field => ({ field, definition: definitions[field] }))
     .filter(item => item.definition);
 
   if (questions.length === 0) {
-    if (missingFields.length === 0) {
+    if (missingFields.length === 0 || !missingFields.some(field => definitions[field])) {
       c.innerHTML = pageHead("Incident Information Complete", "We have enough information to continue.") +
         `<div class="card"><div class="alert alert-success"><strong>No additional information is required.</strong>
         <p>The system extracted the required incident information from your complaint.</p></div>
@@ -408,7 +383,7 @@ if (!analysisJSON) {
     }
   } else {
     let currentQuestion = 0;
-    const listFields = ["modus_operandi", "deception", "victim_action", "attacker_action", "outcome", "channels", "payment_method"];
+    const listFields = ["payment_method"];
 
     c.innerHTML = pageHead("Help us complete your incident", "We identified some information that may need confirmation.") +
       `<div class="steps">
