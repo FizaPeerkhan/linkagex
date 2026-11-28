@@ -30,9 +30,7 @@
             --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         html {
             min-height: 100%;
@@ -49,74 +47,34 @@
             font-size: 14px;
         }
 
-        button,
-        input,
-        select,
-        textarea {
-            font: inherit;
-        }
+        button, input, select, textarea { font: inherit; }
 
-        a {
-            color: var(--cyan);
-            text-decoration: none;
-        }
+        a { color: var(--cyan); text-decoration: none; }
+        a:hover { color: #a6edff; }
 
-        a:hover {
-            color: #a6edff;
-        }
+        h1, h2, h3, h4, strong, b { color: inherit; }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        strong,
-        b {
-            color: inherit;
-        }
-
-        h1,
-        h2,
-        h3 {
+        h1, h2, h3 {
             font-family: var(--display);
             letter-spacing: -.025em;
         }
 
-        h1 {
-            font-size: clamp(25px, 3vw, 36px);
-            line-height: 1.15;
-            margin: 0 0 8px;
-        }
+        h1 { font-size: clamp(25px, 3vw, 36px); line-height: 1.15; margin: 0 0 8px; }
+        h2 { font-size: 21px; margin: 0 0 12px; }
+        h3 { font-size: 16px; margin: 0; }
 
-        h2 {
-            font-size: 21px;
-            margin: 0 0 12px;
-        }
+        p { color: var(--ink-dim); }
 
-        h3 {
-            font-size: 16px;
-            margin: 0;
-        }
-
-        p {
-            color: var(--ink-dim);
-        }
-
-        .card,
-        .section,
-        .panel {
+        .card, .section, .panel {
             background: linear-gradient(145deg, rgba(13, 20, 32, .98), rgba(8, 13, 22, .98));
             border: 1px solid var(--line);
             border-radius: 14px;
             box-shadow: 0 16px 45px rgba(0, 0, 0, .16);
         }
 
-        .card {
-            padding: 22px;
-            margin: 0 0 18px;
-        }
+        .card { padding: 22px; margin: 0 0 18px; }
 
-        .section-head,
-        .page-head {
+        .section-head, .page-head {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
@@ -124,23 +82,10 @@
             flex-wrap: wrap;
         }
 
-        .page-head {
-            margin: 0 0 22px;
-        }
-
-        .page-head p {
-            margin: 0;
-            max-width: 760px;
-        }
-
-        .section-head {
-            margin-bottom: 16px;
-        }
-
-        .section-head h2,
-        .section-head h3 {
-            font-family: var(--display);
-        }
+        .page-head { margin: 0 0 22px; }
+        .page-head p { margin: 0; max-width: 760px; }
+        .section-head { margin-bottom: 16px; }
+        .section-head h2, .section-head h3 { font-family: var(--display); }
 
         .table-wrap {
             width: 100%;
@@ -149,8 +94,7 @@
             border-radius: 10px;
         }
 
-        table,
-        .data-table {
+        table, .data-table {
             width: 100%;
             border-collapse: collapse;
             color: var(--ink);
@@ -173,16 +117,10 @@
             vertical-align: top;
         }
 
-        tbody tr:last-child td {
-            border-bottom: 0;
-        }
+        tbody tr:last-child td { border-bottom: 0; }
+        tbody tr:hover { background: rgba(84, 217, 255, .025); }
 
-        tbody tr:hover {
-            background: rgba(84, 217, 255, .025);
-        }
-
-        .badge,
-        .status-pill {
+        .badge, .status-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -195,22 +133,19 @@
             color: var(--ink-dim);
         }
 
-        .badge-success,
-        .status-success {
+        .badge-success, .status-success {
             color: var(--green);
             border-color: rgba(94, 230, 155, .3);
             background: rgba(94, 230, 155, .08);
         }
 
-        .badge-warn,
-        .status-warn {
+        .badge-warn, .status-warn {
             color: var(--amber);
             border-color: rgba(255, 180, 84, .3);
             background: rgba(255, 180, 84, .08);
         }
 
-        .badge-danger,
-        .status-danger {
+        .badge-danger, .status-danger {
             color: var(--red);
             border-color: rgba(255, 122, 122, .3);
             background: rgba(255, 122, 122, .08);
@@ -224,13 +159,8 @@
             color: var(--ink-dim);
         }
 
-        .alert strong {
-            color: var(--ink);
-        }
-
-        .alert p {
-            margin: 6px 0 0;
-        }
+        .alert strong { color: var(--ink); }
+        .alert p { margin: 6px 0 0; }
 
         .alert-info {
             border-color: rgba(84, 217, 255, .28);
@@ -242,8 +172,7 @@
             background: rgba(255, 180, 84, .07);
         }
 
-        .btn,
-        .actions a {
+        .btn, .actions a {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -258,8 +187,7 @@
             cursor: pointer;
         }
 
-        .btn:hover,
-        .actions a:hover {
+        .btn:hover, .actions a:hover {
             background: rgba(84, 217, 255, .1);
             border-color: var(--cyan);
             color: var(--ink);
@@ -277,9 +205,7 @@
             color: #031018;
         }
 
-        .btn-secondary {
-            background: rgba(148, 197, 224, .05);
-        }
+        .btn-secondary { background: rgba(148, 197, 224, .05); }
 
         .actions {
             display: flex;
@@ -300,8 +226,7 @@
             gap: 12px;
         }
 
-        .incident-grid > div,
-        .incident-grid > section {
+        .incident-grid > div, .incident-grid > section {
             min-width: 0;
             padding: 14px 15px;
             background: rgba(148, 197, 224, .035);
@@ -310,8 +235,7 @@
             overflow-wrap: anywhere;
         }
 
-        .incident-grid h4,
-        .incident-grid .label {
+        .incident-grid h4, .incident-grid .label {
             color: var(--ink-faint);
             font: 500 10px var(--mono);
             text-transform: uppercase;
@@ -319,8 +243,7 @@
             margin: 0 0 6px;
         }
 
-        .incident-grid p,
-        .incident-grid .value {
+        .incident-grid p, .incident-grid .value {
             margin: 0;
             color: var(--ink);
         }
@@ -331,9 +254,7 @@
             overflow-wrap: anywhere;
         }
 
-        .entity-context-item:last-child {
-            margin-bottom: 0;
-        }
+        .entity-context-item:last-child { margin-bottom: 0; }
 
         .context-detail {
             margin-top: 5px;
@@ -348,32 +269,27 @@
             font-weight: 600;
         }
 
-        pre,
-        code {
-            font-family: var(--mono);
+        pre, code { font-family: var(--mono); }
+
+        /* New style for the complaint text block */
+        .complaint-text-block {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            white-space: pre-wrap;
+            font-family: var(--sans);
+            color: var(--ink);
+            line-height: 1.65;
+            font-size: 14px;
         }
 
         @media (max-width: 720px) {
-            .card {
-                padding: 16px;
-            }
-
-            .incident-grid {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            .page-head {
-                gap: 10px;
-            }
-
-            th,
-            td {
-                padding: 10px;
-            }
-
-            .actions .btn {
-                width: 100%;
-            }
+            .card { padding: 16px; }
+            .incident-grid { grid-template-columns: minmax(0, 1fr); }
+            .page-head { gap: 10px; }
+            th, td { padding: 10px; }
+            .actions .btn { width: 100%; }
         }
     </style>
 
@@ -389,431 +305,195 @@
         /* =====================================================
            APPLICATION SHELL
         ====================================================== */
-
         const c = shell("citizen", "Report");
-
 
         /* =====================================================
            GET NLP RESULT
         ====================================================== */
-
         const analysisJSON = sessionStorage.getItem("linkageX_analysis");
-
 
         /* =====================================================
            NO ANALYSIS FOUND
         ====================================================== */
-
         if (!analysisJSON) {
-
             c.innerHTML = pageHead(
                 "No Analysis Found",
                 "We could not find the analyzed complaint. Please submit your complaint again."
             );
-
             c.innerHTML += `
                 <div class="card">
                     <div class="alert alert-warn">
                         <strong>Analysis unavailable.</strong>
-                        <p>
-                            Please return to the complaint page
-                            and submit your report again.
-                        </p>
+                        <p>Please return to the complaint page and submit your report again.</p>
                     </div>
-
                     <div class="actions" style="margin-top:18px">
-                        <a class="btn btn-primary" href="complaint.html">
-                            Back to Complaint
-                        </a>
+                        <a class="btn btn-primary" href="complaint.html">Back to Complaint</a>
                     </div>
                 </div>
             `;
-
         } else {
-
             let result;
-
             try {
                 result = JSON.parse(analysisJSON);
             } catch (error) {
-
                 console.error("Unable to parse NLP result:", error);
-
-                c.innerHTML = pageHead(
-                    "Analysis Error",
-                    "The complaint analysis could not be read."
-                );
-
+                c.innerHTML = pageHead("Analysis Error", "The complaint analysis could not be read.");
                 c.innerHTML += `
                     <div class="card">
                         <div class="alert alert-warn">
                             <strong>Invalid analysis data.</strong>
                             <p>Please submit the complaint again.</p>
                         </div>
-
                         <div class="actions" style="margin-top:18px">
-                            <a class="btn btn-primary" href="complaint.html">
-                                Back to Complaint
-                            </a>
+                            <a class="btn btn-primary" href="complaint.html">Back to Complaint</a>
                         </div>
                     </div>
                 `;
-
                 throw error;
             }
-
 
             /* =================================================
                EXTRACT INCIDENT
             ================================================== */
-
             const data = result.data || {};
-            const incident = data.incident || {};
-            const missingFields = data.missing_fields || [];
-
+            const incident = data.incident || result.incident || {};
+            const missingFields = data.missing_fields || result.missing_fields || [];
+            const complaintText = result.complaint_text || data.complaint_text || "";
 
             /* =================================================
                PAGE HEADER
             ================================================== */
-
             c.innerHTML = pageHead(
                 "We Understood Your Incident",
                 "The system extracted the following information from your complaint. Please review and confirm it before continuing."
             );
 
-
             /* =================================================
                REVIEW NOTICE
             ================================================== */
-
             c.innerHTML += `
                 <div class="alert alert-info" style="margin-bottom:16px">
                     <strong>Review before continuing:</strong>
-
-                    Extracted information is based on
-                    your complaint text. Please confirm
-                    the details and provide any missing
-                    information before submitting your report.
+                    Extracted information is based on your complaint text. Please confirm the details and provide any missing information before submitting your report.
                 </div>
             `;
 
-
             /* =================================================
-               DISPLAY VALUE
+               ORIGINAL COMPLAINT TEXT (NEW)
             ================================================== */
-
-            function displayEntityItem(item) {
-
-                if (item === null || item === undefined) {
-                    return "";
-                }
-
-                if (typeof item === "string" || typeof item === "number") {
-                    return String(item).trim();
-                }
-
-                if (Array.isArray(item)) {
-                    return item.map(displayEntityItem).filter(Boolean).join(", ");
-                }
-
-                if (typeof item === "object") {
-
-                    const preferredKeys = [
-                        "value", "text", "number", "phone", "phone_number",
-                        "email", "upi", "upi_id", "url", "domain", "address",
-                        "identifier", "raw", "matched_text", "entity"
-                    ];
-
-                    for (const key of preferredKeys) {
-
-                        const candidate = item[key];
-
-                        if (
-                            (typeof candidate === "string" ||
-                             typeof candidate === "number") &&
-                            String(candidate).trim() !== ""
-                        ) {
-                            return String(candidate).trim();
-                        }
-                    }
-
-                    const primitives = Object.values(item)
-                        .filter(value =>
-                            (typeof value === "string" ||
-                             typeof value === "number") &&
-                            String(value).trim() !== ""
-                        )
-                        .map(value => String(value).trim());
-
-                    return [...new Set(primitives)].join(" · ");
-                }
-
-                return "";
-            }
-
-
-            function displayValue(value) {
-
-                if (value === null || value === undefined) {
-                    return "Not provided";
-                }
-
-                if (Array.isArray(value)) {
-
-                    const items = value.map(displayEntityItem).filter(Boolean);
-
-                    return items.length
-                        ? [...new Set(items)].join(", ")
-                        : "Not provided";
-                }
-
-                if (typeof value === "object") {
-                    return displayEntityItem(value) || "Not provided";
-                }
-
-                if (typeof value === "string" && value.trim() === "") {
-                    return "Not provided";
-                }
-
-                return String(value);
-            }
-
-
-            /* =================================================
-               CHECK WHETHER VALUE EXISTS
-            ================================================== */
-
-            function hasValue(value) {
-
-                if (value === null || value === undefined) {
-                    return false;
-                }
-
-                if (Array.isArray(value)) {
-                    return value.length > 0;
-                }
-
-                if (typeof value === "string") {
-                    return value.trim().length > 0;
-                }
-
-                return true;
-            }
-
-
-            /* =================================================
-               FIELD STATUS
-            ================================================== */
-
-            function statusFor(value, fieldName) {
-
-                if (missingFields.includes(fieldName)) {
-                    return `
-                        <span class="badge badge-warn">
-                            Needs confirmation
-                        </span>
-                    `;
-                }
-
-                if (hasValue(value)) {
-                    return `
-                        <span class="badge badge-success">
-                            Extracted
-                        </span>
-                    `;
-                }
-
-                return `
-                    <span class="badge">
-                        Not detected
-                    </span>
-                `;
-            }
-
-
-            /* =================================================
-               ESCAPE HTML SAFELY
-            ================================================== */
-
-            function escapeHTML(value) {
-
-                return String(value ?? "")
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#39;");
-            }
-
-
-            /* =================================================
-               FORMAT AMOUNTS
-            ================================================== */
-
-            function formatAmount(value) {
-
-                const number = Number(value);
-
-                return Number.isFinite(number)
-                    ? "₹" + number.toLocaleString("en-IN")
-                    : escapeHTML(value);
-            }
-
-
-            /* =================================================
-               DISPLAY CONTEXTUAL DETAILS
-            ================================================== */
-
-            function displayContextualDetails(details, fallback, kind) {
-
-                if (!Array.isArray(details) || details.length === 0) {
-
-                    // Escape fallback text to prevent complaint text
-                    // from being interpreted as HTML.
-                    return escapeHTML(displayValue(fallback));
-                }
-
-                return details.map(item => {
-
-                    const value = kind === "amount"
-                        ? formatAmount(item.value)
-                        : escapeHTML(displayEntityItem(item.value));
-
-                    const meaning = item.meaning
-                        ? `<strong>${escapeHTML(item.meaning)}</strong>`
-                        : "Context not established";
-
-                    const context = item.context
-                        ? `<div class="context-detail"><span>Complaint context:</span> ${escapeHTML(item.context)}</div>`
-                        : `<div class="context-detail">No matching sentence context was found.</div>`;
-
-                    return `
-                        <div class="entity-context-item">
-                            <div>${meaning}: ${value}</div>
-                            ${context}
+            if (complaintText) {
+                c.innerHTML += `
+                    <div class="card">
+                        <div class="section-head">
+                            <h3>Original Complaint Text</h3>
+                            <span>Source text for verification</span>
                         </div>
-                    `;
-
-                }).join("");
-            }
-
-
-            /* =================================================
-               RENDER EXTRACTED INDICATOR CARDS
-
-               IMPORTANT:
-               Do not use app.js field() here. That function
-               escapes its value and would show HTML tags as text.
-            ================================================== */
-
-            function indicatorField(label, valueHtml, key) {
-
-                return `
-                    <div>
-                        <h4>${escapeHTML(label)}</h4>
-
-                        <div class="value" data-indicator="${escapeHTML(key)}">
-                            ${valueHtml || "Not provided"}
-                        </div>
+                        <div class="complaint-text-block">${escapeHTML(complaintText)}</div>
                     </div>
                 `;
             }
 
-
-            function displayAmounts(amounts) {
-
-                if (!Array.isArray(amounts) || amounts.length === 0) {
-                    return "Not provided";
+            /* =================================================
+               DISPLAY VALUE HELPERS
+            ================================================== */
+            function displayEntityItem(item) {
+                if (item === null || item === undefined) return "";
+                if (typeof item === "string" || typeof item === "number") return String(item).trim();
+                if (Array.isArray(item)) return item.map(displayEntityItem).filter(Boolean).join(", ");
+                if (typeof item === "object") {
+                    const preferredKeys = ["value", "text", "number", "phone", "phone_number", "email", "upi", "upi_id", "url", "domain", "address", "identifier", "raw", "matched_text", "entity"];
+                    for (const key of preferredKeys) {
+                        const candidate = item[key];
+                        if ((typeof candidate === "string" || typeof candidate === "number") && String(candidate).trim() !== "") {
+                            return String(candidate).trim();
+                        }
+                    }
+                    const primitives = Object.values(item).filter(value => (typeof value === "string" || typeof value === "number") && String(value).trim() !== "").map(value => String(value).trim());
+                    return [...new Set(primitives)].join(" · ");
                 }
-
-                return amounts.map(formatAmount).join(", ");
+                return "";
             }
 
+            function displayValue(value) {
+                if (value === null || value === undefined) return "Not provided";
+                if (Array.isArray(value)) {
+                    const items = value.map(displayEntityItem).filter(Boolean);
+                    return items.length ? [...new Set(items)].join(", ") : "Not provided";
+                }
+                if (typeof value === "object") return displayEntityItem(value) || "Not provided";
+                if (typeof value === "string" && value.trim() === "") return "Not provided";
+                return String(value);
+            }
+
+            function hasValue(value) {
+                if (value === null || value === undefined) return false;
+                if (Array.isArray(value)) return value.length > 0;
+                if (typeof value === "string") return value.trim().length > 0;
+                return true;
+            }
+
+            function statusFor(value, fieldName) {
+                if (missingFields.includes(fieldName)) {
+                    return `<span class="badge badge-warn">Needs confirmation</span>`;
+                }
+                if (hasValue(value)) {
+                    return `<span class="badge badge-success">Extracted</span>`;
+                }
+                return `<span class="badge">Not detected</span>`;
+            }
+
+            function escapeHTML(value) {
+                return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+            }
+
+            function formatAmount(value) {
+                const number = Number(value);
+                return Number.isFinite(number) ? "₹" + number.toLocaleString("en-IN") : escapeHTML(value);
+            }
+
+            function displayContextualDetails(details, fallback, kind) {
+                if (!Array.isArray(details) || details.length === 0) {
+                    return escapeHTML(displayValue(fallback));
+                }
+                return details.map(item => {
+                    const value = kind === "amount" ? formatAmount(item.value) : escapeHTML(displayEntityItem(item.value));
+                    const meaning = item.meaning ? `<strong>${escapeHTML(item.meaning)}</strong>` : "Context not established";
+                    const context = item.context ? `<div class="context-detail"><span>Complaint context:</span> ${escapeHTML(item.context)}</div>` : `<div class="context-detail">No matching sentence context was found.</div>`;
+                    return `<div class="entity-context-item"><div>${meaning}: ${value}</div>${context}</div>`;
+                }).join("");
+            }
+
+            function indicatorField(label, valueHtml, key) {
+                return `
+                    <div>
+                        <h4>${escapeHTML(label)}</h4>
+                        <div class="value" data-indicator="${escapeHTML(key)}">${valueHtml || "Not provided"}</div>
+                    </div>
+                `;
+            }
 
             /* =================================================
                BUILD FIELD LIST
             ================================================== */
-
             const fields = [
-
-                [
-                    "Crime Category",
-                    incident.crime_category,
-                    "crime_category"
-                ],
-
-                [
-                    "Crime Type",
-                    incident.crime_subcategory,
-                    "crime_subcategory"
-                ],
-
-                [
-                    "Channel",
-                    incident.channels,
-                    "channels"
-                ],
-
-                [
-                    "Deception Method",
-                    incident.deception,
-                    "deception"
-                ],
-
-                [
-                    "Victim Action",
-                    incident.victim_action,
-                    "victim_action"
-                ],
-
-                [
-                    "Attacker Action",
-                    incident.attacker_action,
-                    "attacker_action"
-                ],
-
-                [
-                    "Outcome",
-                    incident.outcome,
-                    "outcome"
-                ],
-
-                [
-                    "Payment Method",
-                    incident.payment_method,
-                    "payment_method"
-                ],
-
-                [
-                    "Amount",
-                    incident.amounts,
-                    "amounts"
-                ],
-
-                [
-                    "Organizations",
-                    incident.organizations,
-                    "organizations"
-                ],
-
-                [
-                    "Location",
-                    hasValue(incident.location_mentions)
-                        ? incident.location_mentions
-                        : incident.locations,
-                    "locations"
-                ]
-
+                ["Crime Category", incident.crime_category, "crime_category"],
+                ["Crime Type", incident.crime_subcategory, "crime_subcategory"],
+                ["Channel", incident.channels, "channels"],
+                ["Deception Method", incident.deception, "deception"],
+                ["Victim Action", incident.victim_action, "victim_action"],
+                ["Attacker Action", incident.attacker_action, "attacker_action"],
+                ["Outcome", incident.outcome, "outcome"],
+                ["Payment Method", incident.payment_method, "payment_method"],
+                ["Amount", incident.amounts, "amounts"],
+                ["Organizations", incident.organizations, "organizations"],
+                ["Location", hasValue(incident.location_mentions) ? incident.location_mentions : incident.locations, "locations"]
             ];
-
 
             /* =================================================
                RENDER INCIDENT INFORMATION TABLE
             ================================================== */
-
             c.innerHTML += `
                 <div class="card">
-
                     <div class="section-head">
                         <h3>Extracted Incident Information</h3>
                         <span>NLP-generated representation</span>
@@ -821,7 +501,6 @@
 
                     <div class="table-wrap">
                         <table class="data-table">
-
                             <thead>
                                 <tr>
                                     <th>Field</th>
@@ -829,137 +508,56 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-
                             <tbody>
-                                ${
-                                    fields.map(field => {
+                                ${fields.map(field => {
+                                    const label = field[0];
+                                    const rawValue = field[1];
+                                    const key = field[2];
 
-                                        const label = field[0];
-                                        const rawValue = field[1];
-                                        const key = field[2];
+                                    const value = key === "amounts"
+                                        ? displayContextualDetails(incident.amount_details, rawValue, "amount")
+                                        : key === "locations"
+                                            ? displayContextualDetails(incident.location_details, hasValue(incident.location_mentions) ? incident.location_mentions : rawValue, "location")
+                                            : escapeHTML(displayValue(rawValue));
 
-                                        const value = key === "amounts"
-
-                                            ? displayContextualDetails(
-                                                incident.amount_details,
-                                                rawValue,
-                                                "amount"
-                                            )
-
-                                            : key === "locations"
-
-                                                ? displayContextualDetails(
-                                                    incident.location_details,
-                                                    hasValue(incident.location_mentions)
-                                                        ? incident.location_mentions
-                                                        : rawValue,
-                                                    "location"
-                                                )
-
-                                                : escapeHTML(displayValue(rawValue));
-
-                                        return `
-                                            <tr>
-                                                <td>
-                                                    <strong>${escapeHTML(label)}</strong>
-                                                </td>
-
-                                                <td>
-                                                    ${value}
-                                                </td>
-
-                                                <td>
-                                                    ${statusFor(rawValue, key)}
-                                                </td>
-                                            </tr>
-                                        `;
-
-                                    }).join("")
-                                }
+                                    return `
+                                        <tr>
+                                            <td><strong>${escapeHTML(label)}</strong></td>
+                                            <td>${value}</td>
+                                            <td>${statusFor(rawValue, key)}</td>
+                                        </tr>
+                                    `;
+                                }).join("")}
                             </tbody>
-
                         </table>
                     </div>
-
 
                     <!-- =====================================
                          EXTRACTED INDICATORS
                     ====================================== -->
-
                     <div class="divider" style="margin:22px 0"></div>
 
                     <div class="section-head">
                         <h3>Extracted Indicators</h3>
-
-                        <span>
-                            Additional information detected from the complaint
-                        </span>
+                        <span>Additional information detected from the complaint</span>
                     </div>
 
                     <div class="incident-grid">
-
-                        ${indicatorField(
-                            "Phone Numbers",
-                            displayContextualDetails(
-                                incident.phone_details,
-                                incident.phones,
-                                "phone"
-                            ),
-                            "phones"
-                        )}
-
-                        ${indicatorField(
-                            "Email Addresses",
-                            displayContextualDetails(
-                                incident.email_details,
-                                incident.emails,
-                                "email"
-                            ),
-                            "emails"
-                        )}
-
-                        ${indicatorField(
-                            "UPI IDs",
-                            displayContextualDetails(
-                                incident.upi_details,
-                                incident.upi_ids,
-                                "upi"
-                            ),
-                            "upi_ids"
-                        )}
-
-                        ${indicatorField(
-                            "URLs",
-                            displayContextualDetails(
-                                incident.url_details,
-                                incident.urls,
-                                "url"
-                            ),
-                            "urls"
-                        )}
-
+                        ${indicatorField("Phone Numbers", displayContextualDetails(incident.phone_details, incident.phones, "phone"), "phones")}
+                        ${indicatorField("Email Addresses", displayContextualDetails(incident.email_details, incident.emails, "email"), "emails")}
+                        ${indicatorField("UPI IDs", displayContextualDetails(incident.upi_details, incident.upi_ids, "upi"), "upi_ids")}
+                        ${indicatorField("URLs", displayContextualDetails(incident.url_details, incident.urls, "url"), "urls")}
                     </div>
-
 
                     <!-- =====================================
                          ACTIONS
                     ====================================== -->
-
                     <div class="actions" style="margin-top:22px">
-
-                        <a class="btn btn-primary" href="missing-info.html">
-                            Continue Review →
-                        </a>
-
-                        <a class="btn btn-secondary" href="complaint.html">
-                            Back
-                        </a>
-
+                        <a class="btn btn-primary" href="missing-info.html">Continue Review →</a>
+                        <a class="btn btn-secondary" href="complaint.html">Back</a>
                     </div>
-
                 </div>
             `;
-
         }
     </script>
 
